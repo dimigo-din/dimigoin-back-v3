@@ -8,7 +8,7 @@
   "license": "MIT",
   "private": false,
   "scripts": {
-    "start": "ts-node ./src/index.ts",
+    "start": "nodemon",
     "lint": "eslint ./src/**/*.ts"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "express-bearer-token": "^2.4.0",
     "helmet": "^3.23.3",
     "mongoose": "^5.9.20",
+    "nodemon": "^2.0.4",
     "ts-mongoose": "^0.0.21",
     "ts-node": "^8.10.2",
     "typescript": "^3.9.6"
