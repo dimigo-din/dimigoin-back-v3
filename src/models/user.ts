@@ -1,5 +1,9 @@
-import { createSchema, ExtractDoc, Type, typedModel } from 'ts-mongoose'
-import { GenderValues, UserTypeValues, GradeValues, ClassValues } from '../types';
+import {
+  createSchema, ExtractDoc, Type, typedModel,
+} from 'ts-mongoose';
+import {
+  GenderValues, UserTypeValues, GradeValues, ClassValues,
+} from '../types';
 
 export const userSchema = createSchema({
   idx: Type.number({ required: true, unique: true }),
