@@ -26,6 +26,6 @@ async function getIdentity(account: Account) {
   return data;
 }
 
-export {
+export default {
   getIdentity,
 };
