@@ -15,6 +15,7 @@
     "@types/cors": "^2.8.6",
     "@types/express": "^4.17.6",
     "@types/helmet": "^0.0.47",
+    "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.7.29",
     "axios": "^0.19.2",
     "cors": "^2.8.5",
