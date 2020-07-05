@@ -4,7 +4,7 @@ import mongoose from 'mongoose';
 import helmet from 'helmet';
 import cors from 'cors';
 import bearerToken from 'express-bearer-token';
-import errorHandler from './middlewares/ErrorHandler';
+import { errorHandler } from './middlewares';
 
 import router from './routes';
 
