@@ -1,4 +1,4 @@
-import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import config from '../config';
 import { User } from '../interfaces';
 
