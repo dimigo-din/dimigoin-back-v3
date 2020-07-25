@@ -9,7 +9,8 @@
   "private": false,
   "scripts": {
     "start": "nodemon",
-    "lint": "eslint ./src/**/*.ts"
+    "lint": "eslint ./src/**/*.ts",
+    "fix:prettier": "prettier --write \"**/*.*\""
   },
   "dependencies": {
     "@types/cors": "^2.8.6",
