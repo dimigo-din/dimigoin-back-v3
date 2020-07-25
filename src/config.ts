@@ -12,5 +12,5 @@ export default {
   jwtSecret: process.env.JWT_SECRET!,
   apiId: process.env.DIMIAPI_ID!,
   apiPw: process.env.DIMIAPI_PW!,
-  apiUrl: process.env.DIMIAPI_URL!
-}
+  apiUrl: process.env.DIMIAPI_URL!,
+};
