@@ -1,5 +1,6 @@
 export class HttpException extends Error {
   public status: number;
+
   public message: string;
 
   constructor(status: number = 500,
@@ -7,5 +8,12 @@ export class HttpException extends Error {
     super(message);
     this.status = status;
     this.message = message;
+  }
+}
+
+export class ValidationFailException extends HttpException {
+  constructor(keys: string[]) {
+    const message = `"${keys.join(', ')}" 항목이 입력되지 않았습니다.`;
+    super(400, message);
   }
 }

@@ -1,4 +1,4 @@
-{
+module.exports = {
     "env": {
         "es6": true,
         "node": true
@@ -15,29 +15,23 @@
         "ecmaVersion": 11,
         "sourceType": "module"
     },
-    "plugins": [
-        "@typescript-eslint"
-    ],
+    "plugins": ["@typescript-eslint"],
     "rules": {
+        "semi": "off",
         "import/prefer-default-export": "off",
+        "import/extensions": "off",
+        "import/no-unresolved": "off",
         "lines-between-class-members": "off",
+        "consistent-return": "off",
+        "no-underscore-dangle": "off",
+        "no-param-reassign": "off",
+        "max-classes-per-file": "off",
+        "class-methods-use-this": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],
         "no-unused-vars": [
             "error", { "args": "none" }
         ],
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            { "ts": "never" }
-        ]
     },
-    "settings": {
-        "import/resolver": {
-            "node": {
-            "extensions": [".js", ".jsx", ".ts", ".tsx"]
-            }
-        }
-    }
-}
+};

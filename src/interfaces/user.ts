@@ -1,15 +1,19 @@
 import { ObjectId } from 'mongodb';
-import { Gender, UserType, Grade, Class } from '../types';
+import { UserType, Gender } from '../types';
 
-export interface User {
+export default interface IUser {
   _id: ObjectId;
+  idx: number;
+  username: string;
   name: string;
+  userType: UserType;
   gender: Gender;
   phone: string;
-  type: UserType;
-  grade: Grade;
-  class: Class;
-  number: number;
-  serial: number;
-  photo: Array<string>;
+
+  grade?: number;
+  class?: number;
+  number?: number;
+  serial?: number;
+
+  photo: string[];
 }

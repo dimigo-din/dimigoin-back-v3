@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
+import App from './App';
+// eslint-disable-next-line
 import express from 'express';
-import App from './app';
 
-dotenv.config({ path: '../.env' });
+dotenv.config();
 
 const port: number = Number(process.env.SERVER_PORT) || 5000;
-const app: express.Application = new App().app;
+const { app } = new App();
 
+/* eslint-disable */
 app.listen(port, () => console.log(`Server is listening at ${port}`))
   .on('error', (error) => console.error(error));
+/* eslint-enable */

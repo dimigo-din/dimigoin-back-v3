@@ -1,22 +1,33 @@
+import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
-import config from '../config';
-import { User } from '../interfaces';
+import { HttpException } from '../exceptions';
+import IUser from '../interfaces/User';
 
-async function issue(identity: User, refresh: boolean = false) {
-  const signOptions: jwt.SignOptions = {
-    algorithm: 'HS256',
-    expiresIn: refresh ? '1y' : '1w',
-  };
+dotenv.config();
 
-  const token = jwt.sign(
-    { identity, refresh },
-    config.jwtSecret,
-    signOptions,
-  );
+export default class Token {
+  private secretKey = process.env.JWT_SECRET;
 
-  return token;
-}
+  public verify(token: string): IUser {
+    try {
+      const { identity }: any = jwt.verify(token, this.secretKey);
+      return identity;
+    } catch (error) {
+      throw new HttpException(401, error.message);
+    }
+  }
 
-export default {
-  issue,
+  public issue(identity: IUser, refresh: boolean) {
+    if (!refresh) {
+      const token = jwt.sign({ identity }, process.env.JWT_SECRET, {
+        algorithm: 'HS256',
+        expiresIn: '1w',
+      });
+      return token;
+    }
+    const token = jwt.sign({
+      idx: identity.idx, refresh: true,
+    }, process.env.JWT_SECRET);
+    return token;
+  }
 }

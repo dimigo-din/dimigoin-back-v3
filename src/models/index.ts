@@ -1,2 +1,17 @@
-export { userModel, userDoc, userSchema } from './user';
-export { ingangModel, ingangDoc, ingangSchema } from './ingang';
+import { AfterschoolModel } from './Afterschool';
+import { CircleModel } from './Circle';
+import {
+  CircleApplicationModel,
+  CircleApplicationQuestionModel,
+} from './CircleApplication';
+import { ConfigModel } from './Config';
+import { UserModel } from './User';
+
+export {
+  UserModel,
+  CircleModel,
+  CircleApplicationQuestionModel,
+  CircleApplicationModel,
+  ConfigModel,
+  AfterschoolModel,
+};
