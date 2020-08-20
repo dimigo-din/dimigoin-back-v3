@@ -47,16 +47,25 @@ class CircleApplicationController extends Controller {
   }
 
   private createIngangApplication = async (req: Request, res: Response) => {
-    const { _id: applier } = this.getUserIdentity(req);
+    const { _id: applier, class: _class } = this.getUserIdentity(req);
     const date = getOnlyDate();
+    const { time } = req.body;
     const existing = await IngangApplicationModel.findOne({
       applier,
       date,
-      time: req.body.time,
+      time,
     });
     if (existing) throw new HttpException(409, '이미 해당 시간 인강실을 신청했습니다.');
 
-    // 최대 신청 인원 로직
+    const todayAll = await IngangApplicationModel.find({
+      date,
+      time,
+    }).populate('applier');
+
+    // @ts-ignore
+    if (todayAll.filter((v) => v.applier.class === _class).length >= 9) {
+      throw new HttpException(403, '최대 인강실 인원을 초과했습니다.');
+    }
 
     const ingangApplication = new IngangApplicationModel();
     Object.assign(ingangApplication, {
