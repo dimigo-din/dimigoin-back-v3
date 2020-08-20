@@ -47,19 +47,13 @@ class App {
   }
 
   private connectMongoDB() {
-    const {
-      MONGO_PATH,
-      MONGO_PORT,
-      MONGO_NAME,
-      MONGO_ID,
-      MONGO_PW,
-    } = process.env;
+    const { MONGO_URI: mongoURI } = process.env;
     const mongooseOption = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     };
-    mongoose.connect(`mongodb://${MONGO_ID}:${MONGO_PW}@${MONGO_PATH}:${MONGO_PORT}/${MONGO_NAME}`, mongooseOption)
+    mongoose.connect(mongoURI, mongooseOption)
   }
 }
 
