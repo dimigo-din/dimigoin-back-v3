@@ -6,6 +6,7 @@ import CircleApplierSelection from './CircleApplierSelection';
 import CircleManagementController from './CircleManagement';
 import ConfigController from './Config';
 import UserController from './User';
+import IngangApplicationController from './IngangApplication';
 
 const controllers = [
   new AuthController(),
@@ -16,6 +17,7 @@ const controllers = [
   new CircleApplicationManagementController(),
   new CircleApplierSelection(),
   new ConfigController(),
+  new IngangApplicationController(),
 ];
 
 export default controllers;
