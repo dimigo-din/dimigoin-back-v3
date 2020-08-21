@@ -53,7 +53,7 @@ export const reloadAllUsers = async () => {
       await UserModel.updateOne({ idx: users[idx].idx }, users[idx]);
     }
   });
-}
+};
 
 export const attachStudentInfo = async () => {
   const { data } = await api.get(apiRouter.getAllStudents);

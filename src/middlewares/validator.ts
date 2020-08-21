@@ -10,4 +10,4 @@ export default (joiScheme: Schema) =>
       return;
     }
     next();
-  }
+  };

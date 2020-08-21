@@ -1,47 +1,25 @@
 import { NextFunction, Request, Response } from 'express';
-import Joi from 'joi';
 import { IConfig } from '../interfaces';
-import { Controller } from '../classes';
 import { ConfigModel } from '../models';
-import { validator, checkUserType } from '../middlewares';
+import { getEntireConfig } from '../resources/config';
 
-class ConfigController extends Controller {
-  public basePath = '/config';
+export const getAllConfig = async (req: Request, res: Response, next: NextFunction) => {
+  res.json({ config: await getEntireConfig() });
+};
 
-  constructor() {
-    super();
-    this.initializeRoutes();
+export const editConfig = async (req: Request, res: Response, next: NextFunction) => {
+  const newConfig: IConfig = req.body;
+  const config = await ConfigModel.findOne({ key: newConfig.key });
+  if (config) {
+    config.value = newConfig.value;
+    await config.save();
+  } else {
+    const _newConfig = new ConfigModel();
+    Object.assign(_newConfig, newConfig);
+    await _newConfig.save();
   }
-
-  private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), this.getAllConfig);
-
-    this.router.patch('/', checkUserType('T'), validator(Joi.object({
-      key: Joi.string().required(),
-      value: Joi.string().required(),
-    })), this.editConfig);
-  }
-
-  private getAllConfig = async (req: Request, res: Response, next: NextFunction) => {
-    res.json({ config: await this.config });
-  }
-
-  private editConfig = async (req: Request, res: Response, next: NextFunction) => {
-    const newConfig: IConfig = req.body;
-    const config = await ConfigModel.findOne({ key: newConfig.key });
-    if (config) {
-      config.value = newConfig.value;
-      await config.save();
-    } else {
-      const _newConfig = new ConfigModel();
-      Object.assign(_newConfig, newConfig);
-      await _newConfig.save();
-    }
-    res.json({
-      key: config.key,
-      value: config.value,
-    });
-  }
-}
-
-export default ConfigController;
+  res.json({
+    key: config.key,
+    value: config.value,
+  });
+};
