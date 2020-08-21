@@ -7,7 +7,7 @@ import { UserModel } from '../models';
 import DimiAPI from '../resources/dimi-api';
 import Token from '../resources/Token';
 import { IUser } from '../interfaces';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 
 class AuthController extends Controller {
   public basePath = '/auth';
@@ -22,7 +22,7 @@ class AuthController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.post('/', Validator(Joi.object({
+    this.router.post('/', validator(Joi.object({
       username: Joi.string().required(),
       password: Joi.string().required(),
     })), this.identifyUser);
