@@ -6,7 +6,7 @@ import cors from 'cors'
 import bearerToken from 'express-bearer-token'
 import fileUpload from 'express-fileupload'
 import helmet from 'helmet'
-import { AttachUserInfo, ErrorHandler } from './middlewares'
+import { attachUserInfo, errorHandler } from './middlewares'
 import controllers from './controllers'
 
 class App {
@@ -39,11 +39,11 @@ class App {
       headerKey: 'Bearer',
       reqKey: 'token',
     }))
-    this.app.use(AttachUserInfo)
+    this.app.use(attachUserInfo)
   }
 
   private initializeErrorhandlers() {
-    this.app.use(ErrorHandler)
+    this.app.use(errorHandler)
   }
 
   // eslint-disable-next-line class-methods-use-this

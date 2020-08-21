@@ -9,7 +9,7 @@ import {
   CircleModel,
 } from '../models';
 import { ConfigKeys, CirclePeriod } from '../types';
-import { validator } from '../middlewares';
+import { validator, checkUserType } from '../middlewares';
 
 class CircleApplicationController extends Controller {
   public basePath = '/circle/application';
@@ -20,17 +20,14 @@ class CircleApplicationController extends Controller {
   }
 
   private initializeRoutes() {
-    // S
-    this.router.get('/', this.getApplicationStatus);
+    this.router.get('/', checkUserType('S'), this.getApplicationStatus);
 
-    // S
-    this.router.post('/', validator(Joi.object({
+    this.router.post('/', checkUserType('S'), validator(Joi.object({
       circle: Joi.string().required(),
       form: Joi.object().required(),
     })), this.createApplication);
 
-    // S
-    this.router.patch('/final/:circleId', this.finalSelection);
+    this.router.patch('/final/:circleId', checkUserType('S'), this.finalSelection);
   }
 
   private getApplicationStatus = async (req: Request, res: Response, next: NextFunction) => {

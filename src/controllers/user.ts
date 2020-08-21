@@ -3,6 +3,7 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { UserModel } from '../models';
 import DimiAPI from '../resources/dimi-api';
+import { checkUserType } from '../middlewares';
 
 class UserController extends Controller {
   public basePath = '/user';
@@ -15,20 +16,11 @@ class UserController extends Controller {
   }
 
   private initializeRoutes() {
-    // T
-    this.router.get('/', this.getAllUsers);
-
-    // T, S
-    this.router.get('/student', this.getAllStudents);
-
-    // T
-    this.router.get('/teacher', this.getAllTeachers);
-
-    // U
-    this.router.get('/reload', this.reloadUsers);
-
-    // U
-    this.router.get('/me', this.decodeJWT);
+    this.router.get('/', checkUserType('*'), this.getAllUsers);
+    this.router.get('/student', checkUserType('*'), this.getAllStudents);
+    this.router.get('/teacher', checkUserType('*'), this.getAllTeachers);
+    this.router.get('/reload', checkUserType('*'), this.reloadUsers);
+    this.router.get('/me', checkUserType('*'), this.decodeJWT);
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {

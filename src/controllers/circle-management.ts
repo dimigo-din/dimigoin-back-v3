@@ -4,7 +4,7 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { CircleModel, UserModel } from '../models';
 import Upload from '../resources/upload';
-import { validator } from '../middlewares';
+import { validator, checkUserType } from '../middlewares';
 
 class CircleManagementController extends Controller {
   public basePath = '/circle';
@@ -17,8 +17,7 @@ class CircleManagementController extends Controller {
   }
 
   private initializeRoutes() {
-    // T, S
-    this.router.post('/', validator(Joi.object({
+    this.router.post('/', checkUserType('S', 'T'), validator(Joi.object({
       name: Joi.string().required(),
       description: Joi.string().required(),
       chair: Joi.string().required(),
@@ -26,8 +25,7 @@ class CircleManagementController extends Controller {
       videoLink: Joi.string().required(),
     })), this.createCircle);
 
-    // T
-    this.router.delete('/:circleId', this.removeCircle);
+    this.router.delete('/:circleId', checkUserType('T'), this.removeCircle);
   }
 
   private createCircle = async (req: Request, res: Response, next: NextFunction) => {

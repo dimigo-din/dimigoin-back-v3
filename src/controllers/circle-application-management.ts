@@ -5,7 +5,7 @@ import {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
 } from '../models';
-import { validator } from '../middlewares';
+import { validator, checkUserType } from '../middlewares';
 
 class CircleApplicationManagementController extends Controller {
   public basePath = '/circle';
@@ -16,16 +16,13 @@ class CircleApplicationManagementController extends Controller {
   }
 
   private initializeRoutes() {
-    // S, T
-    this.router.get('/application/form', this.getApplicationForm);
+    this.router.get('/application/form', checkUserType('S', 'T'), this.getApplicationForm);
 
-    // T
-    this.router.put('/application/form', validator(Joi.object({
+    this.router.put('/application/form', checkUserType('T'), validator(Joi.object({
       form: Joi.object().required(),
     })), this.updateApplicationForm);
 
-    // T
-    this.router.get('/applier', this.getAllApplications);
+    this.router.get('/applier', checkUserType('T'), this.getAllApplications);
   }
 
   private getApplicationForm = async (req: Request, res: Response, next: NextFunction) => {

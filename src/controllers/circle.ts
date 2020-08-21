@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Controller } from '../classes';
 import { CircleModel, CircleApplicationModel } from '../models';
+import { checkUserType } from '../middlewares';
 
 class CircleController extends Controller {
   public basePath = '/circle';
@@ -11,11 +12,9 @@ class CircleController extends Controller {
   }
 
   private initializeRoutes() {
-    // S, T
-    this.router.get('/', this.getAllCircles);
+    this.router.get('/', checkUserType('S', 'T'), this.getAllCircles);
 
-    // S, T
-    this.router.get('/id/:circleId', this.getOneCircle);
+    this.router.get('/id/:circleId', checkUserType('S', 'T'), this.getOneCircle);
   }
 
   private getAllCircles = async (req: Request, res: Response, next: NextFunction) => {
