@@ -18,6 +18,7 @@ module.exports = {
     "plugins": ["@typescript-eslint"],
     "rules": {
         "semi": "off",
+        "@typescript-eslint/semi": ["error"],
         "import/prefer-default-export": "off",
         "import/extensions": "off",
         "import/no-unresolved": "off",
@@ -27,6 +28,7 @@ module.exports = {
         "no-param-reassign": "off",
         "max-classes-per-file": "off",
         "class-methods-use-this": "off",
+        "implicit-arrow-linebreak": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],

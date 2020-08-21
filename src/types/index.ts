@@ -35,4 +35,4 @@ export const IngangTimeValues = [1, 2] as const;
 export type IngangTime = typeof IngangTimeValues[number];
 
 export type Middleware =
-  (req: Request, res: Response, next: NextFunction) => Promise<void>
+  (req: Request, res: Response, next: NextFunction) => Promise<void>;

@@ -1,5 +1,5 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
-import { userSchema } from '../models/User';
+import { userSchema } from './User';
 import { ClassValues, GradeValues } from '../types';
 
 const afterschoolSchema = createSchema({

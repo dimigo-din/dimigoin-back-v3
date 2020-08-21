@@ -12,10 +12,3 @@ export class HttpException extends Error {
     this.message = message;
   }
 }
-
-export class ValidationFailException extends HttpException {
-  constructor(keys: string[]) {
-    const message = `"${keys.join(', ')}" 항목이 입력되지 않았습니다.`;
-    super(400, message);
-  }
-}

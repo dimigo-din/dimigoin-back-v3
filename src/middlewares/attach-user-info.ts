@@ -1,12 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
-import Token from '../resources/Token';
-
-const TokenManager = new Token();
+import { verify as verifyToken } from '../resources/token';
 
 const attachUserInfo = (req: Request, res: Response, next: NextFunction) => {
   if (!req.token) { return next(); }
   const { token } = req;
-  const identity = TokenManager.verify(token);
+  const identity = verifyToken(token);
   req.app.set('user', identity);
   next();
 };

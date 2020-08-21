@@ -1,9 +1,9 @@
-export { AfterschoolModel } from './Afterschool';
+export { AfterschoolModel } from './afterschool';
 export { UserModel } from './User';
-export { CircleModel } from './Circle';
+export { CircleModel } from './circle';
 export {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
-} from './CircleApplication';
-export { ConfigModel } from './Config';
-export { IngangApplicationModel } from './IngangApplication';
+} from './circle-application';
+export { ConfigModel } from './config';
+export { IngangApplicationModel } from './ingang-application';

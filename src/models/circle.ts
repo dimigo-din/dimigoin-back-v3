@@ -3,7 +3,7 @@ import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
 import { ConfigKeys } from '../types';
-import { ConfigModel } from './Config';
+import { ConfigModel } from './config';
 import { userSchema } from './User';
 
 const circleSchema = createSchema({

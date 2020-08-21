@@ -1,10 +1,10 @@
-import IConfig from './Config';
+import IConfig from './config';
 import IUser from './User';
-import ICircle from './Circle';
+import ICircle from './circle';
 import {
   ICircleApplication,
   ICircleApplicationQuestion,
-} from './CircleApplication';
+} from './circle-application';
 
 export {
   IConfig,
