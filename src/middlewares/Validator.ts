@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import { ValidationFailException } from '../exceptions';
+import { Schema } from 'joi';
 
-export default (requiredKeys: string) => (req: Request, res: Response, next: NextFunction) => {
-  if (requiredKeys.length === 0) return next();
-  const invalidKeys = requiredKeys.split(', ').filter((key) => !Object.hasOwnProperty.call(req.body, key));
-  if (invalidKeys.length > 0) {
-    throw new ValidationFailException(invalidKeys);
-  } else { next(); }
-};
+export default (joiScheme: Schema) => async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    await joiScheme.validateAsync(req.body);
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+    return;
+  }
+  next();
+}
