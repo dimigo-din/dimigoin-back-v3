@@ -3,7 +3,7 @@ import Joi from 'joi';
 import { IConfig } from '../interfaces';
 import { Controller } from '../classes';
 import { ConfigModel } from '../models';
-import { validator } from '../middlewares';
+import { Validator } from '../middlewares';
 
 class ConfigController extends Controller {
   public basePath = '/config';
@@ -18,7 +18,7 @@ class ConfigController extends Controller {
     this.router.get('/', this.getAllConfig);
 
     // T
-    this.router.patch('/', validator(Joi.object({
+    this.router.patch('/', Validator(Joi.object({
       key: Joi.string().required(),
       value: Joi.string().required(),
     })), this.editConfig);
