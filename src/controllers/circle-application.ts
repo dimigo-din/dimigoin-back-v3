@@ -32,7 +32,7 @@ class CircleApplicationController extends Controller {
 
   private getApplicationStatus = async (req: Request, res: Response, next: NextFunction) => {
     const period = (await this.config)[ConfigKeys.circlePeriod];
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     const applications = await CircleApplicationModel.findByApplier(user._id);
     const mappedApplications = await Promise.all(
       applications.map(async (application) => {
@@ -61,7 +61,7 @@ class CircleApplicationController extends Controller {
       throw new HttpException(406, '동아리 지원 기간이 아닙니다.');
     }
 
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     const applied = await CircleApplicationModel.findByApplier(user._id);
     const application: ICircleApplication = req.body;
     application.applier = user._id;
@@ -96,7 +96,7 @@ class CircleApplicationController extends Controller {
   }
 
   private finalSelection = async (req: Request, res: Response, next: NextFunction) => {
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     const applied = await CircleApplicationModel.findByApplier(user._id);
 
     if (applied.filter((v) => v.status === 'final').length > 0) {

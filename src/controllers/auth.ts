@@ -4,17 +4,13 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { IAccount } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
-import DimiAPI from '../resources/dimi-api';
-import Token from '../resources/Token';
+import { getIdentity } from '../resources/dimi-api';
+import { issue as issueToken } from '../resources/token';
 import { IUser } from '../interfaces';
 import { validator } from '../middlewares';
 
 class AuthController extends Controller {
   public basePath = '/auth';
-
-  private DimiAPIClient = new DimiAPI();
-
-  private TokenManager = new Token();
 
   constructor() {
     super();
@@ -32,12 +28,12 @@ class AuthController extends Controller {
     const account: IAccount = req.body;
 
     try {
-      const { id: idx } = await this.DimiAPIClient.getIdentity(account);
+      const { id: idx } = await getIdentity(account);
       const identity = await UserModel.findByIdx(idx) as IUser;
 
       res.json({
-        accessToken: this.TokenManager.issue(identity, false),
-        refreshToken: this.TokenManager.issue(identity, true),
+        accessToken: issueToken(identity, false),
+        refreshToken: issueToken(identity, true),
       });
     } catch (error) {
       throw new HttpException(401, '인증을 실패했습니다.');

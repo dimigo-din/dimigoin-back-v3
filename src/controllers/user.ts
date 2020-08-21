@@ -2,13 +2,11 @@ import { NextFunction, Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { UserModel } from '../models';
-import DimiAPI from '../resources/dimi-api';
+import { reloadAllUsers, attachStudentInfo } from '../resources/dimi-api';
 import { checkUserType } from '../middlewares';
 
 class UserController extends Controller {
   public basePath = '/user';
-
-  private DimiAPIClient = new DimiAPI();
 
   constructor() {
     super();
@@ -30,7 +28,7 @@ class UserController extends Controller {
 
   private getAllStudents = async (req: Request, res: Response, next: NextFunction) => {
     let students = await UserModel.findStudents();
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     if (user.userType === 'S') {
       students = students.map((student) => {
         student.photo = [];
@@ -52,8 +50,8 @@ class UserController extends Controller {
 
   private reloadUsers = async (req: Request, res: Response, next: NextFunction) => {
     try {
-      await this.DimiAPIClient.reloadAllUsers();
-      await this.DimiAPIClient.attachStudentInfo();
+      await reloadAllUsers();
+      await attachStudentInfo();
       res.end();
     } catch (error) {
       throw new HttpException(500, error.message);

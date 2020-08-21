@@ -23,7 +23,7 @@ class CircleApplierSelection extends Controller {
   }
 
   private getApplications = async (req: Request, res: Response, next: NextFunction) => {
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     const circle = await CircleModel.findByChairs(user._id);
 
     const applications = await CircleApplicationModel
@@ -36,7 +36,7 @@ class CircleApplierSelection extends Controller {
     const applier = await UserModel.findById(req.params.applierId);
     if (!applier) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
-    const user = this.getUserIdentity(req);
+    const user = await this.getUserIdentity(req);
     const circle = await CircleModel.findByChairs(user._id);
     if (!circle) throw new HttpException(403, '권한이 없습니다.');
 

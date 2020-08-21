@@ -35,7 +35,7 @@ class CircleApplicationController extends Controller {
   }
 
   private getAllIngangApplications = async (req: Request, res: Response) => {
-    const { userType, _id: applier } = this.getUserIdentity(req);
+    const { userType, _id: applier } = await this.getUserIdentity(req);
     if (userType === 'T') {
       const ingangApplications = await IngangApplicationModel.find({});
       res.json({ ingangApplications });
@@ -50,7 +50,7 @@ class CircleApplicationController extends Controller {
   }
 
   private createIngangApplication = async (req: Request, res: Response) => {
-    const { _id: applier, class: _class } = this.getUserIdentity(req);
+    const { _id: applier, class: _class } = await this.getUserIdentity(req);
     const date = getOnlyDate();
     const { time } = req.body;
     const existing = await IngangApplicationModel.findOne({
@@ -80,7 +80,7 @@ class CircleApplicationController extends Controller {
   }
 
   private removeIngangApplication = async (req: Request, res: Response) => {
-    const { _id: applier } = this.getUserIdentity(req);
+    const { _id: applier } = await this.getUserIdentity(req);
     const date = getOnlyDate();
     const ingangApplication = await IngangApplicationModel.findOne({
       applier,

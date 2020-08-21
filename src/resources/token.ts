@@ -1,31 +1,34 @@
 import jwt from 'jsonwebtoken';
-import config from '../config';
 import { IUser } from '../interfaces';
+import config from '../config';
 import { HttpException } from '../exceptions';
 
-export default class Token {
-  private secretKey = config.jwtSecret;
-
-  public verify(token: string): IUser {
-    try {
-      const { identity }: any = jwt.verify(token, this.secretKey);
-      return identity;
-    } catch (error) {
-      throw new HttpException(401, error.message);
-    }
+export const verify = async (token: string) => {
+  try {
+    const { identity }: any = await jwt.verify(
+      token,
+      config.jwtSecret as string,
+    );
+    return identity;
+  } catch (error) {
+    throw new HttpException(403, '토큰이 정상적으로 검증되지 않았습니다.');
   }
+};
 
-  public issue(identity: IUser, refresh: boolean) {
-    if (!refresh) {
-      const token = jwt.sign({ identity }, this.secretKey, {
-        algorithm: 'HS256',
-        expiresIn: '1w',
-      });
-      return token;
-    }
-    const token = jwt.sign({
-      idx: identity.idx, refresh: true,
-    }, this.secretKey);
+export const issue = async (identity: IUser, refresh: boolean) => {
+  if (!refresh) {
+    const token = await jwt.sign({ identity }, config.jwtSecret as string, {
+      algorithm: 'HS256',
+      expiresIn: '1w',
+    });
     return token;
   }
-}
+  const token = await jwt.sign(
+    {
+      idx: identity.idx,
+      refresh: true,
+    },
+      config.jwtSecret as string,
+  );
+  return token;
+};

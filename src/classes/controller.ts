@@ -1,28 +1,14 @@
 import { Request, Router } from 'express';
 import { IConfig } from '../interfaces';
 import { ConfigModel } from '../models';
-import Token from '../resources/Token';
 import IUser from '../interfaces/User';
+import { verify as verifyToken } from '../resources/token'
 
-const TokenManager = new Token();
-
-const getUserIdentity = (req: Request) => {
+const getUserIdentity = async (req: Request) => {
   const { token } = req;
-  const identity = TokenManager.verify(token);
+  const identity = await verifyToken(token);
   return identity as IUser;
 };
-
-enum requiredKeys {
-  none = '',
-  identifyUser = 'username, password',
-  createApplication = 'circle, form',
-  updateApplicationForm = 'form',
-  setApplierStatus = 'status',
-  createCircle = 'name, category, description, chair, viceChair, videoLink',
-  editConfig = 'key, value',
-  createAfterschool = 'name, description, grade, '
-    + 'class, teacher, capacity',
-}
 
 export default class Controller {
   public basePath: string;
@@ -30,8 +16,6 @@ export default class Controller {
   public router: Router = Router();
 
   protected getUserIdentity = getUserIdentity;
-
-  protected requiredKeys = requiredKeys;
 
   get config() { // eslint-disable-line
     return (async () => {
