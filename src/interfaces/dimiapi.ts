@@ -1,3 +1,5 @@
+/* eslint-disable camelcase */
+
 import { ObjectId } from 'mongodb';
 import { Gender, UserType } from '../types';
 

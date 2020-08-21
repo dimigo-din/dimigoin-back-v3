@@ -1,9 +1,13 @@
-import { ObjectId } from 'mongodb';
 import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
+import { ObjectId } from 'mongodb';
 import {
-  ClassValues, GradeValues, UserType, UserTypeValues, GenderValues,
+  GenderValues,
+  UserTypeValues,
+  GradeValues,
+  ClassValues,
+  UserType,
 } from '../types';
 
 const userSchema = createSchema({
@@ -36,8 +40,7 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
     return this.find({ userType: { $in: userType } });
   },
   findStudents(): UserDoc[] {
-    // userType 'S'에는 졸업생도 포함되어 있어서 학년으로 재학생을 찾아야 함.
-    return this.find({ grade: { $gte: 1, $lte: 3 } });
+    return this.find({ usertype: 'S' });
   },
   findTeachers(): UserDoc[] {
     return this.findByUserType(['D', 'T']);

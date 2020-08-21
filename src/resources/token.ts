@@ -1,12 +1,10 @@
-import dotenv from 'dotenv';
 import jwt from 'jsonwebtoken';
+import config from '../config';
+import { IUser } from '../interfaces';
 import { HttpException } from '../exceptions';
-import IUser from '../interfaces/User';
-
-dotenv.config();
 
 export default class Token {
-  private secretKey = process.env.JWT_SECRET;
+  private secretKey = config.jwtSecret;
 
   public verify(token: string): IUser {
     try {
@@ -19,7 +17,7 @@ export default class Token {
 
   public issue(identity: IUser, refresh: boolean) {
     if (!refresh) {
-      const token = jwt.sign({ identity }, process.env.JWT_SECRET, {
+      const token = jwt.sign({ identity }, this.secretKey, {
         algorithm: 'HS256',
         expiresIn: '1w',
       });
@@ -27,7 +25,7 @@ export default class Token {
     }
     const token = jwt.sign({
       idx: identity.idx, refresh: true,
-    }, process.env.JWT_SECRET);
+    }, this.secretKey);
     return token;
   }
 }

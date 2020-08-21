@@ -46,6 +46,7 @@ class App {
     this.app.use(ErrorHandler)
   }
 
+  // eslint-disable-next-line class-methods-use-this
   private connectMongoDB() {
     const { MONGO_URI: mongoURI } = process.env;
     const mongooseOption = {
