@@ -1,9 +1,10 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { CircleModel, UserModel } from '../models';
-import Upload from '../resources/Upload';
-import Route from '../resources/RouteGenerator';
+import Upload from '../resources/upload';
+import { Validator } from '../middlewares';
 
 class CircleManagementController extends Controller {
   public basePath = '/circle';
@@ -16,10 +17,17 @@ class CircleManagementController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.post('/',
-      Route(['T', 'S'], this.requiredKeys.createCircle, this.createCircle));
-    this.router.delete('/:circleId',
-      Route(['T'], this.requiredKeys.none, this.removeCircle));
+    // T, S
+    this.router.post('/', Validator(Joi.object({
+      name: Joi.string().required(),
+      description: Joi.string().required(),
+      chair: Joi.string().required(),
+      viceChair: Joi.string().required(),
+      videoLink: Joi.string().required(),
+    })), this.createCircle);
+
+    // T
+    this.router.delete('/:circleId', this.removeCircle);
   }
 
   private createCircle = async (req: Request, res: Response, next: NextFunction) => {

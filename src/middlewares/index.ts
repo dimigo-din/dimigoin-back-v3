@@ -1,7 +1,7 @@
-import AttachUserInfo from './AttachUserInfo';
-import CheckUserType from './CheckUserType';
-import ErrorHandler from './ErrorHandler';
-import Validator from './Validator';
+import AttachUserInfo from './attach-user-info';
+import CheckUserType from './check-user-type';
+import ErrorHandler from './error-handler';
+import Validator from './validator';
 
 export {
   ErrorHandler,

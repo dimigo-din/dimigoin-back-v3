@@ -1,12 +1,12 @@
-import AuthController from './Auth';
-import CircleController from './Circle';
-import CircleApplicationController from './CircleApplication';
-import CircleApplicationManagementController from './CircleApplicationManagement';
-import CircleApplierSelection from './CircleApplierSelection';
-import CircleManagementController from './CircleManagement';
-import ConfigController from './Config';
-import UserController from './User';
-import IngangApplicationController from './IngangApplication';
+import AuthController from './auth';
+import CircleController from './circle';
+import CircleApplicationController from './circle-application';
+import CircleApplicationManagementController from './circle-application-management';
+import CircleApplierSelection from './circle-application-selection';
+import CircleManagementController from './circle-management';
+import ConfigController from './config';
+import UserController from './user';
+import IngangApplicationController from './ingang-application';
 
 const controllers = [
   new AuthController(),

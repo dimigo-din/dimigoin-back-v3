@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import { HttpException } from '../exceptions';
 import { ICircleApplication } from '../interfaces';
 import { Controller } from '../classes';
@@ -8,7 +9,7 @@ import {
   CircleModel,
 } from '../models';
 import { ConfigKeys, CirclePeriod } from '../types';
-import Route from '../resources/RouteGenerator';
+import { Validator } from '../middlewares';
 
 class CircleApplicationController extends Controller {
   public basePath = '/circle/application';
@@ -19,12 +20,17 @@ class CircleApplicationController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/',
-      Route(['S'], this.requiredKeys.none, this.getApplicationStatus));
-    this.router.post('/',
-      Route(['S'], this.requiredKeys.createApplication, this.createApplication));
-    this.router.patch('/final/:circleId',
-      Route(['S'], this.requiredKeys.none, this.finalSelection));
+    // S
+    this.router.get('/', this.getApplicationStatus);
+
+    // S
+    this.router.post('/', Validator(Joi.object({
+      circle: Joi.string().required(),
+      form: Joi.object().required(),
+    })), this.createApplication);
+
+    // S
+    this.router.patch('/final/:circleId', this.finalSelection);
   }
 
   private getApplicationStatus = async (req: Request, res: Response, next: NextFunction) => {

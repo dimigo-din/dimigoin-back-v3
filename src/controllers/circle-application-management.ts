@@ -1,7 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import { Controller } from '../classes';
-import { CircleApplicationModel, CircleApplicationQuestionModel } from '../models';
-import Route from '../resources/RouteGenerator';
+import {
+  CircleApplicationModel,
+  CircleApplicationQuestionModel,
+} from '../models';
+import { Validator } from '../middlewares';
 
 class CircleApplicationManagementController extends Controller {
   public basePath = '/circle';
@@ -12,12 +16,16 @@ class CircleApplicationManagementController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/application/form',
-      Route(['S', 'T'], this.requiredKeys.none, this.getApplicationForm));
-    this.router.put('/application/form',
-      Route(['T'], this.requiredKeys.updateApplicationForm, this.updateApplicationForm));
-    this.router.get('/applier',
-      Route(['T'], this.requiredKeys.none, this.getAllApplications));
+    // S, T
+    this.router.get('/application/form', this.getApplicationForm);
+
+    // T
+    this.router.put('/application/form', Validator(Joi.object({
+      form: Joi.object().required(),
+    })), this.updateApplicationForm);
+
+    // T
+    this.router.get('/applier', this.getAllApplications);
   }
 
   private getApplicationForm = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,7 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { Controller } from '../classes';
 import { CircleModel, CircleApplicationModel } from '../models';
-import Route from '../resources/RouteGenerator';
 
 class CircleController extends Controller {
   public basePath = '/circle';
@@ -12,8 +11,11 @@ class CircleController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', Route(['S', 'T'], this.requiredKeys.none, this.getAllCircles));
-    this.router.get('/id/:circleId', Route(['S', 'T'], this.requiredKeys.none, this.getOneCircle));
+    // S, T
+    this.router.get('/', this.getAllCircles);
+
+    // S, T
+    this.router.get('/id/:circleId', this.getOneCircle);
   }
 
   private getAllCircles = async (req: Request, res: Response, next: NextFunction) => {

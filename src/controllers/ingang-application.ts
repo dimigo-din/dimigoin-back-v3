@@ -1,9 +1,11 @@
 import { Request, Response } from 'express';
+import Joi from 'joi';
 import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { IngangApplicationModel } from '../models';
-import Route from '../resources/RouteGenerator';
 import { getOnlyDate } from '../resources/date';
+import { Validator } from '../middlewares';
+import { IngangTimeValues } from '../types';
 
 class CircleApplicationController extends Controller {
   public basePath = '/ingang/application';
@@ -14,14 +16,18 @@ class CircleApplicationController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/',
-      Route(['T', 'S'], this.requiredKeys.none, this.getAllIngangApplications));
+    // T, S
+    this.router.get('/', this.getAllIngangApplications);
 
-    this.router.post('/',
-      Route(['S'], this.requiredKeys.none, this.createIngangApplication));
+    // S
+    this.router.post('/', Validator(Joi.object({
+      time: Joi.number().valid(...IngangTimeValues).required(),
+    })), this.createIngangApplication);
 
-    this.router.delete('/',
-      Route(['S'], this.requiredKeys.none, this.removeIngangApplication));
+    // S
+    this.router.delete('/', Validator(Joi.object({
+      time: Joi.number().valid(...IngangTimeValues).required(),
+    })), this.removeIngangApplication);
   }
 
   private getIngangStatus = async (req: Request, res: Response) => {

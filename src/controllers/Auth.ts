@@ -1,12 +1,13 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
-import { IAccount } from '../interfaces/DimiAPI';
+import { IAccount } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
-import DimiAPI from '../resources/DimiAPI';
+import DimiAPI from '../resources/dimi-api';
 import Token from '../resources/Token';
-import Route from '../resources/RouteGenerator';
 import { IUser } from '../interfaces';
+import { Validator } from '../middlewares';
 
 class AuthController extends Controller {
   public basePath = '/auth';
@@ -21,7 +22,10 @@ class AuthController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.post('/', Route('U', this.requiredKeys.identifyUser, this.identifyUser));
+    this.router.post('/', Validator(Joi.object({
+      username: Joi.string().required(),
+      password: Joi.string().required(),
+    })), this.identifyUser);
   }
 
   private identifyUser = async (req: Request, res: Response, next: NextFunction) => {

@@ -1,8 +1,9 @@
 import { NextFunction, Request, Response } from 'express';
+import Joi from 'joi';
 import { IConfig } from '../interfaces';
 import { Controller } from '../classes';
 import { ConfigModel } from '../models';
-import Route from '../resources/RouteGenerator';
+import { Validator } from '../middlewares';
 
 class ConfigController extends Controller {
   public basePath = '/config';
@@ -13,8 +14,14 @@ class ConfigController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', Route('A', '', this.getAllConfig));
-    this.router.patch('/', Route(['T'], this.requiredKeys.editConfig, this.editConfig));
+    // A
+    this.router.get('/', this.getAllConfig);
+
+    // T
+    this.router.patch('/', Validator(Joi.object({
+      key: Joi.string().required(),
+      value: Joi.string().required(),
+    })), this.editConfig);
   }
 
   private getAllConfig = async (req: Request, res: Response, next: NextFunction) => {
