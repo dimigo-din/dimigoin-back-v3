@@ -9,7 +9,7 @@ import {
   CircleModel,
 } from '../models';
 import { ConfigKeys, CirclePeriod } from '../types';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 
 class CircleApplicationController extends Controller {
   public basePath = '/circle/application';
@@ -24,7 +24,7 @@ class CircleApplicationController extends Controller {
     this.router.get('/', this.getApplicationStatus);
 
     // S
-    this.router.post('/', Validator(Joi.object({
+    this.router.post('/', validator(Joi.object({
       circle: Joi.string().required(),
       form: Joi.object().required(),
     })), this.createApplication);

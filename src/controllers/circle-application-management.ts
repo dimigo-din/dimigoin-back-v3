@@ -5,7 +5,7 @@ import {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
 } from '../models';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 
 class CircleApplicationManagementController extends Controller {
   public basePath = '/circle';
@@ -20,7 +20,7 @@ class CircleApplicationManagementController extends Controller {
     this.router.get('/application/form', this.getApplicationForm);
 
     // T
-    this.router.put('/application/form', Validator(Joi.object({
+    this.router.put('/application/form', validator(Joi.object({
       form: Joi.object().required(),
     })), this.updateApplicationForm);
 

@@ -4,7 +4,7 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { CircleApplicationModel, CircleModel, UserModel } from '../models';
 import { ConfigKeys, CirclePeriod, CircleApplicationStatusValues } from '../types';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 
 class CircleApplierSelection extends Controller {
   public basePath = '/circle/selection/applier';
@@ -19,7 +19,7 @@ class CircleApplierSelection extends Controller {
     this.router.get('/', this.getApplications);
 
     // S
-    this.router.patch('/:applierId', Validator(Joi.object({
+    this.router.patch('/:applierId', validator(Joi.object({
       status: Joi.string().valid(...CircleApplicationStatusValues).required(),
     })), this.setApplierStatus);
   }

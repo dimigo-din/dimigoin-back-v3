@@ -4,7 +4,7 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { IngangApplicationModel } from '../models';
 import { getOnlyDate } from '../resources/date';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 import { IngangTimeValues } from '../types';
 
 class CircleApplicationController extends Controller {
@@ -20,12 +20,12 @@ class CircleApplicationController extends Controller {
     this.router.get('/', this.getAllIngangApplications);
 
     // S
-    this.router.post('/', Validator(Joi.object({
+    this.router.post('/', validator(Joi.object({
       time: Joi.number().valid(...IngangTimeValues).required(),
     })), this.createIngangApplication);
 
     // S
-    this.router.delete('/', Validator(Joi.object({
+    this.router.delete('/', validator(Joi.object({
       time: Joi.number().valid(...IngangTimeValues).required(),
     })), this.removeIngangApplication);
   }

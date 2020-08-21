@@ -4,7 +4,7 @@ import { HttpException } from '../exceptions';
 import { Controller } from '../classes';
 import { CircleModel, UserModel } from '../models';
 import Upload from '../resources/upload';
-import { Validator } from '../middlewares';
+import { validator } from '../middlewares';
 
 class CircleManagementController extends Controller {
   public basePath = '/circle';
@@ -18,7 +18,7 @@ class CircleManagementController extends Controller {
 
   private initializeRoutes() {
     // T, S
-    this.router.post('/', Validator(Joi.object({
+    this.router.post('/', validator(Joi.object({
       name: Joi.string().required(),
       description: Joi.string().required(),
       chair: Joi.string().required(),
