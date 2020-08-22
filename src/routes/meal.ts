@@ -26,6 +26,12 @@ class MealController extends Controller {
       lunch: Joi.array().items(Joi.string()).required(),
       dinner: Joi.array().items(Joi.string()).required(),
     })), createMeal);
+
+    this.router.patch('/:date', checkUserType('T'), validator(Joi.object({
+      breakfast: Joi.array().items(Joi.string()),
+      lunch: Joi.array().items(Joi.string()),
+      dinner: Joi.array().items(Joi.string()),
+    })));
   }
 }
 

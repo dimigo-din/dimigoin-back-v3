@@ -18,6 +18,17 @@ export const getMealByDate = async (req: Request, res: Response) => {
   res.json({ meal });
 };
 
+export const editMealByDate = async (req: Request, res: Response) => {
+  const date = new Date(req.params.date);
+  if (Number.isNaN(date.getTime())) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+  const meal = await MealModel.findOne({ date });
+  Object.assign(meal, req.body);
+  await meal.save();
+
+  res.json({ meal });
+};
+
 export const createMeal = async (req: Request, res: Response) => {
   const meal = new MealModel();
   Object.assign(meal, req.body);
