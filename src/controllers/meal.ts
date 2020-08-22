@@ -24,6 +24,8 @@ export const editMealByDate = async (req: Request, res: Response) => {
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
 
   const meal = await MealModel.findOne({ date });
+  if (!meal) throw new HttpException(404, '해당 날짜의 급식 정보가 없습니다.');
+
   Object.assign(meal, req.body);
   await meal.save();
 

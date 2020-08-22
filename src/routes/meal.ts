@@ -5,6 +5,7 @@ import {
   getAllMeals,
   createMeal,
   getMealByDate,
+  editMealByDate,
 } from '../controllers/meal';
 
 class MealController extends Controller {
@@ -31,7 +32,7 @@ class MealController extends Controller {
       breakfast: Joi.array().items(Joi.string()),
       lunch: Joi.array().items(Joi.string()),
       dinner: Joi.array().items(Joi.string()),
-    })));
+    })), editMealByDate);
   }
 }
 
