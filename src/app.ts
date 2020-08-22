@@ -6,8 +6,10 @@ import cors from 'cors';
 import bearerToken from 'express-bearer-token';
 import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
+
 import { attachUserInfo, errorHandler } from './middlewares';
 import routes from './routes';
+import config from './config';
 
 class App {
   public app: express.Application;
@@ -46,15 +48,14 @@ class App {
     this.app.use(errorHandler);
   }
 
-  // eslint-disable-next-line class-methods-use-this
   private connectMongoDB() {
-    const { MONGO_URI: mongoURI } = process.env;
+    const { mongoUri } = config;
     const mongooseOption = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     };
-    mongoose.connect(mongoURI, mongooseOption);
+    mongoose.connect(mongoUri, mongooseOption);
   }
 }
 
