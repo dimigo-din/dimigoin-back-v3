@@ -6,3 +6,5 @@ export const getOnlyDate = () => {
     now.getDate(),
   );
 };
+
+export const isValidDate = (date: Date) => !Number.isNaN(date.getTime());

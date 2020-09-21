@@ -7,6 +7,7 @@ import CircleManagementController from './circle-management';
 import ConfigController from './config';
 import UserController from './user';
 import IngangApplicationController from './ingang-application';
+import MealController from './meal';
 
 const controllers = [
   new AuthController(),
@@ -18,6 +19,7 @@ const controllers = [
   new CircleApplierSelection(),
   new ConfigController(),
   new IngangApplicationController(),
+  new MealController(),
 ];
 
 export default controllers;

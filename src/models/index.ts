@@ -7,3 +7,4 @@ export {
 } from './circle-application';
 export { ConfigModel } from './config';
 export { IngangApplicationModel } from './ingang-application';
+export { MealModel } from './meal';
