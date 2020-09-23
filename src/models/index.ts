@@ -8,4 +8,4 @@ export {
 export { ConfigModel } from './config';
 export { IngangApplicationModel } from './ingang-application';
 export { MealModel } from './meal';
-export { bookRequestModel } from './book-request';
+export { BookRequestModel } from './book-request';
