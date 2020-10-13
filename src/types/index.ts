@@ -14,6 +14,12 @@ export enum CirclePeriod {
   final = 'FINAL',
 }
 
+export enum OutgoRequestStatus {
+  applied = 'APPLIED',
+  rejected = 'REJECTED',
+  approved = 'APPROVED',
+}
+
 export const GenderValues = ['M', 'F'] as const;
 export type Gender = typeof GenderValues[number];
 

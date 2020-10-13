@@ -9,3 +9,4 @@ export { ConfigModel } from './config';
 export { IngangApplicationModel } from './ingang-application';
 export { MealModel } from './meal';
 export { BookRequestModel } from './book-request';
+export { OutgoRequestModel } from './outgo-request';

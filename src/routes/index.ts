@@ -8,6 +8,7 @@ import ConfigController from './config';
 import UserController from './user';
 import IngangApplicationController from './ingang-application';
 import MealController from './meal';
+import OutgoController from './outgo-request';
 
 const controllers = [
   new AuthController(),
@@ -20,6 +21,7 @@ const controllers = [
   new ConfigController(),
   new IngangApplicationController(),
   new MealController(),
+  new OutgoController(),
 ];
 
 export default controllers;

@@ -14,8 +14,8 @@ export const identifyUser = async (req: Request, res: Response) => {
     const identity = await UserModel.findByIdx(idx) as IUser;
 
     res.json({
-      accessToken: issueToken(identity, false),
-      refreshToken: issueToken(identity, true),
+      accessToken: await issueToken(identity, false),
+      refreshToken: await issueToken(identity, true),
     });
   } catch (error) {
     throw new HttpException(401, '인증을 실패했습니다.');
