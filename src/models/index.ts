@@ -10,3 +10,7 @@ export { IngangApplicationModel } from './ingang-application';
 export { MealModel } from './meal';
 export { BookRequestModel } from './book-request';
 export { OutgoRequestModel } from './outgo-request';
+export {
+  PlaceModel,
+  AttendanceLogModel,
+} from './attendance-log';
