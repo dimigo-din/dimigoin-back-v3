@@ -4,7 +4,7 @@ import {
 } from 'ts-mongoose';
 import { ConfigKeys } from '../types';
 import { ConfigModel } from './config';
-import { userSchema } from './User';
+import { userSchema } from './user';
 
 const circleSchema = createSchema({
   name: Type.string({ required: true, unique: true, trim: true }),

@@ -1,13 +1,9 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
+import { ObjectId } from 'mongodb';
 import { userSchema } from './user';
-
-const placeSchema = createSchema({
-  name: Type.string({ required: true, trim: true }),
-  location: Type.string({ required: true, trim: true }),
-  description: Type.string({ required: true, trim: true }),
-});
-
-const PlaceModel = typedModel('Place', placeSchema);
+import { IngangTime } from '../types';
+import { getOnlyDate } from '../resources/date';
+import { placeSchema } from './place';
 
 const attendanceLogSchema = createSchema({
   date: Type.date({ required: true }),
@@ -17,11 +13,18 @@ const attendanceLogSchema = createSchema({
   location: Type.ref(Type.objectId()).to('Place', placeSchema),
 });
 
-const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema);
+const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema, undefined, undefined, {
+  checkDuplicatedLog(student: ObjectId, date: Date, time: IngangTime) {
+    date = getOnlyDate(date);
+    return !!this.findOne({
+      student,
+      time,
+      date,
+    });
+  },
+});
 
 export {
-  placeSchema,
-  PlaceModel,
   attendanceLogSchema,
   AttendanceLogModel,
 };

@@ -1,12 +1,12 @@
 import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
-import { userSchema } from './User';
+import { userSchema } from './user';
 import { getOnlyDate } from '../resources/date';
 
 const bookRequestSchema = createSchema({
   applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
-  date: Type.date({ required: true, default: getOnlyDate() }),
+  date: Type.date({ required: true, default: getOnlyDate(new Date()) }),
   name: Type.string({ required: true }),
   author: Type.string({ required: true }),
   publisher: Type.string({ required: true }),

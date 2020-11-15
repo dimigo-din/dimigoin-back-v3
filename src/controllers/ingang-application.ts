@@ -28,7 +28,7 @@ export const getAllIngangApplications = async (req: Request, res: Response) => {
 
 export const createIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier, class: _class } = await getUserIdentity(req);
-  const date = getOnlyDate();
+  const date = getOnlyDate(new Date());
   const { time } = req.body;
   const existing = await IngangApplicationModel.findOne({
     applier,
@@ -58,7 +58,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier } = await getUserIdentity(req);
-  const date = getOnlyDate();
+  const date = getOnlyDate(new Date());
   const ingangApplication = await IngangApplicationModel.findOne({
     applier,
     date,

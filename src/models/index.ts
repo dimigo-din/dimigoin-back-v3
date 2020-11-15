@@ -1,5 +1,5 @@
 export { AfterschoolModel } from './afterschool';
-export { UserModel } from './User';
+export { UserModel } from './user';
 export { CircleModel } from './circle';
 export {
   CircleApplicationModel,
@@ -10,7 +10,5 @@ export { IngangApplicationModel } from './ingang-application';
 export { MealModel } from './meal';
 export { BookRequestModel } from './book-request';
 export { OutgoRequestModel } from './outgo-request';
-export {
-  PlaceModel,
-  AttendanceLogModel,
-} from './attendance-log';
+export { AttendanceLogModel } from './attendance-log';
+export { PlaceModel } from './place';

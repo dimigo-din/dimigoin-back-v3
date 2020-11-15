@@ -1,4 +1,4 @@
-import IUser from './User';
+import IUser from './user';
 import {
   ICircleApplication,
   ICircleApplicationQuestion,
