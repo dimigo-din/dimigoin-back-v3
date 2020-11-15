@@ -18,7 +18,7 @@ class UserController extends Controller {
     this.router.get('/', checkUserType('*'), this.getAllUsers);
     this.router.get('/student', checkUserType('*'), this.getAllStudents);
     this.router.get('/teacher', checkUserType('*'), this.getAllTeachers);
-    this.router.get('/reload', checkUserType('*'), this.reloadUsers);
+    this.router.get('/reload', this.reloadUsers);
     this.router.get('/me', checkUserType('*'), this.decodeJWT);
   }
 
