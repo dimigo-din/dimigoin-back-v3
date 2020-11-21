@@ -40,7 +40,7 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
     return this.find({ userType: { $in: userType } });
   },
   findStudents(): UserDoc[] {
-    return this.find({ usertype: 'S' });
+    return this.find({ userType: 'S' });
   },
   findTeachers(): UserDoc[] {
     return this.findByUserType(['D', 'T']);
