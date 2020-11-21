@@ -1,3 +1,5 @@
+import 'ts-mongoose/plugin';
+
 export { AfterschoolModel } from './afterschool';
 export { UserModel } from './user';
 export { CircleModel } from './circle';

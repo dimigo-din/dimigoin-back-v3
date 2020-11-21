@@ -1,25 +1,44 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { IngangApplicationModel } from '../models';
-import { getOnlyDate } from '../resources/date';
+import { getOnlyDate, getWeekStart, getWeekEnd } from '../resources/date';
 import { getUserIdentity } from '../resources/user';
+import { getConfig } from '../resources/config';
 
 export const getIngangStatus = async (req: Request, res: Response) => {
-  // Config랑 연동
+  const weeklyTicketCount = await getConfig('weeklyIngangTicketCount');
+  const { _id: applier, grade, class: klass } = await getUserIdentity(req);
+  const weeklyUsedTicket = await IngangApplicationModel.countDocuments({
+    applier,
+    date: {
+      $gte: getWeekStart(new Date()),
+      $lte: getWeekEnd(new Date()),
+    },
+  });
+  const applicationsInClass = (await IngangApplicationModel
+    .find({ date: getOnlyDate(new Date()) })
+    .populateTs('applier'))
+    .filter((application) => (
+      application.applier.grade === grade
+      && application.applier.class === klass
+    ));
+
   res.json({
-    ticketCount: 3,
+    weeklyTicketCount,
+    weeklyUsedTicket,
+    applicationsInClass,
   });
 };
 
 export const getAllIngangApplications = async (req: Request, res: Response) => {
   const { userType, _id: applier } = await getUserIdentity(req);
+
   if (userType === 'T') {
     const ingangApplications = await IngangApplicationModel.find({});
     res.json({ ingangApplications });
   } else if (userType === 'S') {
-    const ingangApplications = await IngangApplicationModel.find({
-      applier,
-    });
+    const ingangApplications = await IngangApplicationModel
+      .find({ applier });
     res.json({ ingangApplications });
   } else {
     throw new HttpException(403, '권한이 없습니다.');
