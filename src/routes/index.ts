@@ -8,10 +8,11 @@ import ConfigController from './config';
 import UserController from './user';
 import IngangApplicationController from './ingang-application';
 import MealController from './meal';
-import OutgoController from './outgo-request';
+import OutgoRequestController from './outgo-request';
 import AttendanceLogController from './attendance-log';
 import PlaceController from './place';
 import NoticeController from './notice';
+import OutgoManagementController from './outgo-management';
 
 const controllers = [
   new AuthController(),
@@ -24,10 +25,11 @@ const controllers = [
   new ConfigController(),
   new IngangApplicationController(),
   new MealController(),
-  new OutgoController(),
   new AttendanceLogController(),
   new PlaceController(),
   new NoticeController(),
+  new OutgoRequestController(),
+  new OutgoManagementController(),
 ];
 
 export default controllers;

@@ -29,6 +29,7 @@ module.exports = {
         "max-classes-per-file": "off",
         "class-methods-use-this": "off",
         "implicit-arrow-linebreak": "off",
+        "no-return-await": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],

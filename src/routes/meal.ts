@@ -22,7 +22,7 @@ class MealController extends Controller {
 
     this.router.get('/:date', checkUserType('*'), wrapper(getMealByDate));
 
-    this.router.post('/', checkUserType('T'), validator(Joi.object({
+    this.router.post('/', checkUserType('T', 'S'), validator(Joi.object({
       date: Joi.date().required(),
       breakfast: Joi.array().items(Joi.string()).required(),
       lunch: Joi.array().items(Joi.string()).required(),

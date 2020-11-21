@@ -11,23 +11,17 @@ const redacter = (user: any) => {
 };
 
 export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
-  let users = await UserModel.find();
-  const { userType } = await getUserIdentity(req);
-  if (userType === 'S') users = users.map(redacter);
+  const users = await UserModel.find();
   res.json({ users: users.map(redacter) });
 };
 
 export const getAllStudents = async (req: Request, res: Response, next: NextFunction) => {
-  let students = await UserModel.findStudents();
-  const { userType } = await getUserIdentity(req);
-  if (userType === 'S') students = students.map(redacter);
+  const students = await UserModel.findStudents();
   res.json({ students });
 };
 
 export const getAllTeachers = async (req: Request, res: Response, next: NextFunction) => {
-  let teachers = await UserModel.findTeachers();
-  const { userType } = await getUserIdentity(req);
-  if (userType === 'S') teachers = teachers.map(redacter);
+  const teachers = await UserModel.findTeachers();
   res.json({ teachers });
 };
 

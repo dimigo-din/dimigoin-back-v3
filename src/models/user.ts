@@ -15,13 +15,13 @@ const userSchema = createSchema({
   username: Type.string({ required: true, unique: true }),
   name: Type.string({ required: true }),
   gender: Type.string({ enum: [...GenderValues, null] }),
-  phone: Type.string(),
+  phone: Type.string({ select: false }),
   userType: Type.string({ required: true, enum: UserTypeValues }),
   grade: Type.number({ enum: GradeValues }),
   class: Type.number({ enum: ClassValues }),
   number: Type.number(),
   serial: Type.number(),
-  photo: Type.array().of(Type.string()),
+  photo: Type.array({ select: false }).of(Type.string()),
 }, { versionKey: false, timestamps: true });
 
 type UserDoc = ExtractDoc<typeof userSchema>;
