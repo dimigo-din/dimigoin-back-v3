@@ -59,9 +59,8 @@ export const createIngangApplication = async (req: Request, res: Response) => {
   const todayAll = await IngangApplicationModel.find({
     date,
     time,
-  }).populate('applier');
+  }).populateTs('applier');
 
-  // @ts-ignore
   if (todayAll.filter((v) => v.applier.class === _class).length >= 9) {
     throw new HttpException(403, '최대 인강실 인원을 초과했습니다.');
   }

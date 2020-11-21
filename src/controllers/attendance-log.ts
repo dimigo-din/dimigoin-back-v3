@@ -19,12 +19,10 @@ export const getClassStatus = async (req: Request, res: Response) => {
   // Todo: Populate로 리팩토링 해야 함
   const logsInClass = (await AttendanceLogModel
     .find({})
-    .populate('student')
-    .populate('place'))
+    .populateTs('student')
+    .populateTs('place'))
     .filter((log) => (
-      // @ts-ignore
       log.student.grade === grade
-      // @ts-ignore
       && log.student.class === klass
       && log.date.getTime() === date.getTime()
     ));
@@ -77,8 +75,8 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
 
   const populatedLog = await AttendanceLogModel
     .findById(attendanceLog._id)
-    .populate('place')
-    .populate('student');
+    .populateTs('place')
+    .populateTs('student');
 
   res.json({ attendanceLog: populatedLog });
 };
