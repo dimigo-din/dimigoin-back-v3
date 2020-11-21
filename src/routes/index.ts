@@ -11,6 +11,7 @@ import MealController from './meal';
 import OutgoController from './outgo-request';
 import AttendanceLogController from './attendance-log';
 import PlaceController from './place';
+import NoticeController from './notice';
 
 const controllers = [
   new AuthController(),
@@ -26,6 +27,7 @@ const controllers = [
   new OutgoController(),
   new AttendanceLogController(),
   new PlaceController(),
+  new NoticeController(),
 ];
 
 export default controllers;

@@ -12,3 +12,4 @@ export { BookRequestModel } from './book-request';
 export { OutgoRequestModel } from './outgo-request';
 export { AttendanceLogModel } from './attendance-log';
 export { PlaceModel } from './place';
+export { NoticeModel } from './notice';
