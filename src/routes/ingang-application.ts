@@ -3,14 +3,15 @@ import { Controller } from '../classes';
 import { validator, checkUserType } from '../middlewares';
 import { IngangTimeValues } from '../types';
 import {
+  getIngangStatus,
   getAllIngangApplications,
   createIngangApplication,
   removeIngangApplication,
 } from '../controllers/ingang-application';
 import wrapper from '../resources/wrapper';
 
-class CircleApplicationController extends Controller {
-  public basePath = '/ingang/application';
+class IngangApplicationController extends Controller {
+  public basePath = '/ingang-application';
 
   constructor() {
     super();
@@ -19,6 +20,8 @@ class CircleApplicationController extends Controller {
 
   private initializeRoutes() {
     this.router.get('/', checkUserType('T', 'S'), wrapper(getAllIngangApplications));
+
+    this.router.get('/status', checkUserType('S'), wrapper(getIngangStatus));
 
     this.router.post('/', checkUserType('S'), validator(Joi.object({
       time: Joi.number().valid(...IngangTimeValues).required(),
@@ -30,4 +33,4 @@ class CircleApplicationController extends Controller {
   }
 }
 
-export default CircleApplicationController;
+export default IngangApplicationController;
