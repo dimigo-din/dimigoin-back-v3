@@ -8,23 +8,26 @@ export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = await getUserIdentity(req);
   if (
     userType !== 'T' && (
-      grade !== parseInt(req.params.grade, 10)
-      || klass !== parseInt(req.params.class, 10)
+      grade !== parseInt(req.body.grade, 10)
+      || klass !== parseInt(req.body.class, 10)
     )
   ) {
     throw new HttpException(403, '권한이 없습니다.');
   }
 
-  const date = new Date(req.params.date);
-  const logsInClass = await AttendanceLogModel
+  const date = new Date(req.body.date);
+  // Todo: Populate로 리팩토링 해야 함
+  const logsInClass = (await AttendanceLogModel
     .find({})
     .populate('student')
-    .find({
-      'student.grade': grade,
-      'student.class': klass,
-      date,
-    })
-    .exec();
+    .populate('place'))
+    .filter((log) => (
+      // @ts-ignore
+      log.student.grade === grade
+      // @ts-ignore
+      && log.student.class === klass
+      && log.date.getTime() === date.getTime()
+    ));
 
   const studentsInClass = await UserModel.find({
     grade,
@@ -32,13 +35,13 @@ export const getClassStatus = async (req: Request, res: Response) => {
   });
 
   const reducedLogs = studentsInClass.reduce((acc: any, curr: any) => {
-    const student: string = `${curr.serial} ${curr.name}`;
+    const student = `${curr.serial} ${curr.name}`;
     // @ts-ignore
-    acc[student] = logsInClass.find((log) => log.student._id === curr._id);
+    acc[student] = logsInClass.filter((log) => log.student.serial === curr.serial);
     return acc;
   }, {});
 
-  res.json({ logs: reducedLogs });
+  res.json({ classLogs: reducedLogs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
@@ -53,10 +56,11 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   if (currentTime < 1940 || currentTime > 2250) {
     throw new HttpException(403, '출입 인증을 할 수 없는 시간입니다.');
   }
+  const date = getOnlyDate(new Date());
   const time = currentTime < 2110 ? 1 : 2;
-  if (AttendanceLogModel.checkDuplicatedLog(
+  if (await AttendanceLogModel.checkDuplicatedLog(
     student,
-    getOnlyDate(new Date()),
+    date,
     time,
   )) {
     throw new HttpException(409, '이미 출입 인증을 했습니다.');
@@ -65,10 +69,16 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   const attendanceLog = new AttendanceLogModel({
     student,
     time,
+    date,
     ...payload,
   });
 
   await attendanceLog.save();
 
-  res.json({ attendanceLog });
+  const populatedLog = await AttendanceLogModel
+    .findById(attendanceLog._id)
+    .populate('place')
+    .populate('student');
+
+  res.json({ attendanceLog: populatedLog });
 };
