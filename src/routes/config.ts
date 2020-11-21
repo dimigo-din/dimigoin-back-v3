@@ -5,6 +5,7 @@ import {
   getAllConfig,
   editConfig,
 } from '../controllers/config';
+import wrapper from '../resources/wrapper';
 
 class ConfigController extends Controller {
   public basePath = '/config';
@@ -15,12 +16,12 @@ class ConfigController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), getAllConfig);
+    this.router.get('/', checkUserType('*'), wrapper(getAllConfig));
 
     this.router.patch('/', checkUserType('T'), validator(Joi.object({
       key: Joi.string().required(),
       value: Joi.string().required(),
-    })), editConfig);
+    })), wrapper(editConfig));
   }
 }
 

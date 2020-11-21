@@ -4,6 +4,7 @@ import { validator } from '../middlewares';
 import {
   identifyUser,
 } from '../controllers/auth';
+import wrapper from '../resources/wrapper';
 
 class AuthController extends Controller {
   public basePath = '/auth';
@@ -17,7 +18,7 @@ class AuthController extends Controller {
     this.router.post('/', validator(Joi.object({
       username: Joi.string().required(),
       password: Joi.string().required(),
-    })), identifyUser);
+    })), wrapper(identifyUser));
   }
 }
 

@@ -8,6 +8,7 @@ import {
   editPlace,
   deletePlace,
 } from '../controllers/place';
+import wrapper from '../resources/wrapper';
 
 class PlaceController extends Controller {
   public basePath = '/place';
@@ -18,19 +19,19 @@ class PlaceController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), getAllPlaces);
+    this.router.get('/', checkUserType('*'), wrapper(getAllPlaces));
     this.router.patch('/:placeId', checkUserType('T'), validator(Joi.object({
       name: Joi.string(),
       location: Joi.string(),
       description: Joi.string(),
-    })), editPlace);
+    })), wrapper(editPlace));
     this.router.post('/', checkUserType('T'), validator(Joi.object({
       name: Joi.string().required(),
       location: Joi.string().required(),
       description: Joi.string().required(),
-    })), createPlace);
-    this.router.get('/:placeId', checkUserType('*'), getPlace);
-    this.router.delete('/:placeId', checkUserType('T'), deletePlace);
+    })), wrapper(createPlace));
+    this.router.get('/:placeId', checkUserType('*'), wrapper(getPlace));
+    this.router.delete('/:placeId', checkUserType('T'), wrapper(deletePlace));
   }
 }
 

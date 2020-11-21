@@ -7,6 +7,7 @@ import {
   createIngangApplication,
   removeIngangApplication,
 } from '../controllers/ingang-application';
+import wrapper from '../resources/wrapper';
 
 class CircleApplicationController extends Controller {
   public basePath = '/ingang/application';
@@ -17,15 +18,15 @@ class CircleApplicationController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('T', 'S'), getAllIngangApplications);
+    this.router.get('/', checkUserType('T', 'S'), wrapper(getAllIngangApplications));
 
     this.router.post('/', checkUserType('S'), validator(Joi.object({
       time: Joi.number().valid(...IngangTimeValues).required(),
-    })), createIngangApplication);
+    })), wrapper(createIngangApplication));
 
     this.router.delete('/', checkUserType('S'), validator(Joi.object({
       time: Joi.number().valid(...IngangTimeValues).required(),
-    })), removeIngangApplication);
+    })), wrapper(removeIngangApplication));
   }
 }
 

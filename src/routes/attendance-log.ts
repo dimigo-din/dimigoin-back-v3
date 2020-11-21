@@ -4,6 +4,7 @@ import { Controller } from '../classes';
 import {
   createAttendanceLog,
 } from '../controllers/attendance-log';
+import wrapper from '../resources/wrapper';
 
 class AttendanceLogController extends Controller {
   public basePath = '/attendance-log';
@@ -18,7 +19,7 @@ class AttendanceLogController extends Controller {
     this.router.post('/', checkUserType('S'), validator(Joi.object({
       location: Joi.string().required(),
       remark: Joi.string().required(),
-    })), createAttendanceLog);
+    })), wrapper(createAttendanceLog));
   }
 }
 

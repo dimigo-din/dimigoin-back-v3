@@ -6,6 +6,7 @@ import {
   createApplication,
   finalSelection,
 } from '../controllers/circle-application';
+import wrapper from '../resources/wrapper';
 
 class CircleApplicationController extends Controller {
   public basePath = '/circle/application';
@@ -16,14 +17,14 @@ class CircleApplicationController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('S'), getApplicationStatus);
+    this.router.get('/', checkUserType('S'), wrapper(getApplicationStatus));
 
     this.router.post('/', checkUserType('S'), validator(Joi.object({
       circle: Joi.string().required(),
       form: Joi.object().required(),
-    })), createApplication);
+    })), wrapper(createApplication));
 
-    this.router.patch('/final/:circleId', checkUserType('S'), finalSelection);
+    this.router.patch('/final/:circleId', checkUserType('S'), wrapper(finalSelection));
   }
 }
 

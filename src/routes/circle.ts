@@ -4,6 +4,7 @@ import {
   getAllCircles,
   getOneCircle,
 } from '../controllers/circle';
+import wrapper from '../resources/wrapper';
 
 class CircleController extends Controller {
   public basePath = '/circle';
@@ -14,9 +15,9 @@ class CircleController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('S', 'T'), getAllCircles);
+    this.router.get('/', checkUserType('S', 'T'), wrapper(getAllCircles));
 
-    this.router.get('/id/:circleId', checkUserType('S', 'T'), getOneCircle);
+    this.router.get('/id/:circleId', checkUserType('S', 'T'), wrapper(getOneCircle));
   }
 }
 

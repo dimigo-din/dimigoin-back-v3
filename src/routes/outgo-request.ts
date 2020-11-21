@@ -6,6 +6,7 @@ import {
   createOutgoRequest,
   editOutgoRequest,
 } from '../controllers/outgo-request';
+import wrapper from '../resources/wrapper';
 
 class OutgoRequestController extends Controller {
   public basePath = '/outgo-request';
@@ -26,7 +27,7 @@ class OutgoRequestController extends Controller {
         start: Joi.date().required(),
         end: Joi.date().required(),
       }).required(),
-    })), createOutgoRequest);
+    })), wrapper(createOutgoRequest));
     this.router.put('/:requestId', checkUserType('S', '*'), validator(Joi.object({
       applier: Joi.array().items(Joi.string()).required(),
       approver: Joi.string().required(),
@@ -36,7 +37,7 @@ class OutgoRequestController extends Controller {
         start: Joi.date().required(),
         end: Joi.date().required(),
       }).required(),
-    })), editOutgoRequest);
+    })), wrapper(editOutgoRequest));
   }
 }
 

@@ -5,6 +5,7 @@ import {
   createCircle,
   removeCircle,
 } from '../controllers/circle-management';
+import wrapper from '../resources/wrapper';
 
 class CircleManagementController extends Controller {
   public basePath = '/circle';
@@ -21,9 +22,9 @@ class CircleManagementController extends Controller {
       chair: Joi.string().required(),
       viceChair: Joi.string().required(),
       videoLink: Joi.string().required(),
-    })), createCircle);
+    })), wrapper(createCircle));
 
-    this.router.delete('/:circleId', checkUserType('T'), removeCircle);
+    this.router.delete('/:circleId', checkUserType('T'), wrapper(removeCircle));
   }
 }
 

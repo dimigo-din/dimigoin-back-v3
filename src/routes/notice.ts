@@ -8,6 +8,7 @@ import {
   editNotice,
   createNotice,
 } from '../controllers/notice';
+import wrapper from '../resources/wrapper';
 
 class NoticeController extends Controller {
   public basePath = '/notice';
@@ -18,11 +19,11 @@ class NoticeController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), getAllNotices);
+    this.router.get('/', checkUserType('*'), wrapper(getAllNotices));
 
-    this.router.get('/current', checkUserType('*'), getCurrentNotices);
+    this.router.get('/current', checkUserType('*'), wrapper(getCurrentNotices));
 
-    this.router.get('/:noticeId', checkUserType('*'), getNotice);
+    this.router.get('/:noticeId', checkUserType('*'), wrapper(getNotice));
 
     this.router.post('/', checkUserType('T', 'S'), validator(Joi.object({
       title: Joi.string().required(),
@@ -30,7 +31,7 @@ class NoticeController extends Controller {
       targetGrade: Joi.array().items(Joi.number()).required(),
       startDate: Joi.date().required(),
       endDate: Joi.date().required(),
-    })), createNotice);
+    })), wrapper(createNotice));
 
     this.router.patch('/:noticeId', checkUserType('T', 'S'), validator(Joi.object({
       title: Joi.string(),
@@ -38,7 +39,7 @@ class NoticeController extends Controller {
       targetGrade: Joi.array().items(Joi.number()),
       startDate: Joi.date(),
       endDate: Joi.date(),
-    })), editNotice);
+    })), wrapper(editNotice));
   }
 }
 

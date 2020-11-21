@@ -5,6 +5,7 @@ import { UserModel } from '../models';
 import { reloadAllUsers, attachStudentInfo } from '../resources/dimi-api';
 import { checkUserType } from '../middlewares';
 import { getUserIdentity } from '../resources/user';
+import wrapper from '../resources/wrapper';
 
 class UserController extends Controller {
   public basePath = '/user';
@@ -15,11 +16,11 @@ class UserController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), this.getAllUsers);
-    this.router.get('/student', checkUserType('*'), this.getAllStudents);
-    this.router.get('/teacher', checkUserType('*'), this.getAllTeachers);
-    this.router.get('/reload', this.reloadUsers);
-    this.router.get('/me', checkUserType('*'), this.decodeJWT);
+    this.router.get('/', checkUserType('*'), wrapper(this.getAllUsers));
+    this.router.get('/student', checkUserType('*'), wrapper(this.getAllStudents));
+    this.router.get('/teacher', checkUserType('*'), wrapper(this.getAllTeachers));
+    this.router.get('/reload', wrapper(this.reloadUsers));
+    this.router.get('/me', checkUserType('*'), wrapper(this.decodeJWT));
   }
 
   private getAllUsers = async (req: Request, res: Response, next: NextFunction) => {

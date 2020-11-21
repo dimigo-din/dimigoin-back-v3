@@ -6,6 +6,7 @@ import {
   updateApplicationForm,
   getAllApplications,
 } from '../controllers/circle-application-management';
+import wrapper from '../resources/wrapper';
 
 class CircleApplicationManagementController extends Controller {
   public basePath = '/circle';
@@ -16,13 +17,13 @@ class CircleApplicationManagementController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/application/form', checkUserType('S', 'T'), getApplicationForm);
+    this.router.get('/application/form', checkUserType('S', 'T'), wrapper(getApplicationForm));
 
     this.router.put('/application/form', checkUserType('T'), validator(Joi.object({
       form: Joi.object().required(),
-    })), updateApplicationForm);
+    })), wrapper(updateApplicationForm));
 
-    this.router.get('/applier', checkUserType('T'), getAllApplications);
+    this.router.get('/applier', checkUserType('T'), wrapper(getAllApplications));
   }
 }
 

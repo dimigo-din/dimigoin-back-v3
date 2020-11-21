@@ -7,6 +7,7 @@ import {
   getMealByDate,
   editMealByDate,
 } from '../controllers/meal';
+import wrapper from '../resources/wrapper';
 
 class MealController extends Controller {
   public basePath = '/meal';
@@ -17,22 +18,22 @@ class MealController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), getAllMeals);
+    this.router.get('/', checkUserType('*'), wrapper(getAllMeals));
 
-    this.router.get('/:date', checkUserType('*'), getMealByDate);
+    this.router.get('/:date', checkUserType('*'), wrapper(getMealByDate));
 
     this.router.post('/', checkUserType('T'), validator(Joi.object({
       date: Joi.date().required(),
       breakfast: Joi.array().items(Joi.string()).required(),
       lunch: Joi.array().items(Joi.string()).required(),
       dinner: Joi.array().items(Joi.string()).required(),
-    })), createMeal);
+    })), wrapper(createMeal));
 
     this.router.patch('/:date', checkUserType('T'), validator(Joi.object({
       breakfast: Joi.array().items(Joi.string()),
       lunch: Joi.array().items(Joi.string()),
       dinner: Joi.array().items(Joi.string()),
-    })), editMealByDate);
+    })), wrapper(editMealByDate));
   }
 }
 

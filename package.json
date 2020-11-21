@@ -43,6 +43,7 @@
     "@types/mongoose": "^5.7.6",
     "aws-sdk": "^2.639.0",
     "axios": "^0.19.2",
+    "bl": "^2.2.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.2",
@@ -57,7 +58,6 @@
     "mongodb": "^3.6.0",
     "mongoose": "^5.9.4",
     "ts-mongoose": "^0.0.21",
-    "typescript": "^3.9.7",
-    "bl": "^2.2.1"
+    "typescript": "^3.9.7"
   }
 }
