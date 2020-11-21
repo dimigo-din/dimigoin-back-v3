@@ -16,11 +16,11 @@ class ConfigController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/', checkUserType('*'), wrapper(getAllConfig));
+    this.router.get('/', wrapper(getAllConfig));
 
-    this.router.patch('/', checkUserType('T'), validator(Joi.object({
+    this.router.put('/', checkUserType('T', 'S'), validator(Joi.object({
       key: Joi.string().required(),
-      value: Joi.string().required(),
+      value: Joi.any().required(),
     })), wrapper(editConfig));
   }
 }
