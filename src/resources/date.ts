@@ -12,6 +12,6 @@ export const getWeekStart = (date: Date) => {
 };
 
 export const getWeekEnd = (date: Date) => {
-  date.setDate(date.getDate() - date.getDay());
+  date.setDate(date.getDate() + (6 - date.getDay()));
   return date;
 };
