@@ -11,7 +11,7 @@ type ConfigDoc = ExtractDoc<typeof configSchema>;
 
 const ConfigModel = typedModel('Config', configSchema, undefined, undefined, {
   findByKey(key: string): ConfigDoc {
-    return this.find({ key });
+    return this.findOne({ key });
   },
 });
 
