@@ -10,17 +10,17 @@ const attendanceLogSchema = createSchema({
   student: Type.ref(Type.objectId()).to('User', userSchema),
   remark: Type.string({ required: true, trim: true }),
   time: Type.number({ required: true, enum: [1, 2] }),
-  location: Type.ref(Type.objectId()).to('Place', placeSchema),
+  place: Type.ref(Type.objectId()).to('Place', placeSchema),
 });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema, undefined, undefined, {
-  checkDuplicatedLog(student: ObjectId, date: Date, time: IngangTime) {
+  async checkDuplicatedLog(student: ObjectId, date: Date, time: IngangTime) {
     date = getOnlyDate(date);
-    return !!this.findOne({
+    return !!(await this.findOne({
       student,
       time,
       date,
-    });
+    }));
   },
 });
 
