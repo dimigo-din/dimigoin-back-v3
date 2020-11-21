@@ -4,7 +4,6 @@ import { validator, checkUserType } from '../middlewares';
 import {
   getMyOutgoRequests,
   createOutgoRequest,
-  editOutgoRequest,
 } from '../controllers/outgo-request';
 import wrapper from '../resources/wrapper';
 
@@ -28,16 +27,6 @@ class OutgoRequestController extends Controller {
         end: Joi.date().required(),
       }).required(),
     })), wrapper(createOutgoRequest));
-    this.router.put('/:requestId', checkUserType('S', '*'), validator(Joi.object({
-      applier: Joi.array().items(Joi.string()).required(),
-      approver: Joi.string().required(),
-      reason: Joi.string().required(),
-      detailReason: Joi.string().default(''),
-      duration: Joi.object({
-        start: Joi.date().required(),
-        end: Joi.date().required(),
-      }).required(),
-    })), wrapper(editOutgoRequest));
   }
 }
 

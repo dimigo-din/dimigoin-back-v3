@@ -34,29 +34,3 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
 
   res.json({ outgoRequest });
 };
-
-export const editOutgoRequest = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
-  const request = await OutgoRequestModel.findById(req.params.requestId);
-  if (!request) {
-    throw new HttpException(404, '해당 외출 신청을 찾을 수 없습니다.');
-  }
-  if (user.userType !== 'T' && !request.applier.includes(user._id)) {
-    throw new HttpException(403, '권한이 없습니다.');
-  }
-  if (user.userType === 'S' && request.status !== OutgoRequestStatus.applied) {
-    throw new HttpException(403, '승인되거나 거절된 외출에 대해서는 수정할 수 없습니다.');
-  }
-
-  const payload = req.body;
-
-  if (payload.status !== request.status && user.userType !== 'T') {
-    throw new HttpException(403, '권한이 없습니다.');
-  }
-
-  Object.assign(request, payload);
-
-  await request.save();
-
-  res.json({ outgoRequest: request });
-};
