@@ -20,6 +20,9 @@ export enum OutgoRequestStatus {
   approved = 'APPROVED',
 }
 
+export const DayValues = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'] as const;
+export type Day = typeof DayValues[number];
+
 export const GenderValues = ['M', 'F'] as const;
 export type Gender = typeof GenderValues[number];
 

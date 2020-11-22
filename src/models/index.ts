@@ -1,6 +1,7 @@
 import 'ts-mongoose/plugin';
 
 export * from './afterschool';
+export * from './afterschool-application';
 export * from './user';
 export * from './circle';
 export * from './circle-application';
