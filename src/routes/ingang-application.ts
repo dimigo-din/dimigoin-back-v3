@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import { Controller } from '../classes';
 import { validator, checkUserType } from '../middlewares';
-import { IngangTimeValues } from '../types';
+import { NightTimeValues } from '../types';
 import {
   getIngangStatus,
   getAllIngangApplications,
@@ -24,11 +24,11 @@ class IngangApplicationController extends Controller {
     this.router.get('/status', checkUserType('S'), wrapper(getIngangStatus));
 
     this.router.post('/', checkUserType('S'), validator(Joi.object({
-      time: Joi.number().valid(...IngangTimeValues).required(),
+      time: Joi.string().valid(...NightTimeValues).required(),
     })), wrapper(createIngangApplication));
 
     this.router.delete('/', checkUserType('S'), validator(Joi.object({
-      time: Joi.number().valid(...IngangTimeValues).required(),
+      time: Joi.string().valid(...NightTimeValues).required(),
     })), wrapper(removeIngangApplication));
   }
 }

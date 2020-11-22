@@ -1,7 +1,7 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
 import { ObjectId } from 'mongodb';
 import { userSchema } from './user';
-import { IngangTime } from '../types';
+import { NightTimeValues, NightTime } from '../types';
 import { getOnlyDate } from '../resources/date';
 import { placeSchema } from './place';
 
@@ -9,12 +9,12 @@ const attendanceLogSchema = createSchema({
   date: Type.date({ required: true }),
   student: Type.ref(Type.objectId()).to('User', userSchema),
   remark: Type.string({ required: true, trim: true }),
-  time: Type.number({ required: true, enum: [1, 2] }),
+  time: Type.string({ required: true, enum: NightTimeValues }),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
 });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema, undefined, undefined, {
-  async checkDuplicatedLog(student: ObjectId, date: Date, time: IngangTime) {
+  async checkDuplicatedLog(student: ObjectId, date: Date, time: NightTime) {
     date = getOnlyDate(date);
     return !!(await this.findOne({
       student,

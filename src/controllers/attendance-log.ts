@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
-import { getOnlyDate } from '../resources/date';
+import { getOnlyDate, getTime } from '../resources/date';
 import { AttendanceLogModel, UserModel } from '../models';
 import { getUserIdentity } from '../resources/user';
 
@@ -55,15 +55,7 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
     throw new HttpException(403, '출입 인증을 할 수 없는 시간입니다.');
   }
   const date = getOnlyDate(new Date());
-  const time = currentTime < 2110 ? 1 : 2;
-  if (await AttendanceLogModel.checkDuplicatedLog(
-    student,
-    date,
-    time,
-  )) {
-    throw new HttpException(409, '이미 출입 인증을 했습니다.');
-  }
-
+  const time = getTime(new Date());
   const attendanceLog = new AttendanceLogModel({
     student,
     time,

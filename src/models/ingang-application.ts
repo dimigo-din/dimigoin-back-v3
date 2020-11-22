@@ -3,19 +3,19 @@ import {
 } from 'ts-mongoose';
 import { ObjectId } from 'mongodb';
 import { userSchema } from './user';
-import { IngangTime, IngangTimeValues } from '../types';
+import { NightTimeValues, NightTime } from '../types';
 import { getOnlyDate } from '../resources/date';
 
 const ingangApplicationSchema = createSchema({
   applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
-  time: Type.number({ required: true, enum: IngangTimeValues }),
+  time: Type.number({ required: true, enum: NightTimeValues }),
   date: Type.date({ required: true, default: getOnlyDate(new Date()) }),
 }, { versionKey: false, timestamps: true });
 
 type IngangApplicationDoc = ExtractDoc<typeof ingangApplicationSchema>;
 
 const IngangApplicationModel = typedModel('IngangApplicationModel', ingangApplicationSchema, undefined, undefined, {
-  async checkDuplicatedApplication(applier: ObjectId, date: Date, time: IngangTime) {
+  async checkDuplicatedApplication(applier: ObjectId, date: Date, time: NightTime) {
     date = getOnlyDate(date);
     return !!(await this.findOne({
       applier,

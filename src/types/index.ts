@@ -37,8 +37,17 @@ export const CircleApplicationStatusValues = ['applied', 'document-fail', 'docum
 export type CircleApplicationStatus =
   typeof CircleApplicationStatusValues[number];
 
-export const IngangTimeValues = [1, 2] as const;
-export type IngangTime = typeof IngangTimeValues[number];
+export const AfterschoolTimeValues = ['AFSC1', 'AFSC2'] as const;
+export type AfterschoolTime = typeof AfterschoolTimeValues[number];
+
+export const NightTimeValues = ['NSS1', 'NSS2'] as const;
+export type NightTime = typeof NightTimeValues[number];
+
+export const TimeValues = [
+  ...AfterschoolTimeValues,
+  ...NightTimeValues,
+] as const;
+export type Time = typeof TimeValues[number];
 
 export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
