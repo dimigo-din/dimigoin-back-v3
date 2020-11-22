@@ -14,7 +14,7 @@ const attendanceLogSchema = createSchema({
 });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema, undefined, undefined, {
-  async checkDuplicatedLog(student: ObjectId, date: Date, time: NightTime) {
+  async checkDuplicatedLog(student: ObjectId, date: Date, time: NightTime): Promise<Boolean> {
     date = getOnlyDate(date);
     return !!(await this.findOne({
       student,

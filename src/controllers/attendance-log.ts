@@ -3,28 +3,25 @@ import { HttpException } from '../exceptions';
 import { getOnlyDate, getTime } from '../resources/date';
 import { AttendanceLogModel, UserModel } from '../models';
 import { getUserIdentity } from '../resources/user';
+import { IUser } from '../interfaces';
 
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = await getUserIdentity(req);
-  if (
-    userType !== 'T' && (
-      grade !== parseInt(req.body.grade, 10)
+  if (userType !== 'T' && (
+    grade !== parseInt(req.body.grade, 10)
       || klass !== parseInt(req.body.class, 10)
-    )
-  ) {
+  )) {
     throw new HttpException(403, '권한이 없습니다.');
   }
 
-  const date = new Date(req.body.date);
-  // Todo: Populate로 리팩토링 해야 함
+  const date = getOnlyDate(new Date());
   const logsInClass = (await AttendanceLogModel
-    .find({})
+    .find({ date })
     .populateTs('student')
     .populateTs('place'))
-    .filter((log) => (
-      log.student.grade === grade
-      && log.student.class === klass
-      && log.date.getTime() === date.getTime()
+    .filter(({ student }) => (
+      student.grade === grade
+      && student.class === klass
     ));
 
   const studentsInClass = await UserModel.find({
@@ -32,30 +29,28 @@ export const getClassStatus = async (req: Request, res: Response) => {
     class: klass,
   });
 
-  const reducedLogs = studentsInClass.reduce((acc: any, curr: any) => {
-    const student = `${curr.serial} ${curr.name}`;
-    // @ts-ignore
-    acc[student] = logsInClass.filter((log) => log.student.serial === curr.serial);
-    return acc;
-  }, {});
+  const reducedLogs = studentsInClass.reduce(
+    (reduced: any, student: IUser) => {
+      const studentCode = `${student.serial} ${student.name}`;
+      reduced[studentCode] = logsInClass.filter(
+        (log) => log.student.serial === student.serial,
+      );
+      return reduced;
+    },
+    {},
+  );
 
   res.json({ classLogs: reducedLogs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
   const payload = req.body;
-  const {
-    _id: student,
-  } = await getUserIdentity(req);
-  const currentTime = (
-    new Date().getHours() * 100
-    + new Date().getMinutes()
-  );
-  if (currentTime < 1940 || currentTime > 2250) {
-    throw new HttpException(403, '출입 인증을 할 수 없는 시간입니다.');
-  }
+  const { _id: student } = await getUserIdentity(req);
+
   const date = getOnlyDate(new Date());
   const time = getTime(new Date());
+  if (!time) throw new HttpException(423, '출입 인증을 할 수 없는 시간입니다.');
+
   const attendanceLog = new AttendanceLogModel({
     student,
     time,

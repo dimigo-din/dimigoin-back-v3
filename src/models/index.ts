@@ -12,6 +12,6 @@ export { IngangApplicationModel } from './ingang-application';
 export { MealModel } from './meal';
 export { BookRequestModel } from './book-request';
 export { OutgoRequestModel } from './outgo-request';
-export { AttendanceLogModel } from './attendance-log';
+export * from './attendance-log';
 export { PlaceModel } from './place';
 export { NoticeModel } from './notice';

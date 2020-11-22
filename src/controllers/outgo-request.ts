@@ -28,7 +28,9 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
-  const outgoRequest = await OutgoRequestModel.findById(req.params.outgoRequestId);
+  const outgoRequest = await OutgoRequestModel
+    .findById(req.params.outgoRequestId)
+    .populateTs('approver');
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청이 없습니다.');
   if (user.userType === 'S' && !outgoRequest.applier.includes(user._id)) {
     throw new HttpException(403, '권한이 없습니다.');
@@ -40,7 +42,7 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
         outgoRequest.applier.map(async (applier) =>
           await UserModel.findById(applier)),
       ),
-      approver: await UserModel.findById(outgoRequest.approver),
+      // approver: await UserModel.findById(outgoRequest.approver),
     },
   });
 };
