@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
 import { BookRequestModel } from '../models';
 import { getUserIdentity } from '../resources/user';
 
@@ -12,15 +11,8 @@ export const getBookNotice = async (req: Request, res: Response) => {
 
 export const getAllBookRequests = async (req: Request, res: Response) => {
   const { userType, _id: applier } = await getUserIdentity(req);
-  if (userType === 'T') {
-    const bookReqeusts = await BookRequestModel.find({});
-    res.json({ bookReqeusts });
-  } else if (userType === 'S') {
-    const bookReqeusts = await BookRequestModel.find({
-      applier,
-    });
-    res.json({ bookReqeusts });
-  } else {
-    throw new HttpException(403, '권한이 없습니다.');
-  }
+  const bookReqeusts = await BookRequestModel.find(
+    userType === 'S' ? { applier } : {},
+  );
+  res.json({ bookReqeusts });
 };
