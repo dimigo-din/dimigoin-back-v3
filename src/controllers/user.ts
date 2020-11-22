@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { UserModel } from '../models';
 import { reloadAllUsers, attachStudentInfo } from '../resources/dimi-api';
@@ -10,27 +10,27 @@ const redacter = (user: any) => {
   return user;
 };
 
-export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserModel.find();
   res.json({ users: users.map(redacter) });
 };
 
-export const getAllStudents = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllStudents = async (req: Request, res: Response) => {
   const students = await UserModel.findStudents();
   res.json({ students });
 };
 
-export const getAllTeachers = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllTeachers = async (req: Request, res: Response) => {
   const teachers = await UserModel.findTeachers();
   res.json({ teachers });
 };
 
-export const decodeJWT = async (req: Request, res: Response, next: NextFunction) => {
+export const decodeJWT = async (req: Request, res: Response) => {
   const identity = await getUserIdentity(req);
   res.json({ identity });
 };
 
-export const reloadUsers = async (req: Request, res: Response, next: NextFunction) => {
+export const reloadUsers = async (req: Request, res: Response) => {
   try {
     await reloadAllUsers();
     await attachStudentInfo();

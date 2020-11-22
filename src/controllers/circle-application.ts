@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { ICircleApplication } from '../interfaces';
 import {
@@ -10,7 +10,7 @@ import { ConfigKeys, CirclePeriod } from '../types';
 import { getUserIdentity } from '../resources/user';
 import { getConfig, getEntireConfig } from '../resources/config';
 
-export const getApplicationStatus = async (req: Request, res: Response, next: NextFunction) => {
+export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await getConfig(ConfigKeys.circlePeriod);
   const user = await getUserIdentity(req);
   const applications = await CircleApplicationModel.findByApplier(user._id);
@@ -34,7 +34,7 @@ export const getApplicationStatus = async (req: Request, res: Response, next: Ne
   });
 };
 
-export const createApplication = async (req: Request, res: Response, next: NextFunction) => {
+export const createApplication = async (req: Request, res: Response) => {
   const config = await getEntireConfig();
 
   if (config[ConfigKeys.circlePeriod] !== 'APPLICATION') {
@@ -75,7 +75,7 @@ export const createApplication = async (req: Request, res: Response, next: NextF
   res.json({ application });
 };
 
-export const finalSelection = async (req: Request, res: Response, next: NextFunction) => {
+export const finalSelection = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
   const applied = await CircleApplicationModel.findByApplier(user._id);
 

@@ -1,12 +1,12 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { ConfigModel } from '../models';
 import { getEntireConfig } from '../resources/config';
 
-export const getAllConfig = async (req: Request, res: Response, next: NextFunction) => {
+export const getAllConfig = async (req: Request, res: Response) => {
   res.json({ config: await getEntireConfig() });
 };
 
-export const editConfig = async (req: Request, res: Response, next: NextFunction) => {
+export const editConfig = async (req: Request, res: Response) => {
   const newConfig = req.body;
   const config = await ConfigModel.findOne({ key: newConfig.key });
   if (config) {

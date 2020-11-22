@@ -1,11 +1,11 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { CircleApplicationModel, CircleModel, UserModel } from '../models';
 import { ConfigKeys, CirclePeriod } from '../types';
 import { getUserIdentity } from '../resources/user';
 import { getConfig } from '../resources/config';
 
-export const getApplications = async (req: Request, res: Response, next: NextFunction) => {
+export const getApplications = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
   const circle = await CircleModel.findByChairs(user._id);
 
@@ -15,7 +15,7 @@ export const getApplications = async (req: Request, res: Response, next: NextFun
   res.json({ applications });
 };
 
-export const setApplierStatus = async (req: Request, res: Response, next: NextFunction) => {
+export const setApplierStatus = async (req: Request, res: Response) => {
   const applier = await UserModel.findById(req.params.applierId);
   if (!applier) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
