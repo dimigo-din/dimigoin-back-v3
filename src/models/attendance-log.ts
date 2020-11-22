@@ -11,7 +11,7 @@ const attendanceLogSchema = createSchema({
   remark: Type.string({ required: true, trim: true }),
   time: Type.string({ required: true, enum: NightTimeValues }),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
-});
+}, { versionKey: false, timestamps: true });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema, undefined, undefined, {
   async checkDuplicatedLog(student: ObjectId, date: Date, time: NightTime): Promise<Boolean> {

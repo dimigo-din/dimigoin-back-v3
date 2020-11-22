@@ -19,7 +19,7 @@ const outgoRequestSchema = createSchema({
     enum: Object.values(OutgoRequestStatus),
     default: OutgoRequestStatus.applied,
   }),
-});
+}, { versionKey: false, timestamps: true });
 
 const OutgoRequestModel = typedModel('OutgoRequest', outgoRequestSchema);
 
