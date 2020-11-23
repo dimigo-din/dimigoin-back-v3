@@ -52,6 +52,7 @@ export type NightTime = typeof NightTimeValues[number];
 export const TimeValues = [
   ...AfterschoolTimeValues,
   ...NightTimeValues,
+  ...WeekendTimeValues,
 ] as const;
 export type Time = typeof TimeValues[number];
 
