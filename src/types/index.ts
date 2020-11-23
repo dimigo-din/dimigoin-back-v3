@@ -40,10 +40,13 @@ export const CircleApplicationStatusValues = ['applied', 'document-fail', 'docum
 export type CircleApplicationStatus =
   typeof CircleApplicationStatusValues[number];
 
-export const AfterschoolTimeValues = ['AFSC1', 'AFSC2'] as const;
+export const AfterschoolTimeValues = ['AFSC1', 'AFSC2'] as const; // AFter SChool
 export type AfterschoolTime = typeof AfterschoolTimeValues[number];
 
-export const NightTimeValues = ['NSS1', 'NSS2'] as const;
+export const WeekendTimeValues = ['WEDT1', 'WEDT2'] as const; // WeekEnd Day Time
+export type WeekendTime = typeof WeekendTimeValues[number];
+
+export const NightTimeValues = ['NSS1', 'NSS2'] as const; //Night Self Study
 export type NightTime = typeof NightTimeValues[number];
 
 export const TimeValues = [
