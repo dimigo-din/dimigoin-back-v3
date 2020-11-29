@@ -13,3 +13,4 @@ export * from './outgo-request';
 export * from './attendance-log';
 export * from './place';
 export * from './notice';
+export * from './dets';
