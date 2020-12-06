@@ -17,6 +17,7 @@ export interface IDets {
     'imageUrl': string;
     'targetGrade': typeof GradeValues;
     'count': number;
+    'user': string[];
 }
 
 export interface IDetsInput {
