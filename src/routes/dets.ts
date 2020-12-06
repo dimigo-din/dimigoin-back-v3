@@ -34,7 +34,7 @@ class NoticeController extends Controller {
       imageUrl: Joi.string().required(),
     })), wrapper(createDets));
 
-    this.router.patch('/:noticeId', checkUserType('T', 'S'), validator(Joi.object({
+    this.router.patch('/:detsId', checkUserType('T', 'S'), validator(Joi.object({
       title: Joi.string().required(),
       description: Joi.string().required(),
       startDate: Joi.date().required(),
