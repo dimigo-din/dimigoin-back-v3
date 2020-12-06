@@ -29,3 +29,28 @@ export const editDets = async (req: Request, res: Response) => {
   await dets.save();
   res.json({ dets });
 };
+
+export const applyDets = async (req: Request, res: Response) => {
+  const userID = res.locals.user.idx as string;
+  const detsID = req.params.detsID as string;
+  // @ts-ignore
+  const isMax:boolean = DetsModel.find({ _id: detsID }, (err:any, model:any) => {
+    if (model === undefined || model == null) {
+      throw new HttpException(404, '해당 뎃츠를 찾을 찾을 수 없습니다.');
+    }
+    if (model.user.length < model.maxCount) {
+      return false;
+    }
+    return true;
+  });
+  if (isMax === false) {
+    DetsModel.findByIdAndUpdate(
+      detsID,
+      { $push: { user: userID } },
+      { upsert: true, new: true },
+      (err:any, model:any) => {
+        if (err) throw new HttpException(500, err);
+      },
+    );
+  }
+};
