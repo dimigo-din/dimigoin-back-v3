@@ -5,6 +5,7 @@ import {
   getDetsList, getDets, createDets, editDets, applyDets,
 } from '../controllers/dets';
 import wrapper from '../resources/wrapper';
+import attachUserinfo from '../middlewares/attach-user-info';
 
 class DetsController extends Controller {
   public basePath = '/dets';
@@ -34,7 +35,7 @@ class DetsController extends Controller {
       imageUrl: Joi.string().required(),
     })), wrapper(createDets));
 
-    this.router.post('/apply/:detsId', checkUserType('S'), applyDets);
+    this.router.post('/apply/:detsId', checkUserType('S'), attachUserinfo, applyDets);
 
     this.router.patch('/:detsId', checkUserType('T', 'S'), validator(Joi.object({
       title: Joi.string().required(),
