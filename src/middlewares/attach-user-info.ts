@@ -5,7 +5,7 @@ const attachUserInfo = (req: Request, res: Response, next: NextFunction) => {
   if (!req.token) { return next(); }
   const { token } = req;
   const identity = verifyToken(token);
-  req.app.set('user', identity);
+  res.locals.user = identity;
   next();
 };
 
