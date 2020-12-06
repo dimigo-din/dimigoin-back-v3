@@ -25,9 +25,14 @@ export const createDets = async (req: Request, res: Response) => {
 export const editDets = async (req: Request, res: Response) => {
   const dets = await DetsModel.findById(req.params.detsId);
   if (!dets) throw new HttpException(404, '해당 뎃츠를 찾을 찾을 수 없습니다.');
-  Object.assign(dets, req.body);
-  await dets.save();
-  res.json({ dets });
+  if (dets.speakerID === res.locals.user.idx) {
+    Object.assign(dets, req.body);
+    await dets.save();
+    res.json({ dets });
+  }
+  if (dets.speakerID !== res.locals.user.idx) {
+    throw new HttpException(403, '해당 뎃츠의 소유자가 아닙니다.');
+  }
 };
 
 export const applyDets = async (req: Request, res: Response) => {
