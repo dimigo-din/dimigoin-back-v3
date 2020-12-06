@@ -32,7 +32,7 @@ export const editDets = async (req: Request, res: Response) => {
 
 export const applyDets = async (req: Request, res: Response) => {
   const userID = res.locals.user.idx as string;
-  const detsID = req.params.detsID as string;
+  const detsID = req.params.detsId as string;
   // @ts-ignore
   const isMax:boolean = DetsModel.find({ _id: detsID }, (err:any, model:any) => {
     if (model === undefined || model == null) {
