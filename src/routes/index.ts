@@ -15,6 +15,7 @@ import NoticeController from './notice';
 import OutgoManagementController from './outgo-management';
 import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
+import DetsController from './dets';
 
 const controllers = [
   new AuthController(),
@@ -34,6 +35,7 @@ const controllers = [
   new OutgoManagementController(),
   new AfterschoolController(),
   new AfterschoolApplicationController(),
+  new DetsController(),
 ];
 
 export default controllers;

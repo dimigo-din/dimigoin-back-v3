@@ -2,11 +2,11 @@ import Joi from 'joi';
 import { Controller } from '../classes';
 import { validator, checkUserType } from '../middlewares';
 import {
-  getDetsList, getDets, createDets, editDets,
+  getDetsList, getDets, createDets, editDets, applyDets,
 } from '../controllers/dets';
 import wrapper from '../resources/wrapper';
 
-class NoticeController extends Controller {
+class DetsController extends Controller {
   public basePath = '/dets';
 
   constructor() {
@@ -34,6 +34,8 @@ class NoticeController extends Controller {
       imageUrl: Joi.string().required(),
     })), wrapper(createDets));
 
+    this.router.post('/apply/:detsId', checkUserType('S'), applyDets);
+
     this.router.patch('/:detsId', checkUserType('T', 'S'), validator(Joi.object({
       title: Joi.string().required(),
       description: Joi.string().required(),
@@ -51,4 +53,4 @@ class NoticeController extends Controller {
   }
 }
 
-export default NoticeController;
+export default DetsController;
