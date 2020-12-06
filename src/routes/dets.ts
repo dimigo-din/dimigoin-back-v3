@@ -37,7 +37,7 @@ class DetsController extends Controller {
 
     this.router.post('/apply/:detsId', checkUserType('S'), attachUserinfo, applyDets);
 
-    this.router.patch('/:detsId', checkUserType('T', 'S'), validator(Joi.object({
+    this.router.patch('/:detsId', checkUserType('T', 'S'), attachUserinfo, validator(Joi.object({
       title: Joi.string().required(),
       description: Joi.string().required(),
       startDate: Joi.date().required(),
