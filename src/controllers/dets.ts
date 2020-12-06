@@ -23,7 +23,7 @@ export const createDets = async (req: Request, res: Response) => {
 };
 
 export const editDets = async (req: Request, res: Response) => {
-  const dets = await DetsModel.findById(req.params.noticeId);
+  const dets = await DetsModel.findById(req.params.detsId);
   if (!dets) throw new HttpException(404, '해당 뎃츠를 찾을 찾을 수 없습니다.');
   Object.assign(dets, req.body);
   await dets.save();
