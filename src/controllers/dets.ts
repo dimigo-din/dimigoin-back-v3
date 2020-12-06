@@ -9,7 +9,7 @@ export const getDetsList = async (req: Request, res: Response) => {
 };
 
 export const getDets = async (req: Request, res: Response) => {
-  const dets = await DetsModel.findById(req.params.detsID);
+  const dets = await DetsModel.findById(req.params.detsId);
   res.json({ dets });
 };
 
