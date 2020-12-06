@@ -43,10 +43,7 @@ export const applyDets = async (req: Request, res: Response) => {
     if (model === undefined || model == null) {
       throw new HttpException(404, '해당 뎃츠를 찾을 찾을 수 없습니다.');
     }
-    if (model.user.length < model.maxCount) {
-      return false;
-    }
-    return true;
+    return model.user.length >= model.maxCount;
   });
   if (isMax === false) {
     DetsModel.findByIdAndUpdate(
