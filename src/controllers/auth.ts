@@ -11,7 +11,9 @@ export const identifyUser = async (req: Request, res: Response) => {
 
   try {
     const { id: idx } = await getIdentity(account);
+    const { photo } = await UserModel.findOne({ idx }).select('photo');
     const identity = await UserModel.findByIdx(idx) as IUser;
+    identity.photo = photo;
 
     res.json({
       accessToken: await issueToken(identity, false),
