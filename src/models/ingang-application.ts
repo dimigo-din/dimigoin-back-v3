@@ -8,7 +8,7 @@ import { getOnlyDate } from '../resources/date';
 
 const ingangApplicationSchema = createSchema({
   applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
-  time: Type.number({ required: true, enum: NightTimeValues }),
+  time: Type.string({ required: true, enum: NightTimeValues }),
   date: Type.date({ required: true, default: getOnlyDate(new Date()) }),
 }, { versionKey: false, timestamps: true });
 
