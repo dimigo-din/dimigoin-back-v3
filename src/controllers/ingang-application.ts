@@ -4,9 +4,10 @@ import { IngangApplicationModel } from '../models';
 import { getOnlyDate, getWeekStart, getWeekEnd } from '../resources/date';
 import { getUserIdentity } from '../resources/user';
 import { getConfig } from '../resources/config';
+import { ConfigKeys } from '../types';
 
 export const getIngangStatus = async (req: Request, res: Response) => {
-  const weeklyTicketCount = await getConfig('weeklyIngangTicketCount');
+  const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   const { _id: applier, grade, class: klass } = await getUserIdentity(req);
   const weeklyUsedTicket = await IngangApplicationModel.countDocuments({
     applier,
