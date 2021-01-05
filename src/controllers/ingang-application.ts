@@ -16,6 +16,8 @@ export const getIngangStatus = async (req: Request, res: Response) => {
       $lte: getWeekEnd(new Date()),
     },
   });
+  const weeklyRemainTicket = weeklyTicketCount - weeklyUsedTicket;
+
   const ingangMaxApplier = (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
   const applicationsInClass = (await IngangApplicationModel
     .find({ date: getOnlyDate(new Date()) })
@@ -28,6 +30,7 @@ export const getIngangStatus = async (req: Request, res: Response) => {
   res.json({
     weeklyTicketCount,
     weeklyUsedTicket,
+    weeklyRemainTicket,
     ingangMaxApplier,
     applicationsInClass,
   });
