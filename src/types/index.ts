@@ -5,7 +5,6 @@ export enum ConfigKeys {
   circleMaxApply = 'CIRCLE_MAX_APPLY',
   circleCategory = 'CIRCLE_CATEGORY',
   imageExtension = 'IMAGE_EXTENSION',
-  bucketURL = 'AWS_BUCKET_URL',
 }
 
 export enum CirclePeriod {
