@@ -16,19 +16,32 @@ export const verify = async (token: string) => {
 };
 
 export const issue = async (identity: IUser, refresh: boolean) => {
-  if (!refresh) {
-    const token = await jwt.sign({ identity }, config.jwtSecret as string, {
-      algorithm: 'HS256',
-      expiresIn: '1w',
-    });
+  if (refresh) {
+    const token = await jwt.sign(
+      {
+        identity: {
+          idx: identity.idx,
+        },
+        refresh: true,
+      },
+      config.jwtSecret as string,
+      {
+        algorithm: 'HS512',
+        expiresIn: '1m',
+      },
+    );
     return token;
   }
   const token = await jwt.sign(
     {
-      idx: identity.idx,
-      refresh: true,
+      identity,
+      refresh: false,
     },
-      config.jwtSecret as string,
+    config.jwtSecret as string,
+    {
+      algorithm: 'HS512',
+      expiresIn: '1w',
+    },
   );
   return token;
 };
