@@ -43,7 +43,7 @@ export const issue = async (identity: IUser, refresh: boolean) => {
       config.jwtSecret as string,
       {
         algorithm: 'HS512',
-        expiresIn: '1M',
+        expiresIn: '1y',
       },
     );
     return token;
