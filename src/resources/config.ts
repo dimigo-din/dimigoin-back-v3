@@ -6,7 +6,8 @@ const defaultConfig: any = {
   [ConfigKeys.circlePeriod]: CirclePeriod.application,
   [ConfigKeys.circleMaxApply]: 3,
   [ConfigKeys.circleCategory]: ['IT(프로젝트)', '음악', '경영'],
-  [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'hief'],
+  [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'heif'],
+  [ConfigKeys.weeklyIngangTicketCount]: 6,
 };
 
 (async () => {
