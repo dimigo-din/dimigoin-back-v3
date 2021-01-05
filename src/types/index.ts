@@ -46,7 +46,7 @@ export type AfterschoolTime = typeof AfterschoolTimeValues[number];
 export const WeekendTimeValues = ['WEDT1', 'WEDT2'] as const; // WeekEnd Day Time
 export type WeekendTime = typeof WeekendTimeValues[number];
 
-export const NightTimeValues = ['NSS1', 'NSS2'] as const; //Night Self Study
+export const NightTimeValues = ['NSS1', 'NSS2'] as const; // Night Self Study
 export type NightTime = typeof NightTimeValues[number];
 
 export const TimeValues = [
@@ -55,6 +55,9 @@ export const TimeValues = [
   ...WeekendTimeValues,
 ] as const;
 export type Time = typeof TimeValues[number];
+
+export const TokenTypeValues = ['REFRESH', 'ACCESS'];
+export type TokenType = typeof TokenTypeValues[number];
 
 export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
