@@ -16,6 +16,7 @@ export const getIngangStatus = async (req: Request, res: Response) => {
       $lte: getWeekEnd(new Date()),
     },
   });
+  const ingangMaxApplier = (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
   const applicationsInClass = (await IngangApplicationModel
     .find({ date: getOnlyDate(new Date()) })
     .populateTs('applier'))
@@ -27,6 +28,7 @@ export const getIngangStatus = async (req: Request, res: Response) => {
   res.json({
     weeklyTicketCount,
     weeklyUsedTicket,
+    ingangMaxApplier,
     applicationsInClass,
   });
 };
@@ -41,7 +43,7 @@ export const getAllIngangApplications = async (req: Request, res: Response) => {
 };
 
 export const createIngangApplication = async (req: Request, res: Response) => {
-  const { _id: applier, class: _class } = await getUserIdentity(req);
+  const { _id: applier, grade } = await getUserIdentity(req);
   const date = getOnlyDate(new Date());
   const { time } = req.body;
 
@@ -56,7 +58,11 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     time,
   }).populateTs('applier');
 
-  if (todayAll.filter((v) => v.applier.class === _class).length >= 9) {
+  const maxApply = (await getConfig(ConfigKeys.ingangMaxAppliers))[grade - 1];
+
+  // 신청하려는 인강실 (학년과 신청 타임 기준)에 존재하는 모든 신청 불러옴
+  const classAll = todayAll.filter((v) => v.applier.grade === grade);
+  if (classAll.length >= maxApply) {
     throw new HttpException(403, '최대 인강실 인원을 초과했습니다.');
   }
 
