@@ -4,6 +4,7 @@ import { Controller } from '../classes';
 import {
   getClassStatus,
   createAttendanceLog,
+  myAttendanceStatus,
 } from '../controllers/attendance-log';
 import wrapper from '../resources/wrapper';
 
@@ -17,13 +18,16 @@ class AttendanceLogController extends Controller {
 
   private initializeRoutes() {
     this.router.get('/class-status',
-      checkUserType('S'),
+      checkUserType('S', 'T'),
       validator(Joi.object({
         grade: Joi.number().required(),
         class: Joi.number().required(),
         date: Joi.date().required(),
       })),
       wrapper(getClassStatus));
+    this.router.get('/my-status',
+      checkUserType('S'),
+      wrapper(myAttendanceStatus));
     this.router.post('/', checkUserType('S'), validator(Joi.object({
       place: Joi.string().required(),
       remark: Joi.string().required(),
