@@ -16,7 +16,7 @@ class AttendanceLogController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/class-status',
+    this.router.post('/class-status',
       checkUserType('S'),
       validator(Joi.object({
         grade: Joi.number().required(),
