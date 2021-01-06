@@ -8,8 +8,8 @@ import { IUser } from '../interfaces';
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = await getUserIdentity(req);
   if (userType !== 'T' && (
-    grade !== parseInt(req.body.grade, 10)
-      || klass !== parseInt(req.body.class, 10)
+    grade !== parseInt(req.params.grade, 10)
+      || klass !== parseInt(req.params.class, 10)
   )) {
     throw new HttpException(403, '권한이 없습니다.');
   }

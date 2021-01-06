@@ -17,21 +17,21 @@ class AttendanceLogController extends Controller {
   }
 
   private initializeRoutes() {
-    this.router.get('/class-status',
+    this.router.get(
+      '/class-status/date/:date/grade/:grade/class/:class',
       checkUserType('S', 'T'),
-      validator(Joi.object({
-        grade: Joi.number().required(),
-        class: Joi.number().required(),
-        date: Joi.date().required(),
-      })),
-      wrapper(getClassStatus));
+      wrapper(getClassStatus),
+    );
     this.router.get('/my-status',
       checkUserType('S'),
       wrapper(myAttendanceStatus));
-    this.router.post('/', checkUserType('S'), validator(Joi.object({
-      place: Joi.string().required(),
-      remark: Joi.string().required(),
-    })), wrapper(createAttendanceLog));
+    this.router.post('/',
+      checkUserType('S'),
+      validator(Joi.object({
+        place: Joi.string().required(),
+        remark: Joi.string().required(),
+      })),
+      wrapper(createAttendanceLog));
   }
 }
 
