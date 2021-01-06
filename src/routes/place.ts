@@ -20,18 +20,18 @@ class PlaceController extends Controller {
 
   private initializeRoutes() {
     this.router.get('/', checkUserType('*'), wrapper(getAllPlaces));
-    this.router.patch('/:placeId', checkUserType('T'), validator(Joi.object({
+    this.router.patch('/:placeId', checkUserType('*'), validator(Joi.object({ //
       name: Joi.string(),
       location: Joi.string(),
       description: Joi.string(),
     })), wrapper(editPlace));
-    this.router.post('/', checkUserType('T'), validator(Joi.object({
+    this.router.post('/', checkUserType('*'), validator(Joi.object({ //
       name: Joi.string().required(),
       location: Joi.string().required(),
       description: Joi.string().required(),
     })), wrapper(createPlace));
     this.router.get('/:placeId', checkUserType('*'), wrapper(getPlace));
-    this.router.delete('/:placeId', checkUserType('T'), wrapper(deletePlace));
+    this.router.delete('/:placeId', checkUserType('*'), wrapper(deletePlace)); //
   }
 }
 
