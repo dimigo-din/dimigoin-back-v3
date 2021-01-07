@@ -16,7 +16,7 @@ jobs:
        run: forever stopall
 
      - name: remove old package file 
-       run: rm -rf ~/dimigoin-back-v3
+       run: sudo rm -rf ~/dimigoin-back-v3
 
      - name: install package ✔️
        run: yarn
