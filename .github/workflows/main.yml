@@ -13,7 +13,7 @@ jobs:
       
     - name: deploy package🚀 
       
-      run: sudo ./pull_and_run.sh
+      run: sudo bash /home/edison/pull_and_run.sh
       
     - name: Slack Notification failed 🙅
       if: failure()
