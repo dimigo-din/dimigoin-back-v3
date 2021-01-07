@@ -5,9 +5,7 @@ import {
 } from '../types';
 
 export const getOnlyDate = (date: Date): Date => new Date(
-  `${date.getFullYear()}-`
-  + `${date.getMonth() + 1}-`
-  + `${date.getDate()}`,
+  `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
 );
 
 export const isValidDate = (date: Date): Boolean => !Number.isNaN(date.getTime());

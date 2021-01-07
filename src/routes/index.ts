@@ -1,3 +1,4 @@
+import RootController from './root';
 import AuthController from './auth';
 import CircleController from './circle';
 import CircleApplicationController from './circle-application';
@@ -17,6 +18,7 @@ import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
 
 const controllers = [
+  new RootController(),
   new AuthController(),
   new UserController(),
   new CircleController(),
