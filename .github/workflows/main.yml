@@ -16,19 +16,19 @@ jobs:
        run: forever stopall
 
      - name: remove old package file 
-       run: sudo rm -rf ~/dimigoin-back-v3
+       run: sudo rm -rf /home/edison/dimigoin-back-v3
 
      - name: install package ✔️
        run: yarn
 
      - name: genarate target folder 🗂
-       run: mkdir ~/dimigoin-back-v3
+       run: mkdir /home/edison/dimigoin-back-v3
 
      - name: build typescript 📦
        run: tsc
 
      - name: move pacakage 🎒
-       run: mv * ~/dimigoin-back-v3
+       run: mv * /home/edison/dimigoin-back-v3
 
      - name: deploy package🚀 
        run: forever start /home/edison/dimigoin-back-v3/dist/index.js
