@@ -42,7 +42,7 @@
     "@types/jsonwebtoken": "^8.3.8",
     "@types/mongoose": "^5.7.6",
     "aws-sdk": "^2.639.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "bl": "^2.2.1",
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
