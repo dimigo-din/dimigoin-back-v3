@@ -3,36 +3,17 @@ name: Automatic Deploy Production
 
 on:
   push:
-    branches: [ production ]
+    branches: [ master ]
     
 jobs:
   build:
     runs-on: self-hosted
 
     steps:
-    - uses: actions/checkout@v2
-      
-    - name: remove old package🗑 
-      run: pm2 delete 'dimigoin-backend-deploy'
-      
-    - name: remove old package file 
-      run: rm -rf ~/build/circle.dimigo.in-backend
-
-    - name: install package ✔️
-      run: yarn
-        
-    - name: genarate target folder 🗂
-      run: mkdir ~/build/circle.dimigo.in-backend
-      
-    - name: build typescript 📦
-      run: tsc
-      
-    - name: move pacakage 🎒
-      run: mv * ~/build/circle.dimigo.in-backend
       
     - name: deploy package🚀 
       
-      run: pm2 start 'node ~/build/circle.dimigo.in-backend/dist/index.js' --name dimigoin-backend-deploy
+      run: sudo ./pull_and_run.sh
       
     - name: Slack Notification failed 🙅
       if: failure()
