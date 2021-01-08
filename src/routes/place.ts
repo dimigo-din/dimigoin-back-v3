@@ -28,7 +28,7 @@ class PlaceController extends Controller {
     this.router.post('/', checkUserType('*'), validator(Joi.object({ //
       name: Joi.string().required(),
       location: Joi.string().required(),
-      description: Joi.string().required(),
+      description: Joi.string(),
     })), wrapper(createPlace));
     this.router.get('/:placeId', checkUserType('*'), wrapper(getPlace));
     this.router.delete('/:placeId', checkUserType('*'), wrapper(deletePlace)); //
