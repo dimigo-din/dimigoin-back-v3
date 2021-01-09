@@ -7,6 +7,7 @@ import {
   getPlace,
   editPlace,
   deletePlace,
+  getPrimaryPlaces,
 } from '../controllers/place';
 import wrapper from '../resources/wrapper';
 
@@ -20,6 +21,7 @@ class PlaceController extends Controller {
 
   private initializeRoutes() {
     this.router.get('/', checkUserType('*'), wrapper(getAllPlaces));
+    this.router.get('/primary', checkUserType('S'), wrapper(getPrimaryPlaces));
     this.router.patch('/:placeId', checkUserType('*'), validator(Joi.object({ //
       name: Joi.string(),
       location: Joi.string(),

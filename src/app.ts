@@ -102,6 +102,9 @@ class App {
       new PlaceModel({ name: '큐브', location: '본관 2층' }),
       new PlaceModel({ name: '시청각실', location: '신관 1층' }),
       new PlaceModel({ name: '세미나실', location: '신관 1층' }),
+      new PlaceModel({ name: '학봉관', location: '학봉관' }),
+      new PlaceModel({ name: '우정학사', location: '우정학사' }),
+      new PlaceModel({ name: '영어 전용 교실', location: '신관 1층' }),
     ];
 
     // 교실 추가
