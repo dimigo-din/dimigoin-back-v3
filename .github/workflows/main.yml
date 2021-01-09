@@ -3,57 +3,14 @@ name: Automatic Deploy Production
 
 on:
   push:
-    branches: [ production ]
-    
+    branches: [ master ]
+      
 jobs:
-  build:
-    runs-on: self-hosted
+   build:
+     runs-on: self-hosted
 
-    steps:
-    - uses: actions/checkout@v2
-      
-    - name: remove old package🗑 
-      run: pm2 delete 'dimigoin-backend-deploy'
-      
-    - name: remove old package file 
-      run: rm -rf ~/build/circle.dimigo.in-backend
+     steps:
+     - uses: actions/checkout@v2
 
-    - name: install package ✔️
-      run: yarn
-        
-    - name: genarate target folder 🗂
-      run: mkdir ~/build/circle.dimigo.in-backend
-      
-    - name: build typescript 📦
-      run: tsc
-      
-    - name: move pacakage 🎒
-      run: mv * ~/build/circle.dimigo.in-backend
-      
-    - name: deploy package🚀 
-      
-      run: pm2 start 'node ~/build/circle.dimigo.in-backend/dist/index.js' --name dimigoin-backend-deploy
-      
-    - name: Slack Notification failed 🙅
-      if: failure()
-      uses: rtCamp/action-slack-notify@v2.0.0
-      env:
-        SLACK_CHANNEL: build-notification
-        SLACK_COLOR: '#FF0000'
-        SLACK_ICON: http://github.com/dimigoin.png?size=48
-        SLACK_MESSAGE: '백엔드에 대한 배포가 실패했어요 ! :cry:'
-        SLACK_TITLE: Deploy failed
-        SLACK_USERNAME: Dimigoin auto deploy bot
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-
-    - name: Slack Notification success 🙆
-      if: success()
-      uses: rtCamp/action-slack-notify@v2.0.0
-      env:
-        SLACK_CHANNEL: build-notification
-        SLACK_COLOR: '#04ff00'
-        SLACK_ICON: http://github.com/dimigoin.png?size=48
-        SLACK_MESSAGE: '백엔드에 대한 배포가 완료되었어요 ! :rocket:'
-        SLACK_TITLE: Deploy Success
-        SLACK_USERNAME: Dimigoin auto deploy bot
-        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+     - name: run script 
+       run: bash /home/edison/pull_and_run.sh
