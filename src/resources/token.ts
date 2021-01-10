@@ -15,7 +15,9 @@ export const getTokenType = async (token: string): Promise<TokenType> => {
         ? 'REFRESH' : 'ACCESS'
     );
   } catch (error) {
-    throw new HttpException(403, '토큰이 정상적으로 검증되지 않았습니다.');
+    if (error.name === 'TokenExpiredError') throw new HttpException(401, '토큰이 만료되었습니다.');
+    else if (error.msg === 'jwt malformed') throw new HttpException(401, '토큰이 변조되었습니다.');
+    else throw new HttpException(401, '토큰에 문제가 있습니다.');
   }
 };
 
@@ -27,7 +29,9 @@ export const verify = async (token: string) => {
     );
     return identity;
   } catch (error) {
-    throw new HttpException(403, '토큰이 정상적으로 검증되지 않았습니다.');
+    if (error.name === 'TokenExpiredError') throw new HttpException(401, '토큰이 만료되었습니다.');
+    else if (error.msg === 'jwt malformed') throw new HttpException(401, '토큰이 변조되었습니다.');
+    else throw new HttpException(401, '토큰에 문제가 있습니다.');
   }
 };
 
