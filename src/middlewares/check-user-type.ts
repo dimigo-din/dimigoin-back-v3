@@ -7,7 +7,14 @@ const checkUserType = (...userTypes: ((UserType | '*')[])) =>
   async (req: Request, res: Response, next: NextFunction) => {
     if (!req.token) return next(new HttpException(403, '토큰이 없습니다.'));
     const { token } = req;
-    const tokenType = await getTokenType(token);
+    let tokenType;
+    try {
+      tokenType = await getTokenType(token);
+    } catch (error) {
+      return next(
+        new HttpException(403, '토큰이 정상적으로 검증되지 않았습니다.'),
+      );
+    }
     if (tokenType !== 'ACCESS') {
       return next(
         new HttpException(403, '액세스 토큰이 아닙니다.'),

@@ -31,7 +31,7 @@ export const identifyUser = async (req: Request, res: Response) => {
 
 export const refreshAccessToken = async (req: Request, res: Response) => {
   const { token: refreshToken } = req;
-  if (!refreshToken) throw new HttpException(403, '리프레시 토큰이 전달되지 않았습니다.');
+  if (!refreshToken) throw new HttpException(400, '리프레시 토큰이 전달되지 않았습니다.');
 
   const tokenType = await getTokenType(refreshToken);
   if (tokenType !== 'REFRESH') throw new HttpException(400, '리프레시 토큰이 아닙니다.');
