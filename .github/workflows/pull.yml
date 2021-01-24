@@ -17,6 +17,7 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         script: |
           docker pull dimigoin/dimigoin-server:latest
+          container_id=$(docker ps -q --filter ancestor=dimigoin/dimigoin-server)
           docker stop $($container_id)
           docker rm $($container_id)
           docker run --name dimigoin-prod -p 5000:5000 dimigoin/dimigoin-server
