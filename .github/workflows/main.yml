@@ -6,6 +6,7 @@ on:
 jobs:
   create_env_file:
     name: Create DotEnv File
+    runs-on: ubuntu-latest
     steps:
       - name: Create DotEnv File
         uses: DamianReeves/write-file-action@v1.0
