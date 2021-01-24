@@ -25,7 +25,7 @@ export const identifyUser = async (req: Request, res: Response) => {
       refreshToken: await issueToken(identity, true),
     });
   } catch (error) {
-    throw new HttpException(401, '인증을 실패했습니다.');
+    throw new HttpException(401, '인증에 실패했습니다.');
   }
 };
 
