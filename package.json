@@ -41,6 +41,7 @@
     "@types/joi": "^14.3.4",
     "@types/jsonwebtoken": "^8.3.8",
     "@types/mongoose": "^5.7.6",
+    "@types/node-cron": "^2.0.3",
     "aws-sdk": "^2.639.0",
     "axios": "^0.21.1",
     "bl": "^2.2.1",
@@ -57,6 +58,7 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^3.6.0",
     "mongoose": "^5.9.4",
+    "node-cron": "^2.0.3",
     "ts-mongoose": "^0.0.21",
     "typescript": "^3.9.7"
   }
