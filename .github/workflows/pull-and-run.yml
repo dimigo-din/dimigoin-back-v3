@@ -20,4 +20,4 @@ jobs:
         script: |
           docker pull dimigoin/dimigoin-server:latest
           docker rm -f dimigoin-server-prod
-          docker run --name dimigoin-server-prod -p 5000:5000 dimigoin/dimigoin-server --env-file /etc/dimigoin-server.env
+          docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env -p 5000:5000 dimigoin/dimigoin-server
