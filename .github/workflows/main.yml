@@ -1,16 +1,34 @@
-
-name: Automatic Deploy Production
+name: Automatic Building Docker Image
 
 on:
   push:
-    branches: [ master ]
-      
+    branches: master
+
 jobs:
-   build:
-     runs-on: self-hosted
-
-     steps:
-     - uses: actions/checkout@v2
-
-     - name: run script 
-       run: bash /home/edison/pull_and_run.sh
+  path-context:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: dimigoin
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64,linux/386
+          push: true
+          tags: dimigoin/dimigoin-server:latest
