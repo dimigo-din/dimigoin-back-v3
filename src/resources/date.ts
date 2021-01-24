@@ -22,6 +22,13 @@ export const getWeekEnd = (date: Date): Date => {
   return date;
 };
 
+export const getTomorrow = (date: Date): Date => {
+  date = new Date(date); // Clone date object
+  return new Date(date.setDate(date.getDate() + 1));
+};
+
+export const getYYYYMMDD = (date: Date): string => date.toISOString().substring(0, 10).replace(/-/g, '');
+
 export const getTime = (date: Date): Time | null => {
   const now = (
     new Date().getHours() * 100
