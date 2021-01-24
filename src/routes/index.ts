@@ -16,6 +16,7 @@ import NoticeController from './notice';
 import OutgoManagementController from './outgo-management';
 import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
+import TimetableController from './timetable';
 
 const controllers = [
   new RootController(),
@@ -36,6 +37,7 @@ const controllers = [
   new OutgoManagementController(),
   new AfterschoolController(),
   new AfterschoolApplicationController(),
+  new TimetableController(),
 ];
 
 export default controllers;
