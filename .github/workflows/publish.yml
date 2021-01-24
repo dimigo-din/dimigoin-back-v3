@@ -4,17 +4,6 @@ on:
     branches:
       - master
 jobs:
-  create_env_file:
-    name: Create DotEnv File
-    runs-on: ubuntu-latest
-    steps:
-      - name: Create DotEnv File
-        uses: DamianReeves/write-file-action@v1.0
-        with:
-          path: ./.env
-          contents: |
-            echo ${{ secrets.DOTENV_CONTENT }}
-          write-mode: overwrite
   push_to_registry:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
@@ -23,6 +12,8 @@ jobs:
         uses: actions/checkout@v2
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
+        env:
+          DOTENV_CONTENT: ${{ secrets.DOTENV_CONTENT }}
         with:
           username: dimigoin
           password: ${{ secrets.DOCKERHUB_TOKEN }}
