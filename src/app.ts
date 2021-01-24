@@ -11,6 +11,8 @@ import { attachUserInfo, errorHandler } from './middlewares';
 import routes from './routes';
 import config from './config';
 
+import { setCronJobs } from './resources/cron';
+
 // Defualt Setting
 import { ConfigModel } from './models/config';
 import { ConfigKeys, CirclePeriod } from './types';
@@ -26,6 +28,7 @@ class App {
     this.initializeRouter();
     this.initializeErrorhandlers();
     this.initializeSettings();
+    this.initializeCronJobs();
   }
 
   private initializeRouter() {
@@ -118,16 +121,20 @@ class App {
             if (klass <= 4) return '본관 1층';
             return '본관 2층';
           })(),
-          description: '교실'
-        }))
+          description: '교실',
+        }));
       }
     }
 
     await Promise.all(
       places
         .filter((p) => !registeredPlaces.find((r) => r.name === p.name))
-        .map((p) => p.save())
-    );    
+        .map((p) => p.save()),
+    );
+  }
+
+  private async initializeCronJobs() {
+    await setCronJobs();
   }
 }
 
