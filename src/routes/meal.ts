@@ -20,7 +20,7 @@ class MealController extends Controller {
   private initializeRoutes() {
     this.router.get('/', checkUserType('*'), wrapper(getAllMeals));
 
-    this.router.get('/:date', checkUserType('*'), wrapper(getMealByDate));
+    this.router.get('/:date', wrapper(getMealByDate));
 
     this.router.post('/', checkUserType('T', 'S'), validator(Joi.object({
       date: Joi.date().required(),
