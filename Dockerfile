@@ -11,6 +11,9 @@ COPY . .
 
 RUN echo "${DOTENV_CONTENT}" >> .env
 
+RUN cat .env
+RUN ls -al
+
 EXPOSE 5000
 
 RUN yarn build
