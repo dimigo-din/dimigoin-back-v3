@@ -1,10 +1,25 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../exceptions';
 import { MealModel } from '../models';
-import { isValidDate } from '../resources/date';
+import { isValidDate, getWeekStart, getWeekEnd } from '../resources/date';
 
 export const getAllMeals = async (req: Request, res: Response) => {
   const meals = await MealModel.find({});
+
+  res.json({ meals });
+};
+
+export const getWeeklyMeals = async (req: Request, res: Response) => {
+  const today = new Date();
+  const weekStart = getWeekStart(today);
+  const weekEnd = getWeekEnd(today);
+
+  const meals = await MealModel.find({
+    date: {
+      $gte: weekStart,
+      $lte: weekEnd,
+    },
+  });
 
   res.json({ meals });
 };

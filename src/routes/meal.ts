@@ -3,6 +3,7 @@ import { Controller } from '../classes';
 import { validator, checkUserType } from '../middlewares';
 import {
   getAllMeals,
+  getWeeklyMeals,
   createMeal,
   getMealByDate,
   editMealByDate,
@@ -19,6 +20,8 @@ class MealController extends Controller {
 
   private initializeRoutes() {
     this.router.get('/', checkUserType('*'), wrapper(getAllMeals));
+
+    this.router.get('/weekly', wrapper(getWeeklyMeals));
 
     this.router.get('/:date', wrapper(getMealByDate));
 
