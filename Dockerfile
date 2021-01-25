@@ -9,8 +9,6 @@ RUN yarn install
 
 COPY . .
 
-RUN echo "${DOTENV_CONTENT}" >> .env
-
 EXPOSE 5000
 
 RUN yarn build
