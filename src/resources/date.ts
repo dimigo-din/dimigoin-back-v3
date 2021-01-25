@@ -13,13 +13,13 @@ export const isValidDate = (date: Date): Boolean => !Number.isNaN(date.getTime()
 export const getWeekStart = (date: Date): Date => {
   date = new Date(date); // Clone date object
   date.setDate(date.getDate() - date.getDay());
-  return date;
+  return getOnlyDate(date);
 };
 
 export const getWeekEnd = (date: Date): Date => {
   date = new Date(date); // Clone date object
   date.setDate(date.getDate() + (6 - date.getDay()));
-  return date;
+  return getOnlyDate(date);
 };
 
 export const getTomorrow = (date: Date): Date => {
