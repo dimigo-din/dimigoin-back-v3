@@ -6,7 +6,6 @@ import CircleApplicationManagementController from './circle-application-manageme
 import CircleApplierSelection from './circle-application-selection';
 import CircleManagementController from './circle-management';
 import ConfigController from './config';
-import UserController from './user';
 import IngangApplicationController from './ingang-application';
 import MealController from './meal';
 import OutgoRequestController from './outgo-request';
@@ -16,12 +15,10 @@ import NoticeController from './notice';
 import OutgoManagementController from './outgo-management';
 import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
-import TimetableController from './timetable';
 
 const controllers = [
   new RootController(),
   new AuthController(),
-  new UserController(),
   new CircleController(),
   new CircleApplicationManagementController(),
   new CircleApplicationController(),
@@ -37,7 +34,6 @@ const controllers = [
   new OutgoManagementController(),
   new AfterschoolController(),
   new AfterschoolApplicationController(),
-  new TimetableController(),
 ];
 
 export default controllers;

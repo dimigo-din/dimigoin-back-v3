@@ -1,22 +1,23 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { UserModel } from '../models';
-import { reloadAllUsers, attachStudentInfo } from '../resources/dimi-api';
-import { getUserIdentity } from '../resources/user';
-
-const redacter = (user: any) => {
-  user.photo = null;
-  user.phone = null;
-  return user;
-};
+import { HttpException } from '../../exceptions';
+import { UserModel } from '../../models';
+import { reloadAllUsers, attachStudentInfo } from '../../resources/dimi-api';
+import { getUserIdentity } from '../../resources/user';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserModel.find();
-  res.json({ users: users.map(redacter) });
+  res.json({ users });
 };
 
 export const getAllStudents = async (req: Request, res: Response) => {
-  const students = await UserModel.findStudents();
+  let students = await UserModel.findStudents();
+  const user = await getUserIdentity(req);
+  if (user.userType === 'S') {
+    students = students.map((student) => {
+      student.photo = [];
+      return student;
+    });
+  }
   res.json({ students });
 };
 
@@ -34,7 +35,7 @@ export const reloadUsers = async (req: Request, res: Response) => {
   try {
     await reloadAllUsers();
     await attachStudentInfo();
-    res.send('success');
+    res.end();
   } catch (error) {
     throw new HttpException(500, error.message);
   }

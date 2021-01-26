@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { TimetableModel } from '../models';
-import { getWeekStart, getWeekEnd } from '../resources/date';
+import { TimetableModel } from '../../models';
+import { getWeekStart, getWeekEnd } from '../../resources/date';
 
 const TEMP_DATE = '2020-06-30';
 
