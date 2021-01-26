@@ -31,4 +31,4 @@ jobs:
         step: finish
         token: ${{ secrets.GITHUB_TOKEN }}
         status: ${{ job.status }}
-        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+        deployment_id: DIMIGOIN_SERVER_PRODUCTION
