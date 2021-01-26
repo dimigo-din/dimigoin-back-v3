@@ -35,7 +35,7 @@ export const getIngangStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = await getUserIdentity(req);
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
-  const ingangMaxApplier = getMaxApplicationPerIngang(grade);
+  const ingangMaxApplier = await getMaxApplicationPerIngang(grade);
 
   const weeklyUsedTicket = await getWeeklyUsedTicket(applier);
   const applicationsInClass = await getApplicationsByClass(grade, klass);
