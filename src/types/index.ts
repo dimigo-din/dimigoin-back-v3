@@ -21,6 +21,8 @@ export enum OutgoRequestStatus {
   approved = 'APPROVED',
 }
 
+export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
+
 export const DayValues = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'] as const;
 export type Day = typeof DayValues[number];
 
