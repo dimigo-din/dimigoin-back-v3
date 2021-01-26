@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { ConfigModel } from '../models';
-import { getEntireConfig } from '../resources/config';
+import { getEntireConfigs } from '../resources/config';
 
 export const getAllConfig = async (req: Request, res: Response) => {
-  res.json({ config: await getEntireConfig() });
+  res.json({ config: await getEntireConfigs() });
 };
 
 export const editConfig = async (req: Request, res: Response) => {

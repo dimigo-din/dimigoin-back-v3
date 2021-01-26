@@ -8,7 +8,7 @@ import {
 } from '../models';
 import { ConfigKeys, CirclePeriod } from '../types';
 import { getUserIdentity } from '../resources/user';
-import { getConfig, getEntireConfig } from '../resources/config';
+import { getConfig, getEntireConfigs } from '../resources/config';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await getConfig(ConfigKeys.circlePeriod);
@@ -35,7 +35,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
 };
 
 export const createApplication = async (req: Request, res: Response) => {
-  const config = await getEntireConfig();
+  const config = await getEntireConfigs();
 
   if (config[ConfigKeys.circlePeriod] !== 'APPLICATION') {
     throw new HttpException(406, '동아리 지원 기간이 아닙니다.');
