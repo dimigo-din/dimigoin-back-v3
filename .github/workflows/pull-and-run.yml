@@ -24,11 +24,21 @@ jobs:
           docker pull dimigoin/dimigoin-server:latest
           docker rm -f dimigoin-server-prod
           docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env -p 5000:5000 -d dimigoin/dimigoin-server
-    - name: Update deployment status
-      uses: bobheadxi/deployments@v0.4.3
-      if: always()
+
+    - name: Update deployment status (Success)
+      if: success()
+      uses: chrnorm/deployment-status@releases/v1
       with:
-        step: finish
-        token: ${{ secrets.GITHUB_TOKEN }}
-        status: ${{ job.status }}
-        deployment_id: DIMIGOIN_SERVER_PRODUCTION
+        token: "${{ github.token }}"
+        target_url: http://edison.dimigo.hs.kr
+        state: "success"
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}
+
+    - name: Update deployment status (Failure)
+      if: failure()
+      uses: chrnorm/deployment-status@releases/v1
+      with:
+        token: "${{ github.token }}"
+        target_url: http://edison.dimigo.hs.kr
+        state: "failure"
+        deployment_id: ${{ steps.deployment.outputs.deployment_id }}

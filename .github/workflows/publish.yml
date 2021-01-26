@@ -10,13 +10,13 @@ jobs:
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Start deployment
-        uses: bobheadxi/deployments@v0.4.3
+      - uses: chrnorm/deployment-action@releases/v1
+        name: Create GitHub environment
         id: deployment
         with:
-          step: start
-          token: ${{ secrets.GITHUB_TOKEN }}
-          env: Production
+          token: "${{ github.token }}"
+          target_url: http://edison.dimigo.hs.kr
+          environment: Production
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
