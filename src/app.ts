@@ -8,6 +8,7 @@ import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 
 import { attachUserInfo, errorHandler } from './middlewares';
+import { serviceRouter } from './services';
 import routes from './routes';
 import config from './config';
 
@@ -32,11 +33,10 @@ class App {
   }
 
   private initializeRouter() {
-    const router: express.Router = express.Router();
     routes.forEach((route) => {
       this.app.use(route.basePath, route.router);
     });
-    this.app.use(router);
+    this.app.use('/', serviceRouter);
   }
 
   private initializeMiddlewares() {
