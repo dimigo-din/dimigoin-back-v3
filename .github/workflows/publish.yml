@@ -16,7 +16,7 @@ jobs:
         with:
           step: start
           token: ${{ secrets.GITHUB_TOKEN }}
-          env: release
+          env: Production
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
@@ -24,3 +24,4 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
           repository: dimigoin/dimigoin-server
           tag_with_ref: true
+          deployment_id: ${{ steps.deployment.outputs.deployment_id }}
