@@ -17,6 +17,7 @@ jobs:
           token: "${{ github.token }}"
           target_url: http://edison.dimigo.hs.kr
           environment: Production
+          deployment_id: 0
       - name: Push to Docker Hub
         uses: docker/build-push-action@v1
         with:
