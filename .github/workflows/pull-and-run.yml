@@ -10,7 +10,7 @@ jobs:
     name: Pull Docker Image and Run
     runs-on: ubuntu-latest
     steps:
-    - name: Pull from Docker Hub and Run Image
+    - name: Pull from Docker Hub and Run image
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOSTNAME }}
@@ -21,3 +21,10 @@ jobs:
           docker pull dimigoin/dimigoin-server:latest
           docker rm -f dimigoin-server-prod
           docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env -p 5000:5000 -d dimigoin/dimigoin-server
+    - name: Update deployment status
+      uses: bobheadxi/deployments@v0.4.3
+      if: always()
+      with:
+        step: finish
+        token: ${{ secrets.GITHUB_TOKEN }}
+        status: ${{ job.status }}
