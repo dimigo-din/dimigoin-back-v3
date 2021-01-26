@@ -25,20 +25,20 @@ jobs:
           docker rm -f dimigoin-server-prod
           docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env -p 5000:5000 -d dimigoin/dimigoin-server
 
-    - name: Update deployment status (Success)
-      if: success()
-      uses: chrnorm/deployment-status@releases/v1
-      with:
-        token: "${{ github.token }}"
-        target_url: http://edison.dimigo.hs.kr
-        state: "success"
-        deployment_id: 0
+#     - name: Update deployment status (Success)
+#       if: success()
+#       uses: chrnorm/deployment-status@releases/v1
+#       with:
+#         token: "${{ github.token }}"
+#         target_url: http://edison.dimigo.hs.kr
+#         state: "success"
+#         deployment_id: 0
 
-    - name: Update deployment status (Failure)
-      if: failure()
-      uses: chrnorm/deployment-status@releases/v1
-      with:
-        token: "${{ github.token }}"
-        target_url: http://edison.dimigo.hs.kr
-        state: "failure"
-        deployment_id: 0
+#     - name: Update deployment status (Failure)
+#       if: failure()
+#       uses: chrnorm/deployment-status@releases/v1
+#       with:
+#         token: "${{ github.token }}"
+#         target_url: http://edison.dimigo.hs.kr
+#         state: "failure"
+#         deployment_id: 0
