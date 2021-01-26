@@ -32,7 +32,7 @@ jobs:
         token: "${{ github.token }}"
         target_url: http://edison.dimigo.hs.kr
         state: "success"
-        deployment_id: ${{ github.event.deployment.id }}
+        deployment_id: 0
 
     - name: Update deployment status (Failure)
       if: failure()
@@ -41,4 +41,4 @@ jobs:
         token: "${{ github.token }}"
         target_url: http://edison.dimigo.hs.kr
         state: "failure"
-        deployment_id: ${{ github.event.deployment.id }}
+        deployment_id: 0
