@@ -52,7 +52,6 @@ export const fetchWeeklyTimetable = async () => {
 };
 
 export const refreshWeeklyTimetable = async () => {
-  console.log(123);
   const weeklyTimetable = await fetchWeeklyTimetable();
 
   const today = new Date(TEMP_DATE);
