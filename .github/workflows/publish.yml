@@ -28,14 +28,24 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_ID }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}  
-      - name: Push to Docker Hub (in Pull Request)
+      -
+        name: Extract branch name from git ref
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: extract_branch
+      -
+        name: Push to Docker Hub (in Pull Request)
         if: ${{ github.event_name == 'pull_request' }}
         uses: docker/build-push-action@v2
         with:
           push: true 
           tags: dimigoin/dimigoin-server:${{ github.head_ref }}
-      - name: Push to Docker Hub (in Master Push)
-        if: ${{ github.event_name == 'push' && github.head_ref == 'master' }}
+      -
+        name: Push to Docker Hub (in Master Push)
+        if: ${{
+          github.event_name == 'push' &&
+          steps.extract_branch.outputs.branch == 'master'
+        }}
         uses: docker/build-push-action@v2
         with:
           push: true 
