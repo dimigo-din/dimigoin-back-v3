@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
-import { CircleModel, CircleApplicationModel } from '../models';
-import { getUserIdentity } from '../resources/user';
+import { CircleModel, CircleApplicationModel } from '../../models';
+import { getUserIdentity } from '../../resources/user';
 
 export const getAllCircles = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
