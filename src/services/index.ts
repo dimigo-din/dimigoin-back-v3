@@ -1,14 +1,20 @@
 import { Router, RequestHandler } from 'express';
 import { HTTPMethod, UserType } from '../types';
-import { checkUserType } from '../middlewares';
+import { checkUserType, validator } from '../middlewares';
 import wrapper from '../resources/wrapper';
+import Joi from 'joi';
 import fs from 'fs';
+
+interface ValidateSchema {
+  [key: string]: Joi.AnySchema;
+};
 
 interface Route {
   method: HTTPMethod;
   path: string;
   middlewares?: RequestHandler[];
   handler: RequestHandler;
+  validateSchema?: ValidateSchema;
   allowedUserType?: (UserType | '*')[];
 };
 
@@ -22,6 +28,8 @@ const createRouter = (routes: Route[]) => {
         [checkUserType(...route.allowedUserType)] : []),
       ...(route.middlewares ?
         route.middlewares : []),
+      ...(route.validateSchema ?
+        [validator(Joi.object(route.validateSchema))] : []),
       wrapper(route.handler),
     );
   });
