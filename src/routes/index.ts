@@ -8,7 +8,6 @@ import ConfigController from './config';
 import IngangApplicationController from './ingang-application';
 import OutgoRequestController from './outgo-request';
 import AttendanceLogController from './attendance-log';
-import PlaceController from './place';
 import OutgoManagementController from './outgo-management';
 import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
@@ -23,7 +22,6 @@ const controllers = [
   new ConfigController(),
   new IngangApplicationController(),
   new AttendanceLogController(),
-  new PlaceController(),
   new OutgoRequestController(),
   new OutgoManagementController(),
   new AfterschoolController(),

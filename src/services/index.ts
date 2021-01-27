@@ -15,7 +15,7 @@ interface Route {
   middlewares?: RequestHandler[];
   handler: RequestHandler;
   validateSchema?: ValidateSchema;
-  allowedUserType?: (UserType | '*')[];
+  allowedUserTypes?: (UserType | '*')[];
 };
 
 const createRouter = (routes: Route[]) => {
@@ -24,8 +24,8 @@ const createRouter = (routes: Route[]) => {
   routes.forEach((route) => {
     router[route.method](
       route.path,
-      ...(route.allowedUserType ?
-        [checkUserType(...route.allowedUserType)] : []),
+      ...(route.allowedUserTypes ?
+        [checkUserType(...route.allowedUserTypes)] : []),
       ...(route.middlewares ?
         route.middlewares : []),
       ...(route.validateSchema ?
