@@ -28,7 +28,7 @@ jobs:
           push: true 
           tags: dimigoin/dimigoin-server:${GITHUB_REF##*/}
       - name: Push to Docker Hub (in Master Push)
-        if: ${{ github.event_name == 'push' && ${GITHUB_REF##*/} == 'master' }}
+        if: ${{ github.event_name == 'push' && GITHUB_REF##*/ == 'master' }}
         uses: docker/build-push-action@v1
         with:
           push: true 
