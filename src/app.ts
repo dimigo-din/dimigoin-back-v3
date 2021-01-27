@@ -9,7 +9,6 @@ import helmet from 'helmet';
 
 import { attachUserInfo, errorHandler } from './middlewares';
 import { serviceRouter } from './services';
-import routes from './routes';
 import config from './config';
 
 import { setCronJobs } from './resources/cron';
@@ -33,9 +32,6 @@ class App {
   }
 
   private initializeRouter() {
-    routes.forEach((route) => {
-      this.app.use(route.basePath, route.router);
-    });
     this.app.use('/', serviceRouter);
   }
 
