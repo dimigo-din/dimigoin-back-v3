@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { CircleApplicationModel, CircleModel, UserModel } from '../models';
-import { ConfigKeys, CirclePeriod } from '../types';
-import { getUserIdentity } from '../resources/user';
-import { getConfig } from '../resources/config';
+import { HttpException } from '../../exceptions';
+import { CircleApplicationModel, CircleModel, UserModel } from '../../models';
+import { ConfigKeys, CirclePeriod } from '../../types';
+import { getUserIdentity } from '../../resources/user';
+import { getConfig } from '../../resources/config';
 
 export const getApplications = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
