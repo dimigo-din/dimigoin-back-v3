@@ -1,7 +1,6 @@
-import { Router, RequestHandler } from 'express';
+import { Router, RequestHandler, Request, Response, NextFunction } from 'express';
 import { HTTPMethod, UserType } from '../types';
 import { checkUserType, validator } from '../middlewares';
-import wrapper from '../resources/wrapper';
 import Joi from 'joi';
 import fs from 'fs';
 
@@ -17,6 +16,16 @@ interface Route {
   validateSchema?: ValidateSchema;
   allowedUserTypes?: (UserType | '*')[];
 };
+
+const wrapper = (asyncFn: any) =>
+  (async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      return await asyncFn(req, res, next);
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
 
 const createRouter = (routes: Route[]) => {
   const router = Router();
