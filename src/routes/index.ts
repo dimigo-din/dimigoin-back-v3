@@ -6,7 +6,6 @@ import CircleApplierSelection from './circle-application-selection';
 import CircleManagementController from './circle-management';
 import IngangApplicationController from './ingang-application';
 import AttendanceLogController from './attendance-log';
-import OutgoManagementController from './outgo-management';
 import AfterschoolController from './afterschool';
 import AfterschoolApplicationController from './afterschool-application';
 
@@ -19,7 +18,6 @@ const controllers = [
   new CircleApplierSelection(),
   new IngangApplicationController(),
   new AttendanceLogController(),
-  new OutgoManagementController(),
   new AfterschoolController(),
   new AfterschoolApplicationController(),
 ];
