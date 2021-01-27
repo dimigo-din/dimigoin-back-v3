@@ -53,8 +53,7 @@ jobs:
     name: Pull Docker Image and Run
     runs-on: ubuntu-latest
     needs: [push_to_registry]
-    if: ${{ github.ref == 'refs/heads/master' &&
-      jobs.push_to_registry.status == 'success' }}
+    if: github.ref == 'refs/heads/master'
     steps:
     -
       name: Pull from Docker Hub and Run image
