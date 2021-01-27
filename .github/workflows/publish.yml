@@ -5,9 +5,17 @@ jobs:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
     steps:
-      - name: Check out the repo
+      -
+        name: Check out the repo
         uses: actions/checkout@v2
-      - uses: chrnorm/deployment-action@releases/v1
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        uses: chrnorm/deployment-action@releases/v1
         name: Create GitHub environment
         id: deployment
         with:
