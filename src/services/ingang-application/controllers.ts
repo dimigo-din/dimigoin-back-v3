@@ -1,10 +1,10 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { IngangApplicationModel } from '../models';
-import { getOnlyDate, getWeekStart, getWeekEnd } from '../resources/date';
-import { getUserIdentity } from '../resources/user';
-import { getConfig } from '../resources/config';
-import { ConfigKeys } from '../types';
+import { HttpException } from '../../exceptions';
+import { IngangApplicationModel } from '../../models';
+import { getOnlyDate, getWeekStart, getWeekEnd } from '../../resources/date';
+import { getUserIdentity } from '../../resources/user';
+import { getConfig } from '../../resources/config';
+import { ConfigKeys, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => {
@@ -63,10 +63,11 @@ export const createIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier, grade } = await getUserIdentity(req);
   const maxApply = await getMaxApplicationPerIngang(grade);
   const date = getOnlyDate(new Date());
-  const { time } = req.body;
+  const time = req.params.time as NightTime;
 
-  // 해당 인강실을 기존에 신청했는지 확인
-  if (await IngangApplicationModel.checkDuplicatedApplication(applier, date, time)) {
+  const checkDuplicate = IngangApplicationModel.checkDuplicatedApplication;
+
+  if (await checkDuplicate(applier, date, time)) {
     throw new HttpException(409, '이미 해당 시간 인강실을 신청했습니다.');
   }
 
@@ -100,10 +101,12 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 export const removeIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier } = await getUserIdentity(req);
   const date = getOnlyDate(new Date());
+  const time = req.params.time as NightTime;
+
   const ingangApplication = await IngangApplicationModel.findOne({
     applier,
     date,
-    time: req.body.time,
+    time,
   });
   if (!ingangApplication) throw new HttpException(404, '해당 시간 신청한 인강실이 없습니다.');
   await ingangApplication.remove();
