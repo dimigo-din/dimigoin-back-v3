@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { getUserIdentity } from '../resources/user';
-import { OutgoRequestModel, UserModel } from '../models';
-import { OutgoRequestStatus } from '../types';
+import { HttpException } from '../../exceptions';
+import { getUserIdentity } from '../../resources/user';
+import { OutgoRequestModel, UserModel } from '../../models';
+import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
   const user = await getUserIdentity(req);
