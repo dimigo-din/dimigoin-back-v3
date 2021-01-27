@@ -1,4 +1,4 @@
-name: Publish Docker image
+name: Docker Build and Deploy
 on: [push, pull_request]
 jobs:
   push_to_registry:
@@ -29,6 +29,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_ID }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}  
       -
+        name: Extract branch name from git ref
+        shell: bash
+        run: echo "::set-output name=branch::${GITHUB_REF#refs/heads/}"
+        id: extract_branch
+      -
         name: Push to Docker Hub (in Pull Request)
         if: ${{ github.event_name == 'pull_request' }}
         uses: docker/build-push-action@v2
@@ -38,7 +43,7 @@ jobs:
       -
         name: Push to Docker Hub (in Master Push)
         if: ${{ github.event_name == 'push' &&
-          github.head_ref == 'master' }}
+          steps.extract_branch.outputs.branch == 'master' }}
         uses: docker/build-push-action@v2
         with:
           push: true 
@@ -46,9 +51,11 @@ jobs:
 
   pull_from_registry:
     name: Pull Docker Image and Run
+    if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
     steps:
-    - name: Pull from Docker Hub and Run image
+    -
+      name: Pull from Docker Hub and Run image
       uses: appleboy/ssh-action@master
       with:
         host: ${{ secrets.SSH_HOSTNAME }}
@@ -77,4 +84,3 @@ jobs:
 #         target_url: http://edison.dimigo.hs.kr
 #         state: "failure"
 #         deployment_id: 0
-
