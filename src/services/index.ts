@@ -37,11 +37,11 @@ const createRouter = (routes: Route[]) => {
   return router;
 };
 
-const services = fs.readdirSync(__dirname)
+export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'))
   .map((s) => require(__dirname + '/' + s + '/routes').default);
 
-const routes = services.map((s) => {
+export const routes = services.map((s) => {
   return s.routes.map((r: Route): Route => ({
     ...r,
     path: s.baseURL + r.path,
