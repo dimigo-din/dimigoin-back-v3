@@ -2,12 +2,7 @@ import { Request, Response } from 'express';
 import {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
-} from '../models';
-
-export const getApplicationForm = async (req: Request, res: Response) => {
-  const form = await CircleApplicationQuestionModel.find();
-  res.json({ form });
-};
+} from '../../models';
 
 export const updateApplicationForm = async (req: Request, res: Response) => {
   const { form } = req.body;

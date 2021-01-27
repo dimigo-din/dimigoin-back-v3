@@ -21,6 +21,12 @@ export default {
       handler: controllers.createApplication,
     },
     {
+      method: 'get',
+      path: '/form',
+      allowedUserTypes: ['S', 'T'],
+      handler: controllers.getApplicationForm,
+    },
+    {
       method: 'patch',
       path: '/final/:circleId',
       allowedUserTypes: ['S'],

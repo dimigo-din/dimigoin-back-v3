@@ -34,6 +34,11 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
   });
 };
 
+export const getApplicationForm = async (req: Request, res: Response) => {
+  const form = await CircleApplicationQuestionModel.find();
+  res.json({ form });
+};
+
 export const createApplication = async (req: Request, res: Response) => {
   const config = await getEntireConfigs();
 
