@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { getUserIdentity } from '../resources/user';
-import { AfterschoolModel, AfterschoolApplicationModel } from '../models';
-import { HttpException } from '../exceptions';
+import { getUserIdentity } from '../../resources/user';
+import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
+import { HttpException } from '../../exceptions';
 
 export const applyAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
