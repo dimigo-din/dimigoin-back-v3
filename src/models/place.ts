@@ -1,4 +1,6 @@
- import { createSchema, Type, typedModel, ExtractDoc } from 'ts-mongoose';
+import {
+  createSchema, Type, typedModel, ExtractDoc,
+} from 'ts-mongoose';
 
 const placeSchema = createSchema({
   name: Type.string({ required: true, trim: true, unique: true }),
@@ -13,5 +15,5 @@ const PlaceModel = typedModel('Place', placeSchema);
 export {
   placeSchema,
   PlaceModel,
-  PlaceDoc,
+  PlaceDoc, // eslint-disable-line
 };

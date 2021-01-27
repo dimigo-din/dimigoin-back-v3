@@ -1,4 +1,5 @@
 import axios from 'axios';
+import config from '../config';
 import {
   getYYYYMMDD,
   getWeekStart,
@@ -69,9 +70,9 @@ const aliases: {
 const getAPIEndpoint = (grade: number, klass: number, date: Date) => (
   'https://open.neis.go.kr/hub/hisTimetable?'
   + 'Type=json&'
-  + 'KEY=a20bb8deb5b74e62869d828c790e0dc9&'
   + 'ATPT_OFCDC_SC_CODE=J10&'
   + 'SD_SCHUL_CODE=7530560&'
+  + `KEY=&${config.neisAPIKey}`
   + `GRADE=${grade}&`
   + `CLASS_NM=${klass}&`
   + `TI_FROM_YMD=${getYYYYMMDD(date)}&`
@@ -110,7 +111,6 @@ export const fetchWeeklyTimetable = async () => {
 };
 
 export const refreshWeeklyTimetable = async () => {
-  console.log(123);
   const weeklyTimetable = await fetchWeeklyTimetable();
 
   const today = new Date(TEMP_DATE);

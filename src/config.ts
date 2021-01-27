@@ -10,4 +10,5 @@ export default {
   apiId: process.env.DIMIAPI_ID!,
   apiPw: process.env.DIMIAPI_PW!,
   apiUrl: process.env.DIMIAPI_URL!,
+  neisAPIKey: process.env.NEIS_API_KEY!,
 };

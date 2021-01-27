@@ -4,7 +4,7 @@ import config from './config';
 
 dotenv.config();
 
-const port: number = Number(config.port) || 5000;
+const port: number = parseInt(config.port) || 5000;
 const { app } = new App();
 
 app
