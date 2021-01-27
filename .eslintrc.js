@@ -30,6 +30,7 @@ module.exports = {
         "class-methods-use-this": "off",
         "implicit-arrow-linebreak": "off",
         "no-return-await": "off",
+        "no-await-in-loop": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],
