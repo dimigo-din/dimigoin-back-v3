@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { NoticeModel } from '../models';
-import { getUserIdentity } from '../resources/user';
+import { HttpException } from '../../exceptions';
+import { NoticeModel } from '../../models';
+import { getUserIdentity } from '../../resources/user';
 
 export const getAllNotices = async (req: Request, res: Response) => {
   const notices = await NoticeModel.find({});
