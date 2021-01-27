@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { MealModel } from '../models';
-import { isValidDate, getWeekStart, getWeekEnd } from '../resources/date';
+import { HttpException } from '../../exceptions';
+import { MealModel } from '../../models';
+import { isValidDate, getWeekStart, getWeekEnd } from '../../resources/date';
 
 export const getAllMeals = async (req: Request, res: Response) => {
   const meals = await MealModel.find({});

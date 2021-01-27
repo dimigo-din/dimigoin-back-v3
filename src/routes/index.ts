@@ -7,7 +7,6 @@ import CircleApplierSelection from './circle-application-selection';
 import CircleManagementController from './circle-management';
 import ConfigController from './config';
 import IngangApplicationController from './ingang-application';
-import MealController from './meal';
 import OutgoRequestController from './outgo-request';
 import AttendanceLogController from './attendance-log';
 import PlaceController from './place';
@@ -26,7 +25,6 @@ const controllers = [
   new CircleApplierSelection(),
   new ConfigController(),
   new IngangApplicationController(),
-  new MealController(),
   new AttendanceLogController(),
   new PlaceController(),
   new NoticeController(),
