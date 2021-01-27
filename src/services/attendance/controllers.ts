@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { getOnlyDate, getTime } from '../resources/date';
-import { AttendanceLogModel, UserModel } from '../models';
-import { getUserIdentity } from '../resources/user';
-import { IUser } from '../interfaces';
+import { HttpException } from '../../exceptions';
+import { getOnlyDate, getTime } from '../../resources/date';
+import { AttendanceLogModel, UserModel } from '../../models';
+import { getUserIdentity } from '../../resources/user';
+import { IUser } from '../../interfaces';
 
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = await getUserIdentity(req);
@@ -79,7 +79,7 @@ export const myAttendanceStatus = async (req: Request, res: Response) => {
     .filter(({ student }) => (
       student.grade === grade
       && student.class === klass
-    ))
+    ));
 
   res.json({ myLogs });
 };

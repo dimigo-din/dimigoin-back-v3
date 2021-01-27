@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../exceptions';
-import { ICircleApplication } from '../interfaces';
+import { HttpException } from '../../exceptions';
+import { ICircleApplication } from '../../interfaces';
 import {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
   CircleModel,
-} from '../models';
-import { ConfigKeys, CirclePeriod } from '../types';
-import { getUserIdentity } from '../resources/user';
-import { getConfig, getEntireConfigs } from '../resources/config';
+} from '../../models';
+import { ConfigKeys, CirclePeriod } from '../../types';
+import { getUserIdentity } from '../../resources/user';
+import { getConfig, getEntireConfigs } from '../../resources/config';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await getConfig(ConfigKeys.circlePeriod);
