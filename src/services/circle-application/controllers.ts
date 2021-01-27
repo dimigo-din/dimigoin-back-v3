@@ -7,12 +7,11 @@ import {
   CircleModel,
 } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
-import { getUserIdentity } from '../../resources/user';
 import { getConfig, getEntireConfigs } from '../../resources/config';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await getConfig(ConfigKeys.circlePeriod);
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const applications = await CircleApplicationModel.findByApplier(user._id);
   const mappedApplications = await Promise.all(
     applications.map(async (application) => {
@@ -46,7 +45,7 @@ export const createApplication = async (req: Request, res: Response) => {
     throw new HttpException(406, '동아리 지원 기간이 아닙니다.');
   }
 
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const applied = await CircleApplicationModel.findByApplier(user._id);
   const application: ICircleApplication = req.body;
   application.applier = user._id;
@@ -81,7 +80,7 @@ export const createApplication = async (req: Request, res: Response) => {
 };
 
 export const finalSelection = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const applied = await CircleApplicationModel.findByApplier(user._id);
 
   if (applied.filter((v) => v.status === 'final').length > 0) {

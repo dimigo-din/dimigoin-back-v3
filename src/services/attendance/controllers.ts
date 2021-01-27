@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { getOnlyDate, getTime } from '../../resources/date';
 import { AttendanceLogModel, UserModel } from '../../models';
-import { getUserIdentity } from '../../resources/user';
 import { IUser } from '../../interfaces';
 
 export const getClassStatus = async (req: Request, res: Response) => {
-  const { grade, class: klass, userType } = await getUserIdentity(req);
+  const { grade, class: klass, userType } = req.user;
   if (userType !== 'T' && (
     grade !== parseInt(req.params.grade, 10)
       || klass !== parseInt(req.params.class, 10)
@@ -45,7 +44,7 @@ export const getClassStatus = async (req: Request, res: Response) => {
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
   const payload = req.body;
-  const { _id: student } = await getUserIdentity(req);
+  const { _id: student } = req.user;
 
   const date = getOnlyDate(new Date());
   const time = getTime(new Date());
@@ -69,7 +68,7 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
 };
 
 export const myAttendanceStatus = async (req: Request, res: Response) => {
-  const { grade, class: klass } = await getUserIdentity(req);
+  const { grade, class: klass } = req.user;
   const date = getOnlyDate(new Date());
   const myLogs = (await AttendanceLogModel
     .find({ date })

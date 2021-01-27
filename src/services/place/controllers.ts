@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { PlaceModel } from '../../models';
 import { HttpException } from '../../exceptions';
-import { getUserIdentity } from '../../resources/user';
 
 export const createPlace = async (req: Request, res: Response) => {
   const payload = req.body;
@@ -44,7 +43,7 @@ export const deletePlace = async (req: Request, res: Response) => {
 };
 
 export const getPrimaryPlaces = async (req: Request, res: Response) => {
-  const { grade, class: klass, gender } = await getUserIdentity(req);
+  const { grade, class: klass, gender } = req.user;
   const gp = async (name: string) =>
     (await PlaceModel.findOne({ name })).toJSON();
 

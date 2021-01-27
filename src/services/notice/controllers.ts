@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { NoticeModel } from '../../models';
-import { getUserIdentity } from '../../resources/user';
 
 export const getAllNotices = async (req: Request, res: Response) => {
   const notices = await NoticeModel.find({});
@@ -17,7 +16,7 @@ export const getNotice = async (req: Request, res: Response) => {
 
 export const getCurrentNotices = async (req: Request, res: Response) => {
   const now = new Date();
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const notices = await NoticeModel.find({
     ...(user.grade ? {
       targetGrade: { $all: [user.grade] },

@@ -1,11 +1,10 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { getUserIdentity } from '../../resources/user';
 import { OutgoRequestModel, UserModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
+  const user = req.user;
   let outgoRequests = await OutgoRequestModel
     .find({ applier: { $all: [user._id] } });
 
@@ -27,7 +26,7 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
 };
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const outgoRequest = await OutgoRequestModel
     .findById(req.params.outgoRequestId)
     .populateTs('approver');
@@ -49,7 +48,7 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
 
 export const createOutgoRequest = async (req: Request, res: Response) => {
   const request = req.body;
-  const user = await getUserIdentity(req);
+  const user = req.user;
   if (!request.applier.includes(user._id)) {
     throw new HttpException(403, '자신의 외출만 신청할 수 있습니다.');
   }

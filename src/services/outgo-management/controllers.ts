@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { OutgoRequestModel } from '../../models';
 import { HttpException } from '../../exceptions';
-import { getUserIdentity } from '../../resources/user';
 
 export const getAllOutgoRequests = async (req: Request, res: Response) => {
   const outgoRequests = await OutgoRequestModel
@@ -26,7 +25,7 @@ export const toggleOutgoRequestStatus = async (req: Request, res: Response) => {
     .populateTs('applier');
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청을 찾을 수 없습니다.');
 
-  const user = await getUserIdentity(req);
+  const user = req.user;
   if (outgoRequest.approver._id !== user._id) {
     throw new HttpException(403, '권한이 없습니다.');
   }

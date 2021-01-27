@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationModel } from '../../models';
 import { getOnlyDate, getWeekStart, getWeekEnd } from '../../resources/date';
-import { getUserIdentity } from '../../resources/user';
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
@@ -32,7 +31,7 @@ const getMaxApplicationPerIngang = async (grade: number) => {
 }
 
 export const getIngangStatus = async (req: Request, res: Response) => {
-  const { _id: applier, grade, class: klass } = await getUserIdentity(req);
+  const { _id: applier, grade, class: klass } = req.user;
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   const ingangMaxApplier = await getMaxApplicationPerIngang(grade);
@@ -51,7 +50,7 @@ export const getIngangStatus = async (req: Request, res: Response) => {
 };
 
 export const getAllIngangApplications = async (req: Request, res: Response) => {
-  const { userType, _id: applier } = await getUserIdentity(req);
+  const { userType, _id: applier } = req.user;
 
   const ingangApplications = await IngangApplicationModel
     .find(userType === 'S' ? { applier } : {})
@@ -60,7 +59,7 @@ export const getAllIngangApplications = async (req: Request, res: Response) => {
 };
 
 export const createIngangApplication = async (req: Request, res: Response) => {
-  const { _id: applier, grade } = await getUserIdentity(req);
+  const { _id: applier, grade } = req.user;
   const maxApply = await getMaxApplicationPerIngang(grade);
   const date = getOnlyDate(new Date());
   const time = req.params.time as NightTime;
@@ -99,7 +98,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 };
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
-  const { _id: applier } = await getUserIdentity(req);
+  const { _id: applier } = req.user;
   const date = getOnlyDate(new Date());
   const time = req.params.time as NightTime;
 

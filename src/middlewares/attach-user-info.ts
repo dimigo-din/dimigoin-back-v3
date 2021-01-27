@@ -6,7 +6,7 @@ const attachUserInfo = async (req: Request, res: Response, next: NextFunction) =
   const { token } = req;
   try {
     const identity = await verifyToken(token);
-    req.app.set('user', identity);
+    req.user = identity;
     next();
   } catch (error) {
     return next(error);

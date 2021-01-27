@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { CircleModel, CircleApplicationModel, UserModel } from '../../models';
-import { getUserIdentity } from '../../resources/user';
-
 export const getAllCircles = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const applications = await CircleApplicationModel.findByApplier(user._id);
   const appliedIds = await Promise.all(
     applications.map((application) => application.circle.toString()),

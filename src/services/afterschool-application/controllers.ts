@@ -1,12 +1,11 @@
 import { Request, Response } from 'express';
-import { getUserIdentity } from '../../resources/user';
 import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
 
 export const applyAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
   if (!afterschool) throw new HttpException(404, '해당 방과 후 수업이 존재하지 않습니다.');
-  const { _id: userId, grade, class: klass } = await getUserIdentity(req);
+  const { _id: userId, grade, class: klass } = req.user;
   if (
     !afterschool.grade.includes(grade)
     || !afterschool.class.includes(klass)
@@ -25,7 +24,7 @@ export const applyAfterschool = async (req: Request, res: Response) => {
 };
 
 export const cancelApplication = async (req: Request, res: Response) => {
-  const { _id: applier } = await getUserIdentity(req);
+  const { _id: applier } = req.user;
   const afterschoolApplication = await AfterschoolApplicationModel.findOne({
     afterschool: req.params.afterschoolId,
     applier,

@@ -2,11 +2,10 @@ import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { CircleApplicationModel, CircleModel, UserModel } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
-import { getUserIdentity } from '../../resources/user';
 import { getConfig } from '../../resources/config';
 
 export const getApplications = async (req: Request, res: Response) => {
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const circle = await CircleModel.findByChairs(user._id);
 
   const applications = await CircleApplicationModel
@@ -19,7 +18,7 @@ export const setApplierStatus = async (req: Request, res: Response) => {
   const applier = await UserModel.findById(req.params.applierId);
   if (!applier) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
-  const user = await getUserIdentity(req);
+  const user = req.user;
   const circle = await CircleModel.findByChairs(user._id);
   if (!circle) throw new HttpException(403, '권한이 없습니다.');
 

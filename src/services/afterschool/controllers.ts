@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { getUserIdentity } from '../../resources/user';
 import { AfterschoolModel } from '../../models';
 
 export const getAllAfterschools = async (req: Request, res: Response) => {
-  const { userType, grade, class: klass } = await getUserIdentity(req);
+  const { userType, grade, class: klass } = req.user;
   const afterschools = await AfterschoolModel.find(
     userType === 'T' ? {} : {
       grade: { $all: [grade] },

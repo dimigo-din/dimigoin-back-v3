@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { UserModel } from '../../models';
 import { reloadAllUsers, attachStudentInfo } from '../../resources/dimi-api';
-import { getUserIdentity } from '../../resources/user';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserModel.find();
@@ -11,7 +10,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 
 export const getAllStudents = async (req: Request, res: Response) => {
   let students = await UserModel.findStudents();
-  const user = await getUserIdentity(req);
+  const user = req.user;
   if (user.userType === 'S') {
     students = students.map((student) => {
       student.photo = [];
@@ -27,7 +26,7 @@ export const getAllTeachers = async (req: Request, res: Response) => {
 };
 
 export const decodeJWT = async (req: Request, res: Response) => {
-  const identity = await getUserIdentity(req);
+  const identity = req.user;
   res.json({ identity });
 };
 
