@@ -3,7 +3,6 @@ import mongoose from 'mongoose';
 
 import cors from 'cors';
 import bearerToken from 'express-bearer-token';
-import fileUpload from 'express-fileupload';
 import helmet from 'helmet';
 
 import { attachUserInfo, errorHandler } from './middlewares';
@@ -38,7 +37,6 @@ class App {
     this.app.use(helmet());
     this.app.use(cors());
     this.app.use(express.json());
-    this.app.use(fileUpload());
 
     this.app.use(bearerToken({
       headerKey: 'Bearer',
