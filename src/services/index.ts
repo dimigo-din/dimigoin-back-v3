@@ -1,12 +1,15 @@
-import { Router, RequestHandler, Request, Response, NextFunction } from 'express';
+import fs from 'fs';
+import Joi from 'joi';
+import {
+  Router, RequestHandler, Request, Response, NextFunction,
+} from 'express';
+
 import { HTTPMethod, UserType } from '../types';
 import { checkUserType, validator } from '../middlewares';
-import Joi from 'joi';
-import fs from 'fs';
 
 interface ValidateSchema {
   [key: string]: Joi.AnySchema;
-};
+}
 
 interface Route {
   method: HTTPMethod;
@@ -15,7 +18,7 @@ interface Route {
   handler: RequestHandler;
   validateSchema?: ValidateSchema;
   allowedUserTypes?: (UserType | '*')[];
-};
+}
 
 const wrapper = (asyncFn: any) =>
   (async (req: Request, res: Response, next: NextFunction) => {
@@ -25,7 +28,7 @@ const wrapper = (asyncFn: any) =>
       return next(error);
     }
   }
-);
+  );
 
 const createRouter = (routes: Route[]) => {
   const router = Router();
@@ -33,12 +36,12 @@ const createRouter = (routes: Route[]) => {
   routes.forEach((route) => {
     router[route.method](
       route.path,
-      ...(route.allowedUserTypes ?
-        [checkUserType(...route.allowedUserTypes)] : []),
-      ...(route.middlewares ?
-        route.middlewares : []),
-      ...(route.validateSchema ?
-        [validator(Joi.object(route.validateSchema))] : []),
+      ...(route.allowedUserTypes
+        ? [checkUserType(...route.allowedUserTypes)] : []),
+      ...(route.middlewares
+        ? route.middlewares : []),
+      ...(route.validateSchema
+        ? [validator(Joi.object(route.validateSchema))] : []),
       wrapper(route.handler),
     );
   });
@@ -48,13 +51,12 @@ const createRouter = (routes: Route[]) => {
 
 export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'))
-  .map((s) => require(__dirname + '/' + s + '/routes').default);
+  // eslint-disable-next-line
+  .map((s) => require(`${__dirname}/${s}/routes`).default);
 
-export const routes = services.map((s) => {
-  return s.routes.map((r: Route): Route => ({
-    ...r,
-    path: s.baseURL + r.path,
-  }),
-)}).reduce((a, s) => [...a, ...s]);
+export const routes = services.map((s) => s.routes.map((r: Route): Route => ({
+  ...r,
+  path: s.baseURL + r.path,
+}))).reduce((a, s) => [...a, ...s]);
 
 export const serviceRouter = createRouter(routes);
