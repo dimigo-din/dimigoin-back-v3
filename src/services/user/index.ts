@@ -1,6 +1,7 @@
 import * as controllers from './controllers';
 
 export default {
+  name: '사용자 조회 서비스',
   baseURL: '/user',
   routes: [
     {

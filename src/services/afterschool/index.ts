@@ -3,6 +3,7 @@ import * as controllers from './controllers';
 import { AfterschoolTimeValues, DayValues } from '../../types';
 
 export default {
+  name: '방과후 수업 서비스',
   baseURL: '/afterschool',
   routes: [
     {

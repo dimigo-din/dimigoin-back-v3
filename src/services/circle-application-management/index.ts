@@ -2,6 +2,7 @@ import Joi from 'joi';
 import * as controllers from './controllers';
 
 export default {
+  name: '동아리 지원 관리 서비스 (교사용)',
   baseURL: '/circle-application-management',
   routes: [
     {

@@ -2,6 +2,7 @@ import Joi from 'joi';
 import * as controllers from './controllers';
 
 export default {
+  name: '각종 실 관련 서비스',
   baseURL: '/place',
   routes: [
     {

@@ -6,7 +6,7 @@ import bearerToken from 'express-bearer-token';
 import helmet from 'helmet';
 
 import { attachUserInfo, errorHandler } from './middlewares';
-import { serviceRouter } from './services';
+import { serviceRouter, serviceDocsRouter } from './services';
 import config from './config';
 
 import { setCronJobs } from './resources/cron';
@@ -31,6 +31,7 @@ class App {
 
   private initializeRouter() {
     this.app.use('/', serviceRouter);
+    this.app.use('/docs', serviceDocsRouter);
   }
 
   private initializeMiddlewares() {

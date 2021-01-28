@@ -3,6 +3,7 @@ import * as controllers from './controllers';
 import { OutgoRequestStatus } from '../../types';
 
 export default {
+  name: '외출 신청 관리 서비스',
   baseURL: '/outgo-management',
   routes: [
     {

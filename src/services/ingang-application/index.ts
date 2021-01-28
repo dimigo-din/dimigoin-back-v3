@@ -1,6 +1,7 @@
 import * as controllers from './controllers';
 
 export default {
+  name: '인강실 신청 서비스',
   baseURL: '/ingang-application',
   routes: [
     {

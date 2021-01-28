@@ -2,6 +2,7 @@ import Joi from 'joi';
 import * as controllers from './controllers';
 
 export default {
+  name: '인증 서비스',
   baseURL: '/auth',
   routes: [
     {

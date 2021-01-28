@@ -1,6 +1,7 @@
 import * as controllers from './controllers';
 
 export default {
+  name: '시간표 서비스',
   baseURL: '/timetable',
   routes: [
     {

@@ -1,6 +1,7 @@
 import * as controllers from './controllers';
 
 export default {
+  name: '방과후 수강 신청 서비스',
   baseURL: '/afterschool-application',
   routes: [
     {

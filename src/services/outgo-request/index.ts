@@ -1,7 +1,9 @@
 import Joi from 'joi';
+import { Service } from '../index';
 import * as controllers from './controllers';
 
 export default {
+  name: '외출 신청 서비스',
   baseURL: '/outgo-request',
   routes: [
     {
@@ -33,4 +35,4 @@ export default {
       handler: controllers.createOutgoRequest,
     },
   ],
-};
+} as Service;
