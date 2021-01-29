@@ -91,6 +91,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
   const ingangApplication = new IngangApplicationModel();
   Object.assign(ingangApplication, {
     ...req.body,
+    time,
     applier,
   });
   await ingangApplication.save();

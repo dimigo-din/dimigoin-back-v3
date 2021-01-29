@@ -15,9 +15,9 @@ const ingangApplicationSchema = createSchema({
 type IngangApplicationDoc = ExtractDoc<typeof ingangApplicationSchema>;
 
 const IngangApplicationModel = typedModel('IngangApplicationModel', ingangApplicationSchema, undefined, undefined, {
-  async checkDuplicatedApplication(applier: ObjectId, date: Date, time: NightTime) {
+  checkDuplicatedApplication: async function(applier: ObjectId, date: Date, time: NightTime) {
     date = getOnlyDate(date);
-    return !!(await this.findOne({
+    return !!(await IngangApplicationModel.findOne({
       applier,
       time,
       date,
