@@ -9,7 +9,7 @@ import { attachUserInfo, errorHandler } from './middlewares';
 import { serviceRouter, serviceDocsRouter } from './services';
 import config from './config';
 
-import { setCronJobs } from './resources/cron';
+import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
 import { ConfigModel } from './models/config';
@@ -26,9 +26,11 @@ class App {
     this.initializeMiddlewares();
     this.connectMongoDB();
     this.initializeRouter();
-    this.initializeErrorhandlers();
+    this.initializeErrorHandlers();
     this.initializeSettings();
-    this.initializeCronJobs();
+    if (process.env.NODE_ENV === 'prod') {
+      this.initializeCronJobs();
+    }
   }
 
   private initializeRouter() {
@@ -48,7 +50,7 @@ class App {
     this.app.use(attachUserInfo);
   }
 
-  private initializeErrorhandlers() {
+  private initializeErrorHandlers() {
     this.app.use(errorHandler);
   }
 
@@ -134,7 +136,7 @@ class App {
   }
 
   private async initializeCronJobs() {
-    await setCronJobs();
+    await setCronJobsAndRun();
   }
 }
 
