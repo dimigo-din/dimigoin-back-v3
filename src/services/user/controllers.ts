@@ -1,15 +1,15 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { UserModel } from '../../models';
+import * as User from '../../models/user';
 import { reloadAllUsers, attachStudentInfo } from '../../resources/dimi-api';
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await UserModel.find();
+  const users = await User.model.find();
   res.json({ users });
 };
 
 export const getAllStudents = async (req: Request, res: Response) => {
-  let students = await UserModel.findStudents();
+  let students = await User.findStudents();
   const user = req.user;
   if (user.userType === 'S') {
     students = students.map((student) => {
@@ -21,7 +21,7 @@ export const getAllStudents = async (req: Request, res: Response) => {
 };
 
 export const getAllTeachers = async (req: Request, res: Response) => {
-  const teachers = await UserModel.findTeachers();
+  const teachers = await User.model.findTeachers();
   res.json({ teachers });
 };
 

@@ -31,6 +31,7 @@ module.exports = {
         "implicit-arrow-linebreak": "off",
         "no-return-await": "off",
         "no-await-in-loop": "off",
+        "new-cap": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],

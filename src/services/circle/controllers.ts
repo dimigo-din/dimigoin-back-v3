@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { CircleModel, CircleApplicationModel, UserModel } from '../../models';
+import * as User from '../../models/user';
+import { CircleModel, CircleApplicationModel } from '../../models';
 
 export const getAllCircles = async (req: Request, res: Response) => {
   const { user } = req;
@@ -29,8 +30,8 @@ export const getOneCircle = async (req: Request, res: Response) => {
 };
 
 export const createCircle = async (req: Request, res: Response) => {
-  const chair = await UserModel.findStudentById(req.body.chair);
-  const viceChair = await UserModel.findStudentById(req.body.viceChair);
+  const chair = await User.model.findStudentById(req.body.chair);
+  const viceChair = await User.model.findStudentById(req.body.viceChair);
   if (!chair || !viceChair) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
   const circle = await new CircleModel({

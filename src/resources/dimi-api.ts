@@ -4,7 +4,7 @@ import {
   IStudentIdentity,
   IUserIdentity,
 } from '../interfaces/dimi-api';
-import { UserModel } from '../models';
+import * as User  from '../models/user';
 import config from '../config';
 
 const apiRouter = {
@@ -45,12 +45,12 @@ export const reloadAllUsers = async () => {
   const { data: users } = await api.get(apiRouter.getAllUsers);
   Object.keys(users).forEach(async (idx) => {
     users[idx] = restructureUserIdentity(users[idx]);
-    const user = await UserModel.findOne({ idx: users[idx].idx });
+    const user = await User.model.findOne({ idx: users[idx].idx });
     if (!user) {
       // eslint-disable-next-line
-      await UserModel.create(users[idx]).catch((e) => console.error(e));
+      await User.model.create(users[idx]).catch((e) => console.error(e));
     } else {
-      await UserModel.updateOne({ idx: users[idx].idx }, users[idx]);
+      await User.model.updateOne({ idx: users[idx].idx }, users[idx]);
     }
   });
 };
@@ -60,7 +60,7 @@ export const attachStudentInfo = async () => {
   const students: IStudentIdentity[] = data;
   await Promise.all(
     students.map(async (student) => {
-      await UserModel.updateOne(
+      await User.model.updateOne(
         { idx: student.user_id },
         {
           grade: student.grade,

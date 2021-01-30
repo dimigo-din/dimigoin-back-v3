@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { AfterschoolModel } from '../../models';
+import * as Afterschool from '../../models/afterschool';
 
 export const getAllAfterschools = async (req: Request, res: Response) => {
   const { userType, grade, class: klass } = req.user;
-  const afterschools = await AfterschoolModel.find(
+  const afterschools = await Afterschool.model.find(
     userType === 'T' ? {} : {
       grade: { $all: [grade] },
       class: { $all: [klass] },
@@ -14,12 +14,12 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
 };
 
 export const getAfterschool = async (req: Request, res: Response) => {
-  const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
+  const afterschool = await Afterschool.model.findById(req.params.afterschoolId);
   res.json({ afterschool });
 };
 
 export const createAfterschool = async (req: Request, res: Response) => {
-  const afterschool = new AfterschoolModel(req.body);
+  const afterschool = new Afterschool.model(req.body);
   await afterschool.save();
   res.json({ afterschool });
 };

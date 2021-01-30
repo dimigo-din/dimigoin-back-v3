@@ -4,14 +4,14 @@ import {
 } from 'ts-mongoose';
 import { ConfigKeys } from '../types';
 import { ConfigModel } from './config';
-import { userSchema } from './user';
+import * as User from './user';
 
 const circleSchema = createSchema({
   name: Type.string({ required: true, unique: true, trim: true }),
   imageKey: Type.string({ required: true }),
   description: Type.string({ required: true }),
-  chair: Type.ref(Type.objectId()).to('User', userSchema),
-  viceChair: Type.ref(Type.objectId()).to('User', userSchema),
+  chair: Type.ref(Type.objectId()).to('User', User.schema),
+  viceChair: Type.ref(Type.objectId()).to('User', User.schema),
   videoLink: Type.string({ required: true }),
   category: Type.string({
     required: true,

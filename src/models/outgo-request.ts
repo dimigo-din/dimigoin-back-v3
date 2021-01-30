@@ -2,12 +2,12 @@ import {
   createSchema, Type, typedModel,
 } from 'ts-mongoose';
 import { OutgoRequestStatus } from '../types';
-import { userSchema } from './user';
+import * as User from './user';
 
 const outgoRequestSchema = createSchema({
   applier: Type.array({ required: true })
-    .of(Type.ref(Type.objectId({ required: true })).to('User', userSchema)),
-  approver: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+    .of(Type.ref(Type.objectId({ required: true })).to('User', User.schema)),
+  approver: Type.ref(Type.objectId({ required: true })).to('User', User.schema),
   reason: Type.string({ required: true }),
   detailReason: Type.string({ default: '' }),
   duration: Type.object({ required: true }).of({

@@ -10,7 +10,7 @@ import {
   UserType,
 } from '../types';
 
-const userSchema = createSchema({
+export const schema = createSchema({
   idx: Type.number({ required: true, unique: true }),
   username: Type.string({ required: true, unique: true }),
   name: Type.string({ required: true }),
@@ -24,27 +24,38 @@ const userSchema = createSchema({
   photo: Type.array({ select: false }).of(Type.string()),
 }, { versionKey: false, timestamps: true });
 
-type UserDoc = ExtractDoc<typeof userSchema>;
+export type doc = ExtractDoc<typeof schema>;
 
-const UserModel = typedModel('User', userSchema, undefined, undefined, {
-  findByIdx(idx: number): UserDoc {
-    return this.findOne({ idx });
-  },
-  findBySerial(serial: number): UserDoc {
-    return this.findOne({ serial });
-  },
-  findStudentById(id: ObjectId): UserDoc {
-    return this.findOne({ userType: 'S', _id: id });
-  },
-  findByUserType(userType: UserType[]): UserDoc[] {
-    return this.find({ userType: { $in: userType } });
-  },
-  findStudents(): UserDoc[] {
-    return this.find({ userType: 'S' });
-  },
-  findTeachers(): UserDoc[] {
-    return this.findByUserType(['D', 'T']);
-  },
-});
+export const model = typedModel('User', schema);
 
-export { userSchema, UserModel };
+const findByIdx = async (idx: number) => {
+  return await await model.findOne({ idx });
+};
+const findBySerial = async (serial: number) => {
+  return await model.findOne({ serial });
+};
+
+const findStudentById = async (id: ObjectId) => {
+  return await model.findOne({ userType: 'S', _id: id });
+};
+
+const findByUserType = async (userType: UserType[]) => {
+  return await model.find({ userType: { $in: userType } });
+};
+
+const findStudents = async () => {
+  return await model.find({ userType: 'S' });
+};
+
+const findTeachers = async () => {
+  return await model.findByUserType(['D', 'T']);
+};
+
+export {
+  findByIdx,
+  findBySerial,
+  findStudentById,
+  findByUserType,
+  findStudents,
+  findTeachers,
+};
