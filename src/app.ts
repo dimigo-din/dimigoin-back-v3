@@ -13,8 +13,10 @@ import { setCronJobs } from './resources/cron';
 
 // Defualt Setting
 import { ConfigModel } from './models/config';
-import { ConfigKeys, CirclePeriod } from './types';
-import { PlaceModel, PlaceDoc } from './models';
+import {
+  ConfigKeys, CirclePeriod, Grade, Class,
+} from './types';
+import { PlaceModel } from './models';
 
 class App {
   public app: express.Application;
@@ -92,38 +94,42 @@ class App {
   private async initializePlaces() {
     const registeredPlaces = await PlaceModel.find({});
 
-    const places: Array<PlaceDoc> = [
-      new PlaceModel({ name: '비즈쿨실', location: '본관 1층' }),
-      new PlaceModel({ name: '안정실', location: '본관 1층' }),
-      new PlaceModel({ name: '큐브', location: '본관 2층' }),
-      new PlaceModel({ name: '시청각실', location: '신관 1층' }),
-      new PlaceModel({ name: '세미나실', location: '신관 1층' }),
-      new PlaceModel({ name: '학봉관', location: '학봉관' }),
-      new PlaceModel({ name: '우정학사', location: '우정학사' }),
-      new PlaceModel({ name: '영어 전용 교실', location: '신관 1층' }),
-      new PlaceModel({ name: '열람실', location: '신관 3층' }),
+    const places = [
+      { name: '비즈쿨실', location: '본관 1층' },
+      { name: '안정실', location: '본관 1층' },
+      { name: '큐브', location: '본관 2층' },
+      { name: '시청각실', location: '신관 1층' },
+      { name: '세미나실', location: '신관 1층' },
+      { name: '학봉관', location: '학봉관' },
+      { name: '우정학사', location: '우정학사' },
+      { name: '영어 전용 교실', location: '신관 1층' },
+      { name: '열람실', location: '신관 3층' },
     ];
+
+    const getClassLocation = (grade: Grade, klass: Class) => {
+      if (grade === 3) return '신관 2층';
+      if (grade === 2) return '본관 2층';
+      if (klass <= 4) return '본관 1층';
+      return '본관 2층';
+    };
 
     // 교실 추가
     for (let grade = 1; grade <= 3; grade += 1) {
       for (let klass = 1; klass <= 6; klass += 1) {
-        places.push(new PlaceModel({
+        places.push({
           name: `${grade}학년 ${klass}반`,
-          location: (() => {
-            if (grade === 3) return '신관 2층';
-            if (grade === 2) return '본관 2층';
-            if (klass <= 4) return '본관 1층';
-            return '본관 2층';
-          })(),
-          description: '교실',
-        }));
+          location: getClassLocation(
+            grade as Grade,
+            klass as Class,
+          ),
+        });
       }
     }
 
     await Promise.all(
       places
         .filter((p) => !registeredPlaces.find((r) => r.name === p.name))
-        .map((p) => p.save()),
+        .map((p) => new PlaceModel(p).save()),
     );
   }
 
