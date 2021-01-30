@@ -48,10 +48,6 @@ export const editMealByDate = async (req: Request, res: Response) => {
 };
 
 export const createMeal = async (req: Request, res: Response) => {
-  const meal = new MealModel();
-  Object.assign(meal, req.body);
-
-  await meal.save();
-
+  const meal = await new MealModel(req.body).save();
   res.json({ meal });
 };

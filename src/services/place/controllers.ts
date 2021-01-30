@@ -25,10 +25,7 @@ export const getPlace = async (req: Request, res: Response) => {
 export const editPlace = async (req: Request, res: Response) => {
   const place = await PlaceModel.findById(req.params.placeId);
   if (!place) throw new HttpException(404, '해당 장소가 없습니다.');
-
-  const payload = req.body;
-  Object.assign(place, payload);
-
+  Object.assign(place, req.body);
   await place.save();
   res.json({ place });
 };

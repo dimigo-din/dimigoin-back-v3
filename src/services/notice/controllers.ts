@@ -16,7 +16,7 @@ export const getNotice = async (req: Request, res: Response) => {
 
 export const getCurrentNotices = async (req: Request, res: Response) => {
   const now = new Date();
-  const user = req.user;
+  const { user } = req;
   const notices = await NoticeModel.find({
     ...(user.grade ? {
       targetGrade: { $all: [user.grade] },
@@ -39,10 +39,6 @@ export const editNotice = async (req: Request, res: Response) => {
 };
 
 export const createNotice = async (req: Request, res: Response) => {
-  const notice = new NoticeModel();
-  Object.assign(notice, req.body);
-
-  await notice.save();
-
+  const notice = await new NoticeModel(req.body).save();
   res.json({ notice });
 };
