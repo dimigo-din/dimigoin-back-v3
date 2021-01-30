@@ -52,22 +52,20 @@ export const getPrimaryPlaces = async (req: Request, res: Response) => {
     { label: '안정실', ...await gp('안정실') },
     {
       label: '세탁',
-      ...(
-        gender === 'M' ? await gp('학봉관') : await gp('우정학사')
-      ),
+      ...({
+        M: await gp('학봉관'),
+        F: await gp('우정학사'),
+      }[gender]),
     },
-    // { label: '동아리' },
+    {
+      label: '인강실',
+      ...([
+        await gp('영어 전용 교실'),
+        await gp('비즈쿨실'),
+        await gp('열람실'),
+      ][grade - 1]),
+    },
   ];
-
-  if (grade !== 3) {
-    primaryPlaces.push(
-      {
-        label: '인강실',
-        ...(grade === 1 ? await gp('영어 전용 교실')
-          : await gp('비즈쿨실')),
-      },
-    );
-  }
 
   res.json({ places: primaryPlaces });
 };
