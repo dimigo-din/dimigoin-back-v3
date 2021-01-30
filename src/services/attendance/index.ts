@@ -7,9 +7,9 @@ export default {
   routes: [
     {
       method: 'get',
-      path: '/date/:date/grade/:grade/class/:class',
-      allowedUserTypes: ['S', 'T'],
-      handler: controllers.getClassStatus,
+      path: '/',
+      allowedUserTypes: ['S'],
+      handler: controllers.getMyAttendanceLogs,
     },
     {
       method: 'post',
@@ -23,9 +23,9 @@ export default {
     },
     {
       method: 'get',
-      path: '/my-status',
-      allowedUserTypes: ['S'],
-      handler: controllers.myAttendanceStatus,
+      path: '/date/:date/grade/:grade/class/:class',
+      allowedUserTypes: ['S', 'T'],
+      handler: controllers.getClassStatus,
     },
   ],
 };

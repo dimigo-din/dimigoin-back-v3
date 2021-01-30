@@ -1,8 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { getOnlyDate, getTime } from '../../resources/date';
-import { AttendanceLogModel, UserModel } from '../../models';
-import { IUser } from '../../interfaces';
+import { getDayStart, getOnlyDate } from '../../resources/date';
+import { AttendanceLogModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = req.user;
@@ -14,7 +13,7 @@ export const getClassStatus = async (req: Request, res: Response) => {
   }
 
   const date = getOnlyDate(new Date());
-  const logsInClass = (await AttendanceLogModel
+  const logs = (await AttendanceLogModel
     .find({ date })
     .populateTs('student')
     .populateTs('place'))
@@ -23,23 +22,7 @@ export const getClassStatus = async (req: Request, res: Response) => {
       && student.class === klass
     ));
 
-  const studentsInClass = await UserModel.find({
-    grade,
-    class: klass,
-  });
-
-  const reducedLogs = studentsInClass.reduce(
-    (reduced: any, student: IUser) => {
-      const studentCode = `${student.serial} ${student.name}`;
-      reduced[studentCode] = logsInClass.filter(
-        (log) => log.student.serial === student.serial,
-      );
-      return reduced;
-    },
-    {},
-  );
-
-  res.json({ classLogs: reducedLogs });
+  res.json({ logs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
@@ -47,12 +30,9 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   const { _id: student } = req.user;
 
   const date = getOnlyDate(new Date());
-  const time = getTime(new Date());
-  if (!time) throw new HttpException(423, '출입 인증을 할 수 없는 시간입니다.');
 
   const attendanceLog = new AttendanceLogModel({
     student,
-    time,
     date,
     ...payload,
   });
@@ -67,11 +47,10 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   res.json({ attendanceLog: populatedLog });
 };
 
-export const myAttendanceStatus = async (req: Request, res: Response) => {
+export const getMyAttendanceLogs = async (req: Request, res: Response) => {
   const { grade, class: klass } = req.user;
-  const date = getOnlyDate(new Date());
-  const myLogs = (await AttendanceLogModel
-    .find({ date })
+  const logs = (await AttendanceLogModel
+    .find({ date: { $gte: getDayStart(new Date()) } })
     .populateTs('student')
     .populateTs('place')
     .sort('-createdAt'))
@@ -80,5 +59,5 @@ export const myAttendanceStatus = async (req: Request, res: Response) => {
       && student.class === klass
     ));
 
-  res.json({ myLogs });
+  res.json({ logs });
 };

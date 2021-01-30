@@ -27,6 +27,18 @@ export const getTomorrow = (date: Date): Date => {
   return new Date(date.setDate(date.getDate() + 1));
 };
 
+export const getDayStart = (date: Date): Date => {
+  date = new Date(date); // Clone date object
+  date.setHours(0, 0, 0, 0);
+  return date;
+};
+
+export const getDayEnd = (date: Date): Date => {
+  date = new Date(date); // Clone date object
+  date.setHours(23, 59, 59, 999);
+  return date;
+};
+
 export const getYYYYMMDD = (date: Date): string => date.toISOString().substring(0, 10).replace(/-/g, '');
 
 export const getTime = (date: Date): Time | null => {
