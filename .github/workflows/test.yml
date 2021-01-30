@@ -22,3 +22,11 @@ jobs:
     -
       name: Run test
       run: yarn test
+      env:
+      SERVER_PORT=${{ secrets.SERVER_PORT }}
+      DIMIAPI_URL=${{ secrets.DIMIAPI_URL }}
+      DIMIAPI_ID=${{ secrets.DIMIAPI_ID }}
+      DIMIAPI_PW=${{ secrets.DIMIAPI_PW }}
+      JWT_SECRET=${{ secrets.JWT_SECRET }}
+      MONGO_URI=${{ secrets.MONGO_URI }}
+      NEIS_API_KEY=${{ secrets.NEIS_API_KEY }}

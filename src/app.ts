@@ -30,6 +30,8 @@ class App {
     this.initializeSettings();
     if (process.env.NODE_ENV === 'prod') {
       this.initializeCronJobs();
+    } else if (process.env.NODE_ENV === 'test') {
+      this.initializeTestEnv();
     }
   }
 
