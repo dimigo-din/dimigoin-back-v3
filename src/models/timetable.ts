@@ -5,8 +5,7 @@ const timetableSchema = createSchema({
   date: Type.date({ required: true }),
   grade: Type.number({ required: true, enum: GradeValues }),
   class: Type.number({ required: true, enum: ClassValues }),
-  subject: Type.string({ required: true, trim: true }),
-  period: Type.number({ required: true }),
+  sequence: Type.array({ required: true }).of(Type.string()),
 }, { versionKey: false, timestamps: true });
 
 const TimetableModel = typedModel('Timetable', timetableSchema);
