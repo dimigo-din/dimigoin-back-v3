@@ -8,7 +8,7 @@ import {
 } from '../resources/date';
 import { TimetableModel } from '../models';
 
-const TEMP_DATE = '2020-11-30';
+const TEMP_DATE = '2020-06-30';
 
 const aliases: {
   [key: string]: string;

@@ -23,5 +23,16 @@ export const getWeeklyTimetable = async (req: Request, res: Response) => {
     class: klass,
   });
 
-  res.json({ timetable: data });
+  const timetable = Array.from(
+    { length: 5 },
+    (v, day) => {
+      const dayClasseNames = data
+        .filter((c) => c.date.getDay() === day + 1)
+        .sort((a, b) => a.period - b.period)
+        .map((c) => c.subject);
+      return dayClasseNames;
+    },
+  );
+
+  res.json({ timetable });
 };
