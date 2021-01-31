@@ -6,7 +6,7 @@ import {
   getWeekEnd,
   getTomorrow,
 } from '../resources/date';
-import { TimetableModel } from '../models';
+import * as Timetable from '../models/timetable';
 
 const TEMP_DATE = '2020-11-15';
 
@@ -129,12 +129,12 @@ export const refreshWeeklyTimetable = async () => {
   const weekStart = getWeekStart(today);
   const weekEnd = getWeekEnd(today);
 
-  await TimetableModel.deleteMany({
+  await Timetable.model.deleteMany({
     date: {
       $gte: weekStart,
       $lte: weekEnd,
     },
   });
 
-  await TimetableModel.insertMany(weeklyTimetable);
+  await Timetable.model.insertMany(weeklyTimetable);
 };

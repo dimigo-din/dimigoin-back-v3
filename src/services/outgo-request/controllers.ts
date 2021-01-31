@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import * as User from '../../models/user';
-import { OutgoRequestModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
+import * as User from '../../models/user';
+import * as OutgoRequest from '../../models/outgo-request';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
   const user = req.user;
-  let outgoRequests = await OutgoRequestModel
+  let outgoRequests = await OutgoRequest.model
     .find({ applier: { $all: [user._id] } });
 
   // todo: Populate function으로 리팩토링 해야 함
@@ -28,7 +28,7 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
   const user = req.user;
-  const outgoRequest = await OutgoRequestModel
+  const outgoRequest = await OutgoRequest.model
     .findById(req.params.outgoRequestId)
     .populateTs('approver');
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청이 없습니다.');
@@ -64,13 +64,10 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
     throw new HttpException(400, '외출 신청 시간을 확인해 주세요.');
   }
 
-  const outgoRequest = new OutgoRequestModel();
-  Object.assign(outgoRequest, {
+  const outgoRequest = await new OutgoRequest.model({
     ...request,
     status: OutgoRequestStatus.applied,
-  });
-
-  await outgoRequest.save();
+  }).save();
 
   res.json({
     outgoRequest: {

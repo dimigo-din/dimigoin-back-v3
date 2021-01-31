@@ -1,18 +1,17 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { ICircleApplication } from '../../interfaces';
-import {
-  CircleApplicationModel,
-  CircleApplicationQuestionModel,
-  CircleModel,
-} from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
 import * as Config from '../../models/config';
+import * as Circle from '../../models/circle';
+import * as CircleApplication from '../../models/circle-application';
+import * as CircleApplicationQuestion
+  from '../../models/circle-application-question';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await Config.getValueByKey(ConfigKeys.circlePeriod);
   const user = req.user;
-  const applications = await CircleApplicationModel.findByApplier(user._id);
+  const applications = await CircleApplication.findByApplier(user._id);
   const mappedApplications = await Promise.all(
     applications.map(async (application) => {
       if (period === CirclePeriod.application) application.status = 'applied';
@@ -20,7 +19,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
               && application.status.includes('interview')) {
         application.status = 'document-pass';
       }
-      const circle = await CircleModel.findById(application.circle)
+      const circle = await Circle.model.findById(application.circle)
         .populate('chair', ['name', 'serial'])
         .populate('viceChair', ['name', 'serial']);
       application.circle = circle;
@@ -34,7 +33,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
 };
 
 export const getApplicationForm = async (req: Request, res: Response) => {
-  const form = await CircleApplicationQuestionModel.find();
+  const form = await CircleApplicationQuestion.model.find();
   res.json({ form });
 };
 
@@ -46,7 +45,7 @@ export const createApplication = async (req: Request, res: Response) => {
   }
 
   const user = req.user;
-  const applied = await CircleApplicationModel.findByApplier(user._id);
+  const applied = await CircleApplication.findByApplier(user._id);
   const application: ICircleApplication = req.body;
   application.applier = user._id;
 
@@ -59,7 +58,7 @@ export const createApplication = async (req: Request, res: Response) => {
   }
 
   const answeredIds: string[] = Object.keys(application.form).sort();
-  const questions = await CircleApplicationQuestionModel.find();
+  const questions = await CircleApplicationQuestion.model.find();
   const questionIds = questions.map((v) => v._id.toString()).sort();
   if (JSON.stringify(answeredIds) !== JSON.stringify(questionIds)) {
     throw new HttpException(400, '지원서 양식이 올바르지 않습니다.');
@@ -73,7 +72,7 @@ export const createApplication = async (req: Request, res: Response) => {
   if (invalidAnswers.length > 0) {
     throw new HttpException(400, '지원서 양식이 올바르지 않습니다.');
   }
-  const newCircleApplication = new CircleApplicationModel();
+  const newCircleApplication = new CircleApplication.model();
   Object.assign(newCircleApplication, application);
   await newCircleApplication.save();
   res.json({ application });
@@ -81,7 +80,7 @@ export const createApplication = async (req: Request, res: Response) => {
 
 export const finalSelection = async (req: Request, res: Response) => {
   const user = req.user;
-  const applied = await CircleApplicationModel.findByApplier(user._id);
+  const applied = await CircleApplication.findByApplier(user._id);
 
   if (applied.filter((v) => v.status === 'final').length > 0) {
     throw new HttpException(409, '이미 최종 결정을 한 지원자입니다.');

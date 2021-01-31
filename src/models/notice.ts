@@ -2,7 +2,7 @@ import {
   createSchema, Type, typedModel,
 } from 'ts-mongoose';
 
-const noticeSchema = createSchema({
+export const schema = createSchema({
   title: Type.string({ required: true, trim: true }),
   content: Type.string({ required: true, trim: true }),
   targetGrade: Type.array({ required: true }).of(Type.number()),
@@ -10,9 +10,4 @@ const noticeSchema = createSchema({
   endDate: Type.date({ required: true }),
 }, { versionKey: false, timestamps: true });
 
-const NoticeModel = typedModel('Notice', noticeSchema);
-
-export {
-  noticeSchema,
-  NoticeModel,
-};
+export const model = typedModel('Notice', schema);

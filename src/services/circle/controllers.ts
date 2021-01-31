@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import * as User from '../../models/user';
-import { CircleModel, CircleApplicationModel } from '../../models';
+import * as CircleApplication from '../../models/circle-application';
+import * as Circle from '../../models/circle';
 
 export const getAllCircles = async (req: Request, res: Response) => {
   const { user } = req;
-  const applications = await CircleApplicationModel.findByApplier(user._id);
+  const applications = await CircleApplication.findByApplier(user._id);
   const appliedIds = await Promise.all(
     applications.map((application) => application.circle.toString()),
   );
-  const circleModels = await CircleModel.find()
+  const circleModels = await Circle.model.find()
     .populate('chair', ['name', 'serial'])
     .populate('viceChair', ['name', 'serial']);
   const circles = await Promise.all(circleModels.map((circle) => {
@@ -23,7 +24,7 @@ export const getAllCircles = async (req: Request, res: Response) => {
 
 export const getOneCircle = async (req: Request, res: Response) => {
   const { circleId } = req.params;
-  const circle = await CircleModel.findById(circleId)
+  const circle = await Circle.model.findById(circleId)
     .populate('chair', ['name', 'serial'])
     .populate('viceChair', ['name', 'serial']);
   res.json({ circle });
@@ -34,7 +35,7 @@ export const createCircle = async (req: Request, res: Response) => {
   const viceChair = await User.model.findStudentById(req.body.viceChair);
   if (!chair || !viceChair) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
-  const circle = await new CircleModel({
+  const circle = await new Circle.model({
     ...req.body,
     image: `CIRCLE_PROFILE/${req.body.name}.png`,
   }).save();
@@ -42,7 +43,7 @@ export const createCircle = async (req: Request, res: Response) => {
 };
 
 export const removeCircle = async (req: Request, res: Response) => {
-  const circle = await CircleModel.findById(req.params.circleId);
+  const circle = await Circle.model.findById(req.params.circleId);
   if (!circle) throw new HttpException(404, '해당 동아리를 찾을 수 없습니다.');
   await circle.remove();
   res.json({ circle });

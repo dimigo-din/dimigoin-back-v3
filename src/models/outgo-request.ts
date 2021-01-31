@@ -4,7 +4,7 @@ import {
 import { OutgoRequestStatus } from '../types';
 import * as User from './user';
 
-const outgoRequestSchema = createSchema({
+export const schema = createSchema({
   applier: Type.array({ required: true })
     .of(Type.ref(Type.objectId({ required: true })).to('User', User.schema)),
   approver: Type.ref(Type.objectId({ required: true })).to('User', User.schema),
@@ -21,9 +21,4 @@ const outgoRequestSchema = createSchema({
   }),
 }, { versionKey: false, timestamps: true });
 
-const OutgoRequestModel = typedModel('OutgoRequest', outgoRequestSchema);
-
-export {
-  outgoRequestSchema,
-  OutgoRequestModel,
-};
+export const model = typedModel('OutgoRequest', schema);

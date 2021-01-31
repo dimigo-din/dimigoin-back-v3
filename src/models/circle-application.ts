@@ -3,18 +3,13 @@ import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
 import { CircleApplicationStatusValues } from '../types';
-import { circleSchema } from './circle';
+import * as Circle from './circle';
 import * as User from './user';
 
-const circleApplicationQuestionSchema = createSchema({
-  question: Type.string({ required: true, trim: true, unique: true }),
-  maxLength: Type.number({ required: true }),
-}, { versionKey: false, timestamps: true });
-
-const circleApplicationSchema = createSchema({
+export const schema = createSchema({
   applier: Type.ref(Type.objectId()).to('User', User.schema),
   form: Type.mixed({ required: true }),
-  circle: Type.ref(Type.objectId()).to('Circle', circleSchema),
+  circle: Type.ref(Type.objectId()).to('Circle', Circle.schema),
   status: Type.string({
     required: true,
     default: 'applied',
@@ -22,27 +17,29 @@ const circleApplicationSchema = createSchema({
   }),
 }, { versionKey: false, timestamps: true });
 
-type CircleApplicationDoc = ExtractDoc<typeof circleApplicationSchema>;
+export type doc = ExtractDoc<typeof schema>;
 
-const CircleApplicationQuestionModel = typedModel('CircleApplicationQuestion', circleApplicationQuestionSchema);
-const CircleApplicationModel = typedModel('CircleApplication', circleApplicationSchema, undefined, undefined, {
-  findByApplier(applier: ObjectId): CircleApplicationDoc[] {
-    return this.find({ applier });
-  },
-  findPopulatedByCircle(circle: ObjectId): CircleApplicationDoc[] {
-    return this.find({ circle }).populate('applier', ['name', 'serial', 'photo']);
-  },
-  findByCircle(circle: ObjectId): CircleApplicationDoc[] {
-    return this.find({ circle });
-  },
-  findByCircleApplier(circle: ObjectId, applier: ObjectId): CircleApplicationDoc {
-    return this.findOne({ circle, applier });
-  },
-});
+export const model = typedModel('CircleApplication', schema);
+
+const findByApplier = async (applier: ObjectId): Promise<doc[]> => {
+  return await model.find({ applier });
+};
+
+const findPopulatedByCircle = async (circle: ObjectId): Promise<doc[]> => {
+  return await model.find({ circle }).populate('applier', ['name', 'serial', 'photo']);
+};
+
+const findByCircle = async (circle: ObjectId): Promise<doc[]> => {
+  return await model.find({ circle });
+};
+
+const findByCircleApplier = async (circle: ObjectId, applier: ObjectId): Promise<doc> => {
+  return await model.findOne({ circle, applier });
+};
 
 export {
-  circleApplicationQuestionSchema,
-  circleApplicationSchema,
-  CircleApplicationQuestionModel,
-  CircleApplicationModel,
+  findByApplier,
+  findPopulatedByCircle,
+  findByCircle,
+  findByCircleApplier,
 };

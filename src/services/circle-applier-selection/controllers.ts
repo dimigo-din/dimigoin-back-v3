@@ -1,15 +1,16 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { CircleApplicationModel, CircleModel } from '../../models';
+import { ConfigKeys, CirclePeriod } from '../../types';
 import * as User from '../../models/user';
 import * as Config from '../../models/config';
-import { ConfigKeys, CirclePeriod } from '../../types';
+import * as Circle from '../../models/circle';
+import * as CircleApplication from '../../models/circle-application';
 
 export const getApplications = async (req: Request, res: Response) => {
   const user = req.user;
-  const circle = await CircleModel.findByChairs(user._id);
+  const circle = await Circle.model.findByChairs(user._id);
 
-  const applications = await CircleApplicationModel
+  const applications = await CircleApplication.model
     .findPopulatedByCircle(circle._id);
 
   res.json({ applications });
@@ -20,10 +21,10 @@ export const setApplierStatus = async (req: Request, res: Response) => {
   if (!applier) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
   const user = req.user;
-  const circle = await CircleModel.findByChairs(user._id);
+  const circle = await Circle.model.findByChairs(user._id);
   if (!circle) throw new HttpException(403, '권한이 없습니다.');
 
-  const application = await CircleApplicationModel.findByCircleApplier(circle._id, applier._id);
+  const application = await CircleApplication.findByCircleApplier(circle._id, applier._id);
   if (!application) throw new HttpException(404, '해당 지원서를 찾을 수 없습니다.');
 
   const { status } = req.body;

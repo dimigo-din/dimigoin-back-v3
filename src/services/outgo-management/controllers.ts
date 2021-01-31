@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { OutgoRequestModel } from '../../models';
 import { HttpException } from '../../exceptions';
+import * as OutgoRequest from '../../models/outgo-request';
 
 export const getAllOutgoRequests = async (req: Request, res: Response) => {
-  const outgoRequests = await OutgoRequestModel
+  const outgoRequests = await OutgoRequest.model
     .find({})
     .populateTs('approver')
     .populateTs('applier');
@@ -11,7 +11,7 @@ export const getAllOutgoRequests = async (req: Request, res: Response) => {
 };
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
-  const outgoRequest = await OutgoRequestModel
+  const outgoRequest = await OutgoRequest.model
     .findById(req.params.outgoRequestId)
     .populateTs('approver')
     .populateTs('applier');
@@ -19,7 +19,7 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
 };
 
 export const toggleOutgoRequestStatus = async (req: Request, res: Response) => {
-  const outgoRequest = await OutgoRequestModel
+  const outgoRequest = await OutgoRequest.model
     .findById(req.params.outgoRequestId)
     .populateTs('approver')
     .populateTs('applier');
