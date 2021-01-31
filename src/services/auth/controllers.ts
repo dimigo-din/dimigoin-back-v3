@@ -8,7 +8,7 @@ import { IUser } from '../../interfaces';
 
 const getIdentityWithPhoto = async (userIdx: number): Promise<IUser> => {
   const { photo } = await User.model.findOne({ idx: userIdx }).select('photo');
-  const identity = await User.model.findByIdx(userIdx) as IUser;
+  const identity = await User.findByIdx(userIdx) as IUser;
   identity.photo = photo;
   return identity;
 };

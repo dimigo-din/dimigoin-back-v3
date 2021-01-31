@@ -29,7 +29,7 @@ export type doc = ExtractDoc<typeof schema>;
 export const model = typedModel('User', schema);
 
 const findByIdx = async (idx: number) => {
-  return await await model.findOne({ idx });
+  return await model.findOne({ idx });
 };
 const findBySerial = async (serial: number) => {
   return await model.findOne({ serial });

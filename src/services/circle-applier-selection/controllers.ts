@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import * as User from '../../models/user';
 import { CircleApplicationModel, CircleModel } from '../../models';
+import * as User from '../../models/user';
+import * as Config from '../../models/config';
 import { ConfigKeys, CirclePeriod } from '../../types';
-import { getConfig } from '../../resources/config';
 
 export const getApplications = async (req: Request, res: Response) => {
   const user = req.user;
@@ -27,7 +27,7 @@ export const setApplierStatus = async (req: Request, res: Response) => {
   if (!application) throw new HttpException(404, '해당 지원서를 찾을 수 없습니다.');
 
   const { status } = req.body;
-  const period = await getConfig(ConfigKeys.circlePeriod);
+  const period = await Config.getValueByKey(ConfigKeys.circlePeriod);
 
   if ((period === CirclePeriod.application && !status.includes('document'))
       || (period === CirclePeriod.interview && !status.includes('interview'))

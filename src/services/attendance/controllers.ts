@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { getDayStart, getOnlyDate } from '../../resources/date';
-import { AttendanceLogModel } from '../../models';
+import * as AttendanceLog from '../../models/attendance-log';
 import * as User from '../../models/user';
 
 export const getClassStatus = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ export const getClassStatus = async (req: Request, res: Response) => {
 
   const studentsWithLogs = await Promise.all(
     studentsInClass.map(async (student) => {
-      const logs = await AttendanceLogModel.find({
+      const logs = await AttendanceLog.model.find({
         date,
         student: student._id,
       });
@@ -38,7 +38,7 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
 
   const date = getOnlyDate(new Date());
 
-  const attendanceLog = new AttendanceLogModel({
+  const attendanceLog = new AttendanceLog.model({
     student,
     date,
     ...payload,
@@ -46,17 +46,17 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
 
   await attendanceLog.save();
 
-  const populatedLog = await AttendanceLogModel
+  const populatedLog = await AttendanceLog.model
     .findById(attendanceLog._id)
-    .populateTs('place')
-    .populateTs('student');
+    // .populateTs('place')
+    // .populateTs('student');
 
   res.json({ attendanceLog: populatedLog });
 };
 
 export const getMyAttendanceLogs = async (req: Request, res: Response) => {
   const { grade, class: klass } = req.user;
-  const logs = (await AttendanceLogModel
+  const logs = (await AttendanceLog.model
     .find({ date: { $gte: getDayStart(new Date()) } })
     .populateTs('student')
     .populateTs('place')

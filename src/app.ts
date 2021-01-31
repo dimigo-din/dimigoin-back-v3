@@ -12,15 +12,15 @@ import config from './config';
 import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
-import { ConfigModel } from './models/config';
 import {
   ConfigKeys, CirclePeriod, Grade, Class,
 } from './types';
-import { PlaceModel } from './models';
+import * as Place from './models/place';
+import * as Config from './models/config';
 
 class App {
   public app: express.Application;
-
+  
   constructor() {
     this.app = express();
     this.initializeMiddlewares();
@@ -78,12 +78,12 @@ class App {
     };
 
     const keys = Object.values(ConfigKeys);
-    const configDocs = await ConfigModel.find({});
+    const configDocs = await Config.model.find({});
 
     /* eslint-disable */
     for (const key of keys) {
       if (configDocs.find((d) => d.key === key)) continue;
-      await new ConfigModel({
+      await new Config.model({
         key,
         value: defaultConfigs[key],
       }).save();
@@ -92,7 +92,7 @@ class App {
   }
 
   private async initializePlaces() {
-    const registeredPlaces = await PlaceModel.find({});
+    const registeredPlaces = await Place.model.find({});
 
     const places = [
       { name: '비즈쿨실', location: '본관 1층' },
@@ -129,7 +129,7 @@ class App {
     await Promise.all(
       places
         .filter((p) => !registeredPlaces.find((r) => r.name === p.name))
-        .map((p) => new PlaceModel(p).save()),
+        .map((p) => new Place.model(p).save()),
     );
   }
 

@@ -2,18 +2,12 @@ import {
   createSchema, Type, typedModel, ExtractDoc,
 } from 'ts-mongoose';
 
-const placeSchema = createSchema({
+export const schema = createSchema({
   name: Type.string({ required: true, trim: true, unique: true }),
   location: Type.string({ required: true, trim: true }),
   description: Type.string({ trim: true }),
 }, { versionKey: false, timestamps: true });
 
-type PlaceDoc = ExtractDoc<typeof placeSchema>;
+export type doc = ExtractDoc<typeof schema>;
 
-const PlaceModel = typedModel('Place', placeSchema);
-
-export {
-  placeSchema,
-  PlaceModel,
-  PlaceDoc, // eslint-disable-line
-};
+export const model = typedModel('Place', schema);

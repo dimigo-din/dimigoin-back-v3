@@ -1,29 +1,29 @@
 import { Request, Response } from 'express';
-import { PlaceModel } from '../../models';
+import * as Place from '../../models/place';
 import { HttpException } from '../../exceptions';
 
 export const createPlace = async (req: Request, res: Response) => {
   const payload = req.body;
-  const place = new PlaceModel(payload);
+  const place = new Place.model(payload);
   await place.save();
 
   res.json({ place });
 };
 
 export const getAllPlaces = async (req: Request, res: Response) => {
-  const places = await PlaceModel.find({});
+  const places = await Place.model.find({});
 
   res.json({ places });
 };
 
 export const getPlace = async (req: Request, res: Response) => {
-  const place = await PlaceModel.findById(req.params.placeId);
+  const place = await Place.model.findById(req.params.placeId);
   if (!place) throw new HttpException(404, '해당 장소가 없습니다.');
   res.json({ place });
 };
 
 export const editPlace = async (req: Request, res: Response) => {
-  const place = await PlaceModel.findById(req.params.placeId);
+  const place = await Place.model.findById(req.params.placeId);
   if (!place) throw new HttpException(404, '해당 장소가 없습니다.');
   Object.assign(place, req.body);
   await place.save();
@@ -31,7 +31,7 @@ export const editPlace = async (req: Request, res: Response) => {
 };
 
 export const deletePlace = async (req: Request, res: Response) => {
-  const place = await PlaceModel.findById(req.params.placeId);
+  const place = await Place.model.findById(req.params.placeId);
   if (!place) throw new HttpException(404, '해당 장소가 없습니다.');
 
   await place.remove();
@@ -42,7 +42,7 @@ export const deletePlace = async (req: Request, res: Response) => {
 export const getPrimaryPlaces = async (req: Request, res: Response) => {
   const { grade, class: klass, gender } = req.user;
   const gp = async (name: string) =>
-    (await PlaceModel.findOne({ name })).toJSON();
+    (await Place.model.findOne({ name })).toJSON();
 
   const primaryPlaces = [
     { label: '교실', ...await gp(`${grade}학년 ${klass}반`) },

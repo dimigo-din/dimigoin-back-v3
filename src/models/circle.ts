@@ -3,7 +3,7 @@ import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
 import { ConfigKeys } from '../types';
-import { ConfigModel } from './config';
+import * as Config from './config';
 import * as User from './user';
 
 const circleSchema = createSchema({
@@ -16,7 +16,8 @@ const circleSchema = createSchema({
   category: Type.string({
     required: true,
     validate: async (value: string) => {
-      const { value: category } = await ConfigModel.findOne({ key: ConfigKeys.circleCategory });
+      const { value: category } =
+        await Config.model.findOne({ key: ConfigKeys.circleCategory });
       return category.includes(value);
     },
   }),

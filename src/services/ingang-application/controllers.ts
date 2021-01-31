@@ -1,18 +1,18 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import * as Ingang from '../../models/ingang-application';
 import { getOnlyDate } from '../../resources/date';
-import { getConfig } from '../../resources/config';
 import { ConfigKeys, NightTime } from '../../types';
+import * as Ingang from '../../models/ingang-application';
+import * as Config from '../../models/config';
 
 const getMaxApplicationPerIngang = async (grade: number) => {
-  return (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
+  return (await Config.getValueByKey(ConfigKeys.ingangMaxAppliers))[grade];
 };
 
 export const getIngangStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
 
-  const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
+  const weeklyTicketCount = await Config.getValueByKey(ConfigKeys.weeklyIngangTicketCount);
   const ingangMaxApplier = await getMaxApplicationPerIngang(grade);
 
   const weeklyUsedTicket = await Ingang.getWeeklyUsedTicket(applier);
@@ -60,7 +60,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 
   // 티켓 개수 이상으로 신청했는지 확인
   const weeklyUsedTicket = await Ingang.getWeeklyUsedTicket(applier);
-  const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
+  const weeklyTicketCount = await Config.getValueByKey(ConfigKeys.weeklyIngangTicketCount);
   if (weeklyTicketCount <= weeklyUsedTicket) {
     throw new HttpException(409, '이번 주 인강실 티켓을 모두 사용했습니다.');
   }

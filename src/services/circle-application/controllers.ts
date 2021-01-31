@@ -7,10 +7,10 @@ import {
   CircleModel,
 } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
-import { getConfig, getEntireConfigs } from '../../resources/config';
+import * as Config from '../../models/config';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
-  const period = await getConfig(ConfigKeys.circlePeriod);
+  const period = await Config.getValueByKey(ConfigKeys.circlePeriod);
   const user = req.user;
   const applications = await CircleApplicationModel.findByApplier(user._id);
   const mappedApplications = await Promise.all(
@@ -28,7 +28,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
     }),
   );
   res.json({
-    maxApplyCount: getConfig(ConfigKeys.circleMaxApply),
+    maxApplyCount: await Config.getValueByKey(ConfigKeys.circleMaxApply),
     applications: mappedApplications,
   });
 };
@@ -39,7 +39,7 @@ export const getApplicationForm = async (req: Request, res: Response) => {
 };
 
 export const createApplication = async (req: Request, res: Response) => {
-  const config = await getEntireConfigs();
+  const config = await Config.getEntire();
 
   if (config[ConfigKeys.circlePeriod] !== 'APPLICATION') {
     throw new HttpException(406, '동아리 지원 기간이 아닙니다.');
@@ -91,7 +91,7 @@ export const finalSelection = async (req: Request, res: Response) => {
 
   if (!final) throw new HttpException(404, '해당 지원서가 존재하지 않습니다.');
 
-  const period = await getConfig(ConfigKeys.circlePeriod);
+  const period = await Config.getValueByKey(ConfigKeys.circlePeriod);
 
   if (period !== CirclePeriod.final || final.status !== 'interview-pass') {
     throw new HttpException(403, '합격한 동아리에만 최종 선택을 할 수 있습니다.');
