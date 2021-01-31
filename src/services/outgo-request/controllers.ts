@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { OutgoRequestModel, UserModel } from '../../models';
+import * as User from '../../models/user';
+import { OutgoRequestModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
@@ -13,9 +14,9 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
   outgoRequests = await Promise.all(outgoRequests.map(async (request) => {
     request = request.toJSON();
     const applier = await Promise.all(
-      request.applier.map(async (applier_) => await UserModel.findById(applier_)),
+      request.applier.map(async (applier_) => await User.model.findById(applier_)),
     );
-    const approver = await UserModel.findById(request.approver);
+    const approver = await User.model.findById(request.approver);
     return {
       ...request,
       applier,
@@ -39,9 +40,9 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
       ...outgoRequest.toJSON(),
       applier: await Promise.all(
         outgoRequest.applier.map(async (applier) =>
-          await UserModel.findById(applier)),
+          await User.model.findById(applier)),
       ),
-      // approver: await UserModel.findById(outgoRequest.approver),
+      // approver: await User.model.findById(outgoRequest.approver),
     },
   });
 };
@@ -53,7 +54,7 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
     throw new HttpException(403, '자신의 외출만 신청할 수 있습니다.');
   }
 
-  const { userType: approverType } = await UserModel.findById(request.approver);
+  const { userType: approverType } = await User.model.findById(request.approver);
   if (approverType !== 'T') {
     throw new HttpException(403, '승인자는 교사여야 합니다.');
   }
@@ -76,7 +77,7 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
       ...outgoRequest.toJSON(),
       applier: await Promise.all(
         outgoRequest.applier.map(async (applier) =>
-          await UserModel.findById(applier)),
+          await User.model.findById(applier)),
       ),
     },
   });

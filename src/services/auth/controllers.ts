@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { IAccount } from '../../interfaces/dimi-api';
-import { UserModel } from '../../models';
+import * as User from '../../models/user';
 import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { IUser } from '../../interfaces';
 
 const getIdentityWithPhoto = async (userIdx: number): Promise<IUser> => {
-  const { photo } = await UserModel.findOne({ idx: userIdx }).select('photo');
-  const identity = await UserModel.findByIdx(userIdx) as IUser;
+  const { photo } = await User.model.findOne({ idx: userIdx }).select('photo');
+  const identity = await User.model.findByIdx(userIdx) as IUser;
   identity.photo = photo;
   return identity;
 };

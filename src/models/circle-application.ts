@@ -4,7 +4,7 @@ import {
 } from 'ts-mongoose';
 import { CircleApplicationStatusValues } from '../types';
 import { circleSchema } from './circle';
-import { userSchema } from './user';
+import * as User from './user';
 
 const circleApplicationQuestionSchema = createSchema({
   question: Type.string({ required: true, trim: true, unique: true }),
@@ -12,7 +12,7 @@ const circleApplicationQuestionSchema = createSchema({
 }, { versionKey: false, timestamps: true });
 
 const circleApplicationSchema = createSchema({
-  applier: Type.ref(Type.objectId()).to('User', userSchema),
+  applier: Type.ref(Type.objectId()).to('User', User.schema),
   form: Type.mixed({ required: true }),
   circle: Type.ref(Type.objectId()).to('Circle', circleSchema),
   status: Type.string({

@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { CircleApplicationModel, CircleModel, UserModel } from '../../models';
+import * as User from '../../models/user';
+import { CircleApplicationModel, CircleModel } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
 import { getConfig } from '../../resources/config';
 
@@ -15,7 +16,7 @@ export const getApplications = async (req: Request, res: Response) => {
 };
 
 export const setApplierStatus = async (req: Request, res: Response) => {
-  const applier = await UserModel.findById(req.params.applierId);
+  const applier = await User.model.findById(req.params.applierId);
   if (!applier) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
   const user = req.user;
