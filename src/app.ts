@@ -28,9 +28,7 @@ class App {
     this.initializeRouter();
     this.initializeErrorHandlers();
     this.initializeSettings();
-    if (process.env.NODE_ENV === 'prod') {
-      this.initializeCronJobs();
-    }
+    this.initializeCronJobs();
   }
 
   private initializeRouter() {
