@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { getDayStart, getOnlyDate } from '../../resources/date';
-import { AttendanceLogModel } from '../../models';
+import { AttendanceLogModel, UserModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = req.user;
@@ -13,16 +13,22 @@ export const getClassStatus = async (req: Request, res: Response) => {
   }
 
   const date = getOnlyDate(new Date());
-  const logs = (await AttendanceLogModel
-    .find({ date })
-    .populateTs('student')
-    .populateTs('place'))
-    .filter(({ student }) => (
-      student.grade === grade
-      && student.class === klass
-    ));
+  const studentsInClass = await UserModel
+    .find({ grade, class: klass });
 
-  res.json({ logs });
+  const studentsWithLogs = await Promise.all(
+    studentsInClass.map(async (student) => {
+      const logs = await AttendanceLogModel.find({
+        date,
+        student: student._id,
+      });
+      return {
+        student,
+        logs,
+      };
+    }),
+  );
+  res.json({ logs: studentsWithLogs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
