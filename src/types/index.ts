@@ -21,6 +21,13 @@ export enum OutgoRequestStatus {
   approved = 'APPROVED',
 }
 
+export enum PlaceType {
+  ingang = 'INGANG',
+  classroom = 'CLASSROOM',
+  circle = 'CIRCLE',
+  etc = 'ETC',
+}
+
 export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
 export const DayValues = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'] as const;
@@ -64,5 +71,3 @@ export type TokenType = typeof TokenTypeValues[number];
 
 export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
-
-export const PlaceTypeValues = ['CLASSROOM', 'ETC'];
