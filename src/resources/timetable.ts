@@ -1,8 +1,6 @@
 import axios from 'axios';
 import config from '../config';
 import {
-  getWeekStart,
-  getWeekEnd,
   getWeekStartString,
   getWeekEndString,
   getTomorrowDateString,
@@ -68,14 +66,10 @@ export const fetchWeeklyTimetable = async () => {
 export const refreshWeeklyTimetable = async () => {
   const weeklyTimetable = await fetchWeeklyTimetable();
 
-  const today = new Date(TEMP_DATE);
-  const weekStart = getWeekStart(today);
-  const weekEnd = getWeekEnd(today);
-
   await TimetableModel.deleteMany({
     date: {
-      $gte: weekStart,
-      $lte: weekEnd,
+      $gte: getWeekStartString(TEMP_DATE),
+      $lte: getWeekEndString(TEMP_DATE),
     },
   });
 

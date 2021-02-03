@@ -95,6 +95,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     ...req.body,
     time,
     applier,
+    today,
   }).save();
   res.json({ ingangApplication });
 };
