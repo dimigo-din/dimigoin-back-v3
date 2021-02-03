@@ -1,16 +1,15 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { MealModel } from '../../models';
-import { isValidDate, getWeekStartString, getWeekEndString, getTodayDateString } from '../../resources/date';
+import {
+  isValidDate, getWeekStartString, getWeekEndString, getTodayDateString,
+} from '../../resources/date';
 
 export const getWeeklyMeals = async (req: Request, res: Response) => {
-  const weekStart = getWeekStartString();
-  const weekEnd = getWeekEndString();
-
   const meals = await MealModel.find({
     date: {
-      $gte: weekStart,
-      $lte: weekEnd,
+      $gte: getWeekStartString(),
+      $lte: getWeekEndString(),
     },
   });
 
@@ -47,7 +46,7 @@ export const createMeal = async (req: Request, res: Response) => {
 
   const meal = await new MealModel({
     date,
-    ...req.body
+    ...req.body,
   }).save();
   res.json({ meal });
 };
