@@ -3,7 +3,7 @@ import { userSchema } from './user';
 import { placeSchema } from './place';
 
 const attendanceLogSchema = createSchema({
-  date: Type.date({ required: true }),
+  date: Type.string({ required: true }),
   student: Type.ref(Type.objectId()).to('User', userSchema),
   remark: Type.string({ required: true, trim: true }),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),

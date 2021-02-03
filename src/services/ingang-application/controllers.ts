@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationModel } from '../../models';
-import { getOnlyDate, getWeekStart, getWeekEnd } from '../../resources/date';
+import { getTodayDateString, getWeekStartString, getWeekEndString } from '../../resources/date';
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
@@ -10,15 +10,15 @@ const getWeeklyUsedTicket = async (applier: ObjectID) => {
   return await IngangApplicationModel.countDocuments({
     applier,
     date: {
-      $gte: getWeekStart(new Date()),
-      $lte: getWeekEnd(new Date()),
+      $gte: getWeekStartString(),
+      $lte: getWeekEndString(),
     },
   });
 }
 
 const getApplicationsByClass = async (grade: number, klass: number) => {
   return (await IngangApplicationModel
-    .find({ date: getOnlyDate(new Date()) })
+    .find({ date: getTodayDateString() })
     .populateTs('applier'))
     .filter((application) => (
       application.applier.grade === grade
@@ -49,11 +49,14 @@ export const getIngangStatus = async (req: Request, res: Response) => {
   });
 };
 
-export const getAllIngangApplications = async (req: Request, res: Response) => {
+export const getTodayIngangApplications = async (req: Request, res: Response) => {
   const { userType, _id: applier } = req.user;
 
   const ingangApplications = await IngangApplicationModel
-    .find(userType === 'S' ? { applier } : {})
+    .find({
+      ...(userType === 'S' ? { applier } : {}),
+      date: getTodayDateString(),
+    })
     .populateTs('applier');
   res.json({ ingangApplications });
 };
@@ -61,17 +64,17 @@ export const getAllIngangApplications = async (req: Request, res: Response) => {
 export const createIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier, grade } = req.user;
   const maxApply = await getMaxApplicationPerIngang(grade);
-  const date = getOnlyDate(new Date());
+  const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
   const checkDuplicate = IngangApplicationModel.checkDuplicatedApplication;
 
-  if (await checkDuplicate(applier, date, time)) {
+  if (await checkDuplicate(applier, today, time)) {
     throw new HttpException(409, '이미 해당 시간 인강실을 신청했습니다.');
   }
 
   const todayAll = await IngangApplicationModel.find({
-    date,
+    today,
     time,
   }).populateTs('applier');
 
@@ -88,24 +91,23 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     throw new HttpException(409, '이번 주 인강실 티켓을 모두 사용했습니다.');
   }
 
-  const ingangApplication = new IngangApplicationModel();
-  Object.assign(ingangApplication, {
+  const ingangApplication = await new IngangApplicationModel({
     ...req.body,
     time,
     applier,
-  });
-  await ingangApplication.save();
+    today,
+  }).save();
   res.json({ ingangApplication });
 };
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
   const { _id: applier } = req.user;
-  const date = getOnlyDate(new Date());
+  const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
   const ingangApplication = await IngangApplicationModel.findOne({
     applier,
-    date,
+    today,
     time,
   });
   if (!ingangApplication) throw new HttpException(404, '해당 시간 신청한 인강실이 없습니다.');

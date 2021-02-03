@@ -3,7 +3,7 @@ import {
 } from 'ts-mongoose';
 
 const mealSchema = createSchema({
-  date: Type.date({ required: true, unique: true }),
+  date: Type.string({ required: true, unique: true }),
   breakfast: Type.array({ required: true }).of(Type.string()),
   lunch: Type.array({ required: true }).of(Type.string()),
   dinner: Type.array({ required: true }).of(Type.string()),
