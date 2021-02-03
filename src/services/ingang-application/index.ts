@@ -8,7 +8,7 @@ export default {
       method: 'get',
       path: '/',
       allowedUserTypes: ['S', 'T'],
-      handler: controllers.getAllIngangApplications,
+      handler: controllers.getTodayIngangApplications,
     },
     {
       method: 'get',

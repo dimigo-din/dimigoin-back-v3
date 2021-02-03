@@ -1,18 +1,11 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { MealModel } from '../../models';
-import { isValidDate, getWeekStart, getWeekEnd } from '../../resources/date';
-
-export const getAllMeals = async (req: Request, res: Response) => {
-  const meals = await MealModel.find({});
-
-  res.json({ meals });
-};
+import { isValidDate, getWeekStartString, getWeekEndString, getTodayDateString } from '../../resources/date';
 
 export const getWeeklyMeals = async (req: Request, res: Response) => {
-  const today = new Date();
-  const weekStart = getWeekStart(today);
-  const weekEnd = getWeekEnd(today);
+  const weekStart = getWeekStartString();
+  const weekEnd = getWeekEndString();
 
   const meals = await MealModel.find({
     date: {
@@ -25,7 +18,8 @@ export const getWeeklyMeals = async (req: Request, res: Response) => {
 };
 
 export const getMealByDate = async (req: Request, res: Response) => {
-  const date = new Date(req.params.date);
+  let { date } = req.params;
+  if (date === 'today') date = getTodayDateString();
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
 
   const meal = await MealModel.findOne({ date });
@@ -35,7 +29,7 @@ export const getMealByDate = async (req: Request, res: Response) => {
 };
 
 export const editMealByDate = async (req: Request, res: Response) => {
-  const date = new Date(req.params.date);
+  const { date } = req.params;
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
 
   const meal = await MealModel.findOne({ date });
@@ -48,6 +42,12 @@ export const editMealByDate = async (req: Request, res: Response) => {
 };
 
 export const createMeal = async (req: Request, res: Response) => {
-  const meal = await new MealModel(req.body).save();
+  const { date } = req.params;
+  if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+  const meal = await new MealModel({
+    date,
+    ...req.body
+  }).save();
   res.json({ meal });
 };

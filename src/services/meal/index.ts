@@ -7,26 +7,19 @@ export default {
   routes: [
     {
       method: 'get',
-      path: '/',
-      allowedUserTypes: '*',
-      handler: controllers.getAllMeals,
-    },
-    {
-      method: 'get',
       path: '/weekly',
       handler: controllers.getWeeklyMeals,
     },
     {
       method: 'get',
-      path: '/:date',
+      path: '/date/:date',
       handler: controllers.getMealByDate,
     },
     {
       method: 'post',
-      path: '/',
+      path: '/date/:date',
       allowedUserTypes: ['T', 'S'],
       validateSchema: {
-        date: Joi.date().required(),
         breakfast: Joi.array().items(Joi.string()).required(),
         lunch: Joi.array().items(Joi.string()).required(),
         dinner: Joi.array().items(Joi.string()).required(),
@@ -35,7 +28,7 @@ export default {
     },
     {
       method: 'patch',
-      path: '/:date',
+      path: '/date/:date',
       allowedUserTypes: ['T'],
       validateSchema: {
         date: Joi.date(),
