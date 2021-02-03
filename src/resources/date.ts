@@ -18,6 +18,10 @@ export const getOnlyDate = (date: Date): Date => new Date(
 
 export const getTodayDateString = () => moment().format(format);
 
+export const getKoreanTodayFullString = () => moment().format(
+  'YYYY년 MM월 DD일 HH시 MM분'
+);
+
 export const getWeekStartString = (date?: string) => {
   if (date) return moment(date).startOf('week').format(format);
   return moment().startOf('week').format(format);
