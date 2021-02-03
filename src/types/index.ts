@@ -64,3 +64,5 @@ export type TokenType = typeof TokenTypeValues[number];
 
 export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
+
+export const PlaceTypeValues = ['CLASSROOM', 'ETC'];

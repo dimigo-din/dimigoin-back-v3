@@ -104,7 +104,7 @@ class App {
       { name: '우정학사', location: '우정학사' },
       { name: '영어 전용 교실', location: '신관 1층' },
       { name: '열람실', location: '신관 3층' },
-    ];
+    ].map((p) => ({ ...p, type: 'ETC' }));
 
     const getClassLocation = (grade: Grade, klass: Class) => {
       if (grade === 3) return '신관 2층';
@@ -122,6 +122,7 @@ class App {
             grade as Grade,
             klass as Class,
           ),
+          type: 'CLASSROOM',
         });
       }
     }

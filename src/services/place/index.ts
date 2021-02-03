@@ -23,6 +23,7 @@ export default {
       allowedUserTypes: ['S'],
       validateSchema: {
         name: Joi.string(),
+        type: Joi.string(),
         location: Joi.string(),
         description: Joi.string(),
       },
@@ -34,6 +35,7 @@ export default {
       allowedUserTypes: '*',
       validateSchema: {
         name: Joi.string().required(),
+        type: Joi.string(),
         location: Joi.string().required(),
         description: Joi.string(),
       },
