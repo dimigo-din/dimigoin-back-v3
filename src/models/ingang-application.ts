@@ -12,7 +12,7 @@ const ingangApplicationSchema = createSchema({
   date: Type.string({ required: true, default: getTodayDateString() }),
 }, { versionKey: false, timestamps: true });
 
-type IngangApplicationDoc = ExtractDoc<typeof ingangApplicationSchema>;
+export type IngangApplicationDoc = ExtractDoc<typeof ingangApplicationSchema>;
 
 const IngangApplicationModel = typedModel('IngangApplication', ingangApplicationSchema, undefined, undefined, {
   async checkDuplicatedApplication(applier: ObjectId, date: string, time: NightTime) {
@@ -26,5 +26,6 @@ const IngangApplicationModel = typedModel('IngangApplication', ingangApplication
 
 export {
   ingangApplicationSchema,
+  // IngangApplicationDoc,
   IngangApplicationModel,
 };
