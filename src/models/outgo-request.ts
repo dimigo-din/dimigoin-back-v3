@@ -11,6 +11,7 @@ const outgoRequestSchema = createSchema({
   reason: Type.string({ required: true }),
   detailReason: Type.string({ default: '' }),
   duration: Type.object({ required: true }).of({
+    // 시간 관련 정보도 필요하므로 Date Object 사용
     start: Type.date({ required: true }),
     end: Type.date({ required: true }),
   }),
