@@ -68,17 +68,16 @@ class App {
 
   private async initializeConfigs() {
     const keys = Object.values(ConfigKeys);
-    const configDocs = await ConfigModel.find({});
+    const registerdKeys = (await ConfigModel.find({})).map((c) => c.key);
 
-    /* eslint-disable */
-    for (const key of keys) {
-      if (configDocs.find((d) => d.key === key)) continue;
-      await new ConfigModel({
-        key,
-        value: defaultConfigs[key],
-      }).save();
-    }
-    /* eslint-enable */
+    await Promise.all(
+      keys
+        .filter((k) => !registerdKeys.includes(k))
+        .map((k) => new ConfigModel({
+          key: k,
+          value: defaultConfigs[k],
+        }).save()),
+    );
   }
 
   private async initializePlaces() {
