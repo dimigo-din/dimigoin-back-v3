@@ -74,7 +74,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
   }
 
   const todayAll = await IngangApplicationModel.find({
-    today,
+    date: today,
     time,
   }).populateTs('applier');
 
@@ -95,7 +95,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     ...req.body,
     time,
     applier,
-    today,
+    date: today,
   }).save();
   res.json({ ingangApplication });
 };
