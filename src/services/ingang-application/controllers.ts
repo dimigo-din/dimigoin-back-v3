@@ -107,7 +107,7 @@ export const removeIngangApplication = async (req: Request, res: Response) => {
 
   const ingangApplication = await IngangApplicationModel.findOne({
     applier,
-    today,
+    date: today,
     time,
   });
   if (!ingangApplication) throw new HttpException(404, '해당 시간 신청한 인강실이 없습니다.');
