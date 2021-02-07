@@ -7,6 +7,8 @@ const fileSchema = createSchema({
   owner: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
   // 최대 다운로드 횟수 (0일 경우 제한 없음)
   downloadLimit: Type.number({ required: true, default: 0 }),
+  // 지금까지 다운로드 한 횟수
+  downloadCount: Type.number({ required: true, default: 0 }),
 }, { versionKey: false, timestamps: true });
 
 const FileModel = typedModel('File', fileSchema);
