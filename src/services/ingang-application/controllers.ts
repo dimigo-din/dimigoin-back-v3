@@ -5,7 +5,7 @@ import { getTodayDateString, getWeekStartString, getWeekEndString } from '../../
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, Grade, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
-import { createIngangApplierBook } from '../../resources/ingang';
+import { createIngangApplierBook } from '../../resources/exporter';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => {
   return await IngangApplicationModel.countDocuments({
@@ -80,7 +80,9 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
     [[], []]
   );
 
-  await createIngangApplierBook(grade, splittedApplications);
+  // 임시 (파일 관련 리소스 추가 예정)
+  // eslint-disable-next-line
+  const buffer = await createIngangApplierBook(grade, splittedApplications);
   res.json({ success: true });
 };
 

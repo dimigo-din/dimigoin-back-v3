@@ -66,5 +66,5 @@ export const createIngangApplierBook = async (grade: Grade, applications: [any[]
   const maxLength = Math.max(...applications.map((a) => a.length));
   setAlignCenter(sheet, `A6:F${maxLength + 6}`);
 
-  await book.xlsx.writeFile('./test.xlsx');
+  return await book.xlsx.writeBuffer();
 };
