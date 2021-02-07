@@ -1,41 +1,35 @@
 import { Request, Response } from 'express';
+import { ObjectID } from 'mongodb';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, Grade, NightTime } from '../../types';
-import { ObjectID } from 'mongodb';
 import { createIngangApplierBook } from '../../resources/exporter';
 import { writeFile } from '../../resources/file';
 import {
   getTodayDateString,
   getWeekStartString,
   getWeekEndString,
-  getKoreanTodayFullString
+  getKoreanTodayFullString,
 } from '../../resources/date';
 
-const getWeeklyUsedTicket = async (applier: ObjectID) => {
-  return await IngangApplicationModel.countDocuments({
-    applier,
-    date: {
-      $gte: getWeekStartString(),
-      $lte: getWeekEndString(),
-    },
-  });
-}
+const getWeeklyUsedTicket = async (applier: ObjectID) => await IngangApplicationModel.countDocuments({
+  applier,
+  date: {
+    $gte: getWeekStartString(),
+    $lte: getWeekEndString(),
+  },
+});
 
-const getApplicationsByClass = async (grade: number, klass: number) => {
-  return (await IngangApplicationModel
-    .find({ date: getTodayDateString() })
-    .populateTs('applier'))
-    .filter((application) => (
-      application.applier.grade === grade
+const getApplicationsByClass = async (grade: number, klass: number) => (await IngangApplicationModel
+  .find({ date: getTodayDateString() })
+  .populateTs('applier'))
+  .filter((application) => (
+    application.applier.grade === grade
       && application.applier.class === klass
-    ));
-}
+  ));
 
-const getMaxApplicationPerIngang = async (grade: number) => {
-  return (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
-}
+const getMaxApplicationPerIngang = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
 
 export const getIngangStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
@@ -73,7 +67,7 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   const applications = (
     await IngangApplicationModel.find({
       date: getTodayDateString(),
-    }).populateTs("applier")
+    }).populateTs('applier')
   ).filter((a) => a.applier.grade === grade);
 
   type SplittedApps = [IngangApplicationDoc[], IngangApplicationDoc[]];
@@ -83,11 +77,9 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
       acc[time].push(curr);
       return acc;
     },
-    [[], []]
+    [[], []],
   );
 
-  // 임시 (파일 관련 리소스 추가 예정)
-  // eslint-disable-next-line
   const buffer = await createIngangApplierBook(grade, splittedApplications);
   const today = getKoreanTodayFullString();
   const fileName = `${grade}학년 인터넷 강의실 좌석 신청 현황 (${today} 기준)`;
