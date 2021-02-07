@@ -6,7 +6,7 @@ export default {
   routes: [
     {
       method: 'get',
-      path: '/:fileId',
+      path: '/download/:fileId',
       handler: controllers.downloadFile,
     },
     {
