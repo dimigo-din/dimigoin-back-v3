@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { IngangApplicationModel } from '../../models';
+import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
 import { getTodayDateString, getWeekStartString, getWeekEndString } from '../../resources/date';
 import { getConfig } from '../../resources/config';
-import { ConfigKeys, NightTime } from '../../types';
+import { ConfigKeys, Grade, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
+import { createIngangApplierBook } from '../../resources/exporter';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => {
   return await IngangApplicationModel.countDocuments({
@@ -59,6 +60,30 @@ export const getTodayIngangApplications = async (req: Request, res: Response) =>
     })
     .populateTs('applier');
   res.json({ ingangApplications });
+};
+
+export const exportTodayIngangApplications = async (req: Request, res: Response) => {
+  const grade = parseInt(req.params.grade, 10) as Grade;
+  const applications = (
+    await IngangApplicationModel.find({
+      date: getTodayDateString(),
+    }).populateTs("applier")
+  ).filter((a) => a.applier.grade === grade);
+
+  type SplittedApps = [IngangApplicationDoc[], IngangApplicationDoc[]];
+  const splittedApplications = applications.reduce(
+    (acc: SplittedApps, curr: IngangApplicationDoc) => {
+      const time = parseInt(curr.time.substr(-1), 10) - 1;
+      acc[time].push(curr);
+      return acc;
+    },
+    [[], []]
+  );
+
+  // 임시 (파일 관련 리소스 추가 예정)
+  // eslint-disable-next-line
+  const buffer = await createIngangApplierBook(grade, splittedApplications);
+  res.json({ success: true });
 };
 
 export const createIngangApplication = async (req: Request, res: Response) => {

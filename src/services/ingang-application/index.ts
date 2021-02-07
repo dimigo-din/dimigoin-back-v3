@@ -12,6 +12,12 @@ export default {
     },
     {
       method: 'get',
+      path: '/export/grade/:grade',
+      allowedUserTypes: ['S', 'T'], // S -> 테스트
+      handler: controllers.exportTodayIngangApplications,
+    },
+    {
+      method: 'get',
       path: '/status',
       allowedUserTypes: ['S'],
       handler: controllers.getIngangStatus,
