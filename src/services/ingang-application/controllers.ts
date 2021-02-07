@@ -91,7 +91,7 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   const buffer = await createIngangApplierBook(grade, splittedApplications);
   const today = getKoreanTodayFullString();
   const fileName = `${grade}학년 인터넷 강의실 좌석 신청 현황 (${today} 기준)`;
-  const file = await writeFile(buffer, fileName, req.user);
+  const file = await writeFile(buffer, fileName, 'xlsx', req.user);
 
   res.json({ exportedFile: file });
 };
