@@ -41,12 +41,6 @@ export default {
       handler: controllers.createDets,
     },
     {
-      method: 'post',
-      path: '/apply/:detsId',
-      allowedUserTypes: ['S'],
-      handler: controllers.applyDets,
-    },
-    {
       method: 'patch',
       path: '/:detsId',
       allowedUserTypes: ['S'],
