@@ -22,7 +22,6 @@ const detsSchema = createSchema({
   targetGrade: Type.array().of(Type.number({ required: true, enum: GradeValues })),
   imageUrl: Type.string({ required: true }),
   count: Type.number({ required: true }),
-  user: [Type.string({ required: true })],
 }, { versionKey: false, timestamps: true });
 
   type DetsDocs = ExtractDoc<typeof detsSchema>;
