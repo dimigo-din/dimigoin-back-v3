@@ -1,11 +1,17 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
-import { getTodayDateString, getWeekStartString, getWeekEndString } from '../../resources/date';
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, Grade, NightTime } from '../../types';
 import { ObjectID } from 'mongodb';
 import { createIngangApplierBook } from '../../resources/exporter';
+import { writeFile } from '../../resources/file';
+import {
+  getTodayDateString,
+  getWeekStartString,
+  getWeekEndString,
+  getKoreanTodayFullString
+} from '../../resources/date';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => {
   return await IngangApplicationModel.countDocuments({
@@ -83,7 +89,11 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   // 임시 (파일 관련 리소스 추가 예정)
   // eslint-disable-next-line
   const buffer = await createIngangApplierBook(grade, splittedApplications);
-  res.json({ success: true });
+  const today = getKoreanTodayFullString();
+  const fileName = `${grade}학년 인터넷 강의실 좌석 신청 현황 (${today} 기준)`;
+  const file = await writeFile(buffer, fileName, req.user);
+
+  res.json({ exportedFile: file });
 };
 
 export const createIngangApplication = async (req: Request, res: Response) => {
