@@ -4,29 +4,17 @@ import { OutgoRequestModel, UserModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
-  const user = req.user;
-  let outgoRequests = await OutgoRequestModel
-    .find({ applier: { $all: [user._id] } });
+  const { user } = req;
+  const outgoRequests = await OutgoRequestModel
+    .find({ applier: { $all: [user._id] } })
+    .populateTs('applier')
+    .populateTs('approver');
 
-  // todo: Populate function으로 리팩토링 해야 함
-  // @ts-ignore
-  outgoRequests = await Promise.all(outgoRequests.map(async (request) => {
-    request = request.toJSON();
-    const applier = await Promise.all(
-      request.applier.map(async (applier_) => await UserModel.findById(applier_)),
-    );
-    const approver = await UserModel.findById(request.approver);
-    return {
-      ...request,
-      applier,
-      approver,
-    };
-  }));
   res.json({ outgoRequests });
 };
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
-  const user = req.user;
+  const { user } = req;
   const outgoRequest = await OutgoRequestModel
     .findById(req.params.outgoRequestId)
     .populateTs('approver');
@@ -48,7 +36,7 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
 
 export const createOutgoRequest = async (req: Request, res: Response) => {
   const request = req.body;
-  const user = req.user;
+  const { user } = req;
   if (!request.applier.includes(user._id)) {
     throw new HttpException(403, '자신의 외출만 신청할 수 있습니다.');
   }
