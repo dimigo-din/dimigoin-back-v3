@@ -25,19 +25,23 @@ export const getMyFileList = async (req: Request, res: Response) => {
 export const downloadFile = async (req: Request, res: Response) => {
   const { fileId } = req.params;
   const file = await FileModel.findById(fileId);
+
   if (!file) throw new HttpException(404, '요청하신 파일을 찾을 수 없습니다.');
   if (file.downloadLimit && file.downloadLimit <= file.downloadCount) {
     throw new HttpException(403, '다운로드 횟수를 초과한 파일입니다.');
   }
-  file.downloadCount += 1;
-  await file.save();
 
   const filePath = pathJoin(config.fileStoragePath, fileId);
   const fileName = convertFileName(`${file.name}.${file.extension}`, req);
+  if (!fs.existsSync(filePath)) {
+    throw new HttpException(500, '요청하신 파일을 찾을 수 없습니다.');
+  }
 
-  res.setHeader('Content-disposition', `attachment; fileName=${fileName}`);
-  res.setHeader('Content-Type', mime.getType(filePath));
+  file.downloadCount += 1;
+  await file.save();
 
   const stream = fs.createReadStream(filePath);
+  res.setHeader('Content-disposition', `attachment; fileName=${fileName}`);
+  res.setHeader('Content-Type', mime.getType(filePath));
   stream.pipe(res);
 };
