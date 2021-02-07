@@ -1,12 +1,17 @@
 import { Request, Response } from 'express';
+import moment from 'moment-timezone';
 import { HttpException } from '../../exceptions';
 import { OutgoRequestModel, UserModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
   const { user } = req;
+  const startDate = moment().subtract(2, 'weeks').toDate();
   const outgoRequests = await OutgoRequestModel
-    .find({ applier: { $all: [user._id] } })
+    .find({
+      applier: { $all: [user._id] },
+      createdAt: { $gte: startDate },
+    })
     .populateTs('applier')
     .populateTs('approver');
 
@@ -17,21 +22,15 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
   const { user } = req;
   const outgoRequest = await OutgoRequestModel
     .findById(req.params.outgoRequestId)
-    .populateTs('approver');
+    .populateTs('approver')
+    .populateTs('applier');
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청이 없습니다.');
-  if (user.userType === 'S' && !outgoRequest.applier.includes(user._id)) {
+
+  const applierIds = outgoRequest.applier.map((a) => a._id);
+  if (user.userType === 'S' && !applierIds.includes(user._id)) {
     throw new HttpException(403, '권한이 없습니다.');
   }
-  res.json({
-    outgoRequest: {
-      ...outgoRequest.toJSON(),
-      applier: await Promise.all(
-        outgoRequest.applier.map(async (applier) =>
-          await UserModel.findById(applier)),
-      ),
-      // approver: await UserModel.findById(outgoRequest.approver),
-    },
-  });
+  res.json({ outgoRequest });
 };
 
 export const createOutgoRequest = async (req: Request, res: Response) => {
@@ -59,13 +58,5 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
 
   await outgoRequest.save();
 
-  res.json({
-    outgoRequest: {
-      ...outgoRequest.toJSON(),
-      applier: await Promise.all(
-        outgoRequest.applier.map(async (applier) =>
-          await UserModel.findById(applier)),
-      ),
-    },
-  });
+  res.json({ outgoRequest });
 };

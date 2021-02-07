@@ -12,6 +12,8 @@ const format = 'YYYY-MM-DD';
 
 export const getTodayDateString = () => moment().format(format);
 
+export const getDateString = (date: moment.Moment) => date.format(format);
+
 export const getKoreanTodayFullString = () => moment().format(
   'YYYY년 MM월 DD일 HH시 MM분',
 );
