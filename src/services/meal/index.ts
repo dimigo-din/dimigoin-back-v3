@@ -12,6 +12,11 @@ export default {
     },
     {
       method: 'get',
+      path: '/today',
+      handler: controllers.getTodayMeal,
+    },
+    {
+      method: 'get',
       path: '/date/:date',
       handler: controllers.getMealByDate,
     },

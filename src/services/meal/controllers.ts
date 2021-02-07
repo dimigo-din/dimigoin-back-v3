@@ -16,6 +16,14 @@ export const getWeeklyMeals = async (req: Request, res: Response) => {
   res.json({ meals });
 };
 
+export const getTodayMeal = async (req: Request, res: Response) => {
+  const date = getTodayDateString();
+  const meal = await MealModel.findOne({ date });
+  if (!meal) throw new HttpException(404, '오늘의 급식 정보가 없습니다.');
+
+  res.json({ meal });
+};
+
 export const getMealByDate = async (req: Request, res: Response) => {
   let { date } = req.params;
   if (date === 'today') date = getTodayDateString();
