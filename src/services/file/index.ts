@@ -9,5 +9,10 @@ export default {
       path: '/:fileId',
       handler: controllers.downloadFile,
     },
+    {
+      method: 'get',
+      path: '/',
+      handler: controllers.getMyFileList,
+    },
   ],
 };

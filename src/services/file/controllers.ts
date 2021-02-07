@@ -16,6 +16,12 @@ const convertFileName = (fileName: string, req: Request) => {
   return iconv.decode(iconv.encode(fileName, 'UTF-8'), 'ISO-8859-1');
 };
 
+// downloadFile 핸들러와 구분하기 위해서 네이밍을 다른 서비스와 조금 다르게 함
+export const getMyFileList = async (req: Request, res: Response) => {
+  const files = await FileModel.find({ owner: req.user._id });
+  res.json({ files });
+};
+
 export const downloadFile = async (req: Request, res: Response) => {
   const { fileId } = req.params;
   const file = await FileModel.findById(fileId);
