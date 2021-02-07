@@ -1,14 +1,14 @@
 import express from 'express';
 import mongoose from 'mongoose';
 
+import fs from 'fs';
 import cors from 'cors';
 import bearerToken from 'express-bearer-token';
 import helmet from 'helmet';
+import config from './config';
 
 import { attachUserInfo, errorHandler } from './middlewares';
 import { serviceRouter, serviceDocsRouter } from './services';
-import config from './config';
-
 import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
@@ -30,6 +30,7 @@ class App {
     if (process.env.NODE_ENV === 'prod') {
       this.initializeCronJobs();
     }
+    this.initializeFileStorage();
   }
 
   private initializeRouter() {
@@ -96,6 +97,10 @@ class App {
 
   private async initializeCronJobs() {
     await setCronJobsAndRun();
+  }
+
+  private async initializeFileStorage() {
+    fs.promises.mkdir(config.fileStoragePath, { recursive: true });
   }
 }
 
