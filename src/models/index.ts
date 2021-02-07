@@ -14,3 +14,4 @@ export * from './attendance-log';
 export * from './place';
 export * from './notice';
 export * from './timetable';
+export * from './file';
