@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { NoticeModel } from '../../models';
+import { getTodayDateString } from '../../resources/date';
 
 export const getAllNotices = async (req: Request, res: Response) => {
   const notices = await NoticeModel.find({});
@@ -15,14 +16,14 @@ export const getNotice = async (req: Request, res: Response) => {
 };
 
 export const getCurrentNotices = async (req: Request, res: Response) => {
-  const now = new Date();
+  const today = getTodayDateString();
   const { user } = req;
   const notices = await NoticeModel.find({
     ...(user.grade ? {
       targetGrade: { $all: [user.grade] },
     } : undefined),
-    startDate: { $lte: now },
-    endDate: { $gte: now },
+    startDate: { $lte: today },
+    endDate: { $gte: today },
   });
 
   res.json({ notices });

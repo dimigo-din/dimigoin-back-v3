@@ -6,8 +6,8 @@ const noticeSchema = createSchema({
   title: Type.string({ required: true, trim: true }),
   content: Type.string({ required: true, trim: true }),
   targetGrade: Type.array({ required: true }).of(Type.number()),
-  startDate: Type.date({ required: true }),
-  endDate: Type.date({ required: true }),
+  startDate: Type.string({ required: true }),
+  endDate: Type.string({ required: true }),
 }, { versionKey: false, timestamps: true });
 
 const NoticeModel = typedModel('Notice', noticeSchema);
