@@ -31,7 +31,19 @@ export const editDets = async (req: Request, res: Response) => {
     await dets.save();
     res.json({ dets });
   }
-  if (dets.speakerID !== res.locals.user.id) {
+  if (dets.speakerID !== req.user._id) {
+    throw new HttpException(403, '해당 뎃츠의 소유자가 아닙니다.');
+  }
+};
+
+export const removeDets = async (req: Request, res: Response) => {
+  const dets = await DetsModel.findById(req.params.detsId);
+  if (!dets) throw new HttpException(404, '해당 뎃츠를 찾을 찾을 수 없습니다.');
+  if (dets.speakerID === req.user._id) {
+    await dets.remove();
+    res.json({ dets });
+  }
+  if (dets.speakerID !== req.user._id) {
     throw new HttpException(403, '해당 뎃츠의 소유자가 아닙니다.');
   }
 };
