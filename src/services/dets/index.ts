@@ -3,7 +3,7 @@ import { Service } from '../index';
 import * as controllers from './controllers';
 
 export default {
-  name: '뎃츠 신청 서비스',
+  name: '뎃츠 서비스',
   baseURL: '/dets',
   routes: [
     {
@@ -15,7 +15,13 @@ export default {
     {
       method: 'get',
       path: '/:detsId',
-      allowedUserTypes: ['S'],
+      allowedUserTypes: ['S', 'T'],
+      handler: controllers.getDets,
+    },
+    {
+      method: 'delete',
+      path: '/:detsId',
+      allowedUserTypes: ['S', 'T'],
       handler: controllers.getDets,
     },
     {
