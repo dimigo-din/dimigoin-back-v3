@@ -25,16 +25,7 @@ type AfterschoolDoc = ExtractDoc<typeof afterschoolSchema>;
 const AfterschoolModel = typedModel('Afterschool', afterschoolSchema, undefined, undefined, {
   async checkOverlap(applierId: ObjectId, targetId: ObjectId): Promise<Boolean> {
     const target = await AfterschoolModel.findById(targetId);
-    // const application = await AfterschoolApplicationModel
-    //   .findOne({
-    //     applier: applierId,
-    //     'afterschool.key': afterschool.key,
-    //     'afterschool.day': { $all: afterschool.day },
-    //     'afterschool.time': { $all: afterschool.time },
-    //   })
-    //   .populate('afterschool');
-    // 저 위에 거가 자꾸 안 돼서 우선 아래 걸로
-    return !!(await AfterschoolApplicationModel
+    return (await AfterschoolApplicationModel
       .find({ applier: applierId })
       .populateTs('afterschool'))
       .filter(({ afterschool }) => (
@@ -43,7 +34,7 @@ const AfterschoolModel = typedModel('Afterschool', afterschoolSchema, undefined,
           afterschool.day.filter((day) => target.day.includes(day)).length
           && afterschool.time.filter((time) => target.time.includes(time)).length
         )
-      ));
+      )).length > 0;
   },
 });
 
