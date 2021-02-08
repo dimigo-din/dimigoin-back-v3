@@ -22,7 +22,7 @@ export default {
       method: 'delete',
       path: '/:detsId',
       allowedUserTypes: ['S', 'T'],
-      handler: controllers.getDets,
+      handler: controllers.removeDets,
     },
     {
       method: 'post',
