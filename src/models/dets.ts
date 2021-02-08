@@ -1,3 +1,4 @@
+/* eslint-disable max-len */
 import {
   createSchema, Type, typedModel, ExtractDoc,
 } from 'ts-mongoose';
@@ -28,17 +29,19 @@ const detsSchema = createSchema({
 
 const DetsModel = typedModel('Dets', detsSchema, undefined, undefined, {
   async checkOverlap(applierId: ObjectId, targetId: ObjectId): Promise<Boolean> {
-    const target = await DetsModel.findById(targetId);
-    return !!(await DetsApplicationModel
-      .find({ applier: applierId })
-      .populateTs('dets'))
-      .filter(({ dets }) => (
-        dets.key === target.key
-          || (
-            dets.day.filter((day) => target.day.includes(day)).length
-            && dets.time.filter((time) => target.time.includes(time)).length
-          )
-      ));
+    // const target = await DetsModel.findById(targetId);
+    // return !!(await DetsApplicationModel
+    //   .find({ applier: applierId })
+    //   .populateTs('dets'))
+    //   .filter(({ dets }) => (
+    //     dets.dets === target._id
+    //       || (
+    //         dets.day.filter((day) => target.day.includes(day)).length
+    //         && dets.time.filter((time) => target.time.includes(time)).length
+    //       )
+    //   ));
+    const isDuplicatedApplication = !!await DetsApplicationModel.countDocuments({ applier: applierId, dets: targetId });
+    return isDuplicatedApplication;
   },
 });
 
