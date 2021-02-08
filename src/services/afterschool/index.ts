@@ -35,5 +35,11 @@ export default {
       },
       handler: controllers.createAfterschool,
     },
+    {
+      method: 'delete',
+      path: '/:afterschoolId',
+      allowedUserTypes: ['T'],
+      handler: controllers.deleteAfterschool,
+    },
   ],
 };
