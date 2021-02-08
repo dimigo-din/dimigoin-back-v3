@@ -1,5 +1,5 @@
 import {
-  createSchema, Type, typedModel, ExtractDoc,
+  createSchema, Type, typedModel,
 } from 'ts-mongoose';
 import { ObjectId } from 'mongodb';
 import { userSchema } from './user';
@@ -20,21 +20,22 @@ const afterschoolSchema = createSchema({
   capacity: Type.number({ required: true }),
 }, { versionKey: false, timestamps: true });
 
-type AfterschoolDoc = ExtractDoc<typeof afterschoolSchema>;
-
 const AfterschoolModel = typedModel('Afterschool', afterschoolSchema, undefined, undefined, {
   async checkOverlap(applierId: ObjectId, targetId: ObjectId): Promise<Boolean> {
     const target = await AfterschoolModel.findById(targetId);
-    return (await AfterschoolApplicationModel
+    const overlapped = (await AfterschoolApplicationModel
       .find({ applier: applierId })
       .populateTs('afterschool'))
-      .filter(({ afterschool }) => (
-        afterschool.key === target.key
-        || (
+      .filter(({ afterschool }) => {
+        // 중복 수강 불가한 강좌인지
+        if (target.key && target.key === afterschool.key) return true;
+        // 겹치는 요일이 존재하는 동시에 타임까지 겹치는지
+        return (
           afterschool.day.filter((day) => target.day.includes(day)).length
           && afterschool.time.filter((time) => target.time.includes(time)).length
-        )
-      )).length > 0;
+        );
+      });
+    return overlapped.length > 0;
   },
 });
 
