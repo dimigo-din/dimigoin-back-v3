@@ -2,6 +2,13 @@ import { Request, Response } from 'express';
 import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
 
+export const getMyAllApplications = async (req: Request, res: Response) => {
+  const applications = await AfterschoolApplicationModel.find({
+    applier: req.user._id,
+  }).populateTs('afterschool');
+  res.json({ applications });
+};
+
 export const applyAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
   if (!afterschool) throw new HttpException(404, '해당 방과 후 수업이 존재하지 않습니다.');

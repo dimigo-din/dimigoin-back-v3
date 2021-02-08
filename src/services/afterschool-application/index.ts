@@ -5,6 +5,12 @@ export default {
   baseURL: '/afterschool-application',
   routes: [
     {
+      method: 'get',
+      path: '/',
+      allowedUserTypes: ['S'],
+      handler: controllers.getMyAllApplications,
+    },
+    {
       method: 'post',
       path: '/:afterschoolId',
       allowedUserTypes: ['S'],
