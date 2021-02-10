@@ -24,3 +24,7 @@ export const revokeDeviceToken = async (req: Request, res: Response) => {
   await user.save();
   res.json({ registeredTokens: user.tokens });
 };
+
+export const sendPushMessage = async (req: Request, res: Response) => {
+  throw new HttpException(501, '아직 사용할 수 없는 기능입니다.');
+};

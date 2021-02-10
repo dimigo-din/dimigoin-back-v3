@@ -26,5 +26,11 @@ export default {
       path: '/token',
       handler: controllers.getAllDeviceTokens,
     },
+    // 아직은 쓸 일이 없을 것 같음
+    {
+      method: 'post',
+      path: '/send',
+      handler: controllers.sendPushMessage,
+    },
   ],
 };
