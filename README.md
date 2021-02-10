@@ -3,7 +3,7 @@
 ![Test Express Application](https://github.com/dimigoin/dimigoin-back-v3/workflows/Test%20Express%20Application/badge.svg)
 
 ## 개발 서버 실행 방법
-1. 팀 노션에 있는 `.env` 파일과 Firebase Service Account Key를 프로젝트 최상단에 추가합니다.
+1. 팀 노션에 있는 `.env` 파일을 프로젝트 최상단에 추가합니다.
 2. 의존성 패키지를 설치합니다.
 `yarn install`
 3. 개발 서버를 실행합니다.
