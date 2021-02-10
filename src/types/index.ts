@@ -6,7 +6,8 @@ export enum ConfigKeys {
   circleCategory = 'CIRCLE_CATEGORY',
   imageExtension = 'IMAGE_EXTENSION',
   weeklyIngangTicketCount = 'WEEKLY_INGANG_TICKET_COUNT',
-  ingangMaxAppliers = 'INGANG_MAX_APPLIERS'
+  ingangMaxAppliers = 'INGANG_MAX_APPLIERS',
+  ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
 }
 
 export enum CirclePeriod {
