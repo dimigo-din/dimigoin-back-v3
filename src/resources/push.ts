@@ -3,9 +3,7 @@ import config from '../config';
 import { UserModel } from '../models';
 
 admin.initializeApp({
-  credential: admin.credential.cert(
-    'firebase-service-account.json',
-  ),
+  credential: admin.credential.applicationDefault(),
   databaseURL: config.firebaseDatabaseURL,
 });
 
