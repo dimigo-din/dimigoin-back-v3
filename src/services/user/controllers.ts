@@ -9,14 +9,7 @@ export const getAllUsers = async (req: Request, res: Response) => {
 };
 
 export const getAllStudents = async (req: Request, res: Response) => {
-  let students = await UserModel.findStudents();
-  const user = req.user;
-  if (user.userType === 'S') {
-    students = students.map((student) => {
-      student.photo = [];
-      return student;
-    });
-  }
+  const students = await UserModel.findStudents();
   res.json({ students });
 };
 
