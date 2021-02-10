@@ -5,17 +5,33 @@ import {
   attachStudentInfo,
 } from './dimi-api';
 
-export const setCronJobsAndRun = async () => {
-  const cronJobs = [
-    { schedule: '0 */2 * * *', action: refreshWeeklyTimetable },
-    { schedule: '0 0 * * *', action: async () => {
+const cronJobs = [
+  {
+    schedule: '0 */2 * * *',
+    action: refreshWeeklyTimetable,
+  },
+  {
+    schedule: '0 0 * * *',
+    action: async () => {
       await reloadAllUsers();
       await attachStudentInfo();
-    } },
-  ];
-  
+    },
+  },
+];
+
+export const setCronJobs = async () => {
   for (const { schedule, action } of cronJobs) {
-    await action();
     cron.schedule(schedule, action);
   }
+};
+
+export const manuallyRunCronJobs = async () => {
+  for (const { action } of cronJobs) {
+    await action();
+  }
+};
+
+export const setCronJobsAndRun = async () => {
+  await setCronJobs();
+  await manuallyRunCronJobs();
 };
