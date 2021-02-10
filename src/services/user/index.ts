@@ -28,10 +28,5 @@ export default {
       allowedUserTypes: '*',
       handler: controllers.decodeJWT,
     },
-    {
-      method: 'get',
-      path: '/reload',
-      handler: controllers.reloadUsers,
-    },
   ],
 };
