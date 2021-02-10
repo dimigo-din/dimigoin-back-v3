@@ -32,6 +32,7 @@ module.exports = {
         "no-return-await": "off",
         "no-await-in-loop": "off",
         "max-len": "off",
+        "no-restricted-syntax": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],

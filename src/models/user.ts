@@ -22,6 +22,7 @@ const userSchema = createSchema({
   number: Type.number(),
   serial: Type.number(),
   photo: Type.array({ select: false }).of(Type.string()),
+  tokens: Type.array({ select: false, default: [] }).of(Type.string()),
 }, { versionKey: false, timestamps: true });
 
 type UserDoc = ExtractDoc<typeof userSchema>;

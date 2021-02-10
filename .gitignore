@@ -41,3 +41,5 @@ package-lock.json
 yarn.lock
 
 exported-files
+
+firebase-service-account.json
