@@ -16,4 +16,5 @@ export default {
     ? process.env.FILE_STORAGE_PATH!
     : path.join(path.parse(__dirname).dir, 'exported-files'),
   firebaseDatabaseURL: process.env.FIREBASE_DATABASE_URL!,
+  firebaseAPIKey: process.env.FIREBASE_API_KEY!,
 };
