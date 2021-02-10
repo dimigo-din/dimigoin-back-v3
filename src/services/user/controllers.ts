@@ -1,7 +1,5 @@
 import { Request, Response } from 'express';
-import { HttpException } from '../../exceptions';
 import { UserModel } from '../../models';
-import { reloadAllUsers, attachStudentInfo } from '../../resources/dimi-api';
 
 export const getAllUsers = async (req: Request, res: Response) => {
   const users = await UserModel.find();
@@ -21,14 +19,4 @@ export const getAllTeachers = async (req: Request, res: Response) => {
 export const decodeJWT = async (req: Request, res: Response) => {
   const identity = req.user;
   res.json({ identity });
-};
-
-export const reloadUsers = async (req: Request, res: Response) => {
-  try {
-    await reloadAllUsers();
-    await attachStudentInfo();
-    res.end();
-  } catch (error) {
-    throw new HttpException(500, error.message);
-  }
 };
