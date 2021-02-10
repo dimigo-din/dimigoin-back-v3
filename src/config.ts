@@ -17,4 +17,5 @@ export default {
     : path.join(path.parse(__dirname).dir, 'exported-files'),
   firebaseDatabaseURL: process.env.FIREBASE_DATABASE_URL!,
   firebaseAPIKey: process.env.FIREBASE_API_KEY!,
+  manualCronPassword: process.env.MANUAL_CRON_PASSWORD!,
 };
