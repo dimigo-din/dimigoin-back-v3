@@ -57,13 +57,13 @@ export const setCronJobs = async () => {
   }
 };
 
-export const manuallyRunCronJobs = async () => {
-  for (const { action } of cronJobs) {
-    await action();
+export const manuallyRunCronJobs = async (isSetup: boolean = false) => {
+  for (const { action, runOnSetup } of cronJobs) {
+    if (!isSetup || runOnSetup) await action();
   }
 };
 
 export const setCronJobsAndRun = async () => {
   await setCronJobs();
-  await manuallyRunCronJobs();
+  await manuallyRunCronJobs(true);
 };
