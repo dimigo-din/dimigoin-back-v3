@@ -6,8 +6,8 @@ import { AttendanceLogModel, UserModel } from '../../models';
 export const getClassStatus = async (req: Request, res: Response) => {
   const { grade, class: klass, userType } = req.user;
   if (userType !== 'T' && (
-    grade !== parseInt(req.params.grade, 10)
-      || klass !== parseInt(req.params.class, 10)
+    grade !== parseInt(req.params.grade)
+      || klass !== parseInt(req.params.class)
   )) {
     throw new HttpException(403, '권한이 없습니다.');
   }

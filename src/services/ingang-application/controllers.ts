@@ -63,7 +63,7 @@ export const getTodayIngangApplications = async (req: Request, res: Response) =>
 };
 
 export const exportTodayIngangApplications = async (req: Request, res: Response) => {
-  const grade = parseInt(req.params.grade, 10) as Grade;
+  const grade = parseInt(req.params.grade) as Grade;
   const applications = (
     await IngangApplicationModel.find({
       date: getTodayDateString(),

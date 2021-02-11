@@ -6,8 +6,8 @@ const TEMP_DATE = '2020-11-15';
 
 export const getWeeklyTimetable = async (req: Request, res: Response) => {
   const { grade, class: klass } = {
-    grade: parseInt(req.params.grade, 10),
-    class: parseInt(req.params.class, 10),
+    grade: parseInt(req.params.grade),
+    class: parseInt(req.params.class),
   };
 
   const timetable = await TimetableModel.find({
