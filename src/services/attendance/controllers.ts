@@ -36,6 +36,23 @@ export const getClassStatus = async (req: Request, res: Response) => {
   res.json({ status: studentsWithLog });
 };
 
+export const getStudentAttendanceHistory = async (req: Request, res: Response) => {
+  const { date } = req.params;
+  if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+  const student = await UserModel.findOne({
+    _id: req.params.studentId,
+    userType: 'S',
+  });
+  if (!student) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
+
+  const logs = await AttendanceLogModel.find({
+    date: req.params.date,
+    student: student._id,
+  });
+  res.json({ logs });
+};
+
 export const createAttendanceLog = async (req: Request, res: Response) => {
   const payload = req.body;
   const { _id: student } = req.user;
