@@ -18,19 +18,39 @@ export const getClassStatus = async (req: Request, res: Response) => {
   const studentsInClass = await UserModel
     .find({ grade, class: klass });
 
-  const studentsWithLogs = await Promise.all(
+  const studentsWithLog = await Promise.all(
     studentsInClass.map(async (student) => {
-      const logs = await AttendanceLogModel.find({
+      const log = await AttendanceLogModel.findOne({
         date,
         student: student._id,
-      }).populateTs('place');
+      })
+        .populateTs('place')
+        .sort('-createdAt');
+
       return {
         student,
-        logs,
+        log,
       };
     }),
   );
-  res.json({ logs: studentsWithLogs });
+  res.json({ status: studentsWithLog });
+};
+
+export const getStudentAttendanceHistory = async (req: Request, res: Response) => {
+  const { date } = req.params;
+  if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+  const student = await UserModel.findOne({
+    _id: req.params.studentId,
+    userType: 'S',
+  });
+  if (!student) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
+
+  const logs = await AttendanceLogModel.find({
+    date: req.params.date,
+    student: student._id,
+  });
+  res.json({ logs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {

@@ -27,5 +27,11 @@ export default {
       allowedUserTypes: ['S', 'T'],
       handler: controllers.getClassStatus,
     },
+    {
+      method: 'get',
+      path: '/date/:date/student/:studentId',
+      allowedUserTypes: ['T'],
+      handler: controllers.getStudentAttendanceHistory,
+    },
   ],
 };
