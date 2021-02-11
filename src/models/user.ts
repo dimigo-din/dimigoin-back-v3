@@ -17,12 +17,16 @@ const userSchema = createSchema({
   gender: Type.string({ enum: [...GenderValues, null] }),
   phone: Type.string({ select: false }),
   userType: Type.string({ required: true, enum: UserTypeValues }),
+  photo: Type.array({ select: false }).of(Type.string()),
+  tokens: Type.array({ select: false, default: [] }).of(Type.string()),
+  // 학생 정보
   grade: Type.number({ enum: GradeValues }),
   class: Type.number({ enum: ClassValues }),
   number: Type.number(),
   serial: Type.number(),
-  photo: Type.array({ select: false }).of(Type.string()),
-  tokens: Type.array({ select: false, default: [] }).of(Type.string()),
+  // 교사 정보
+  position: Type.string({ trim: true }),
+  role: Type.string({ trim: true }),
 }, { versionKey: false, timestamps: true });
 
 type UserDoc = ExtractDoc<typeof userSchema>;
