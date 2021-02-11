@@ -16,7 +16,7 @@ export default {
       allowedUserTypes: ['T'],
       validateSchema: {
         key: Joi.string().required(),
-        value: Joi.string().required(),
+        value: Joi.any().required(),
       },
       handler: controllers.editConfig,
     },
