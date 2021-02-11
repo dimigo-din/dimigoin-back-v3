@@ -69,7 +69,7 @@
     "mongoose": "^5.9.4",
     "node-cron": "^2.0.3",
     "slack-node": "^0.1.8",
-    "ts-mongoose": "^0.0.21",
+    "ts-mongoose": "^0.0.24",
     "typescript": "^3.9.7",
     "winston": "^3.3.3",
     "winston-daily-rotate-file": "^4.5.0"
