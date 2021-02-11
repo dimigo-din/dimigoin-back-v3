@@ -3,6 +3,7 @@ import {
   IAccount,
   IStudentIdentity,
   IUserIdentity,
+  ITeacherIdentity,
 } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
 import config from '../config';
@@ -11,6 +12,7 @@ const apiRouter = {
   getIdentity: '/v1/users/identify',
   getAllUsers: '/v1/users',
   getAllStudents: '/v1/user-students',
+  getAllTeachers: '/v1/user-teachers',
 };
 
 const api = axios.create({
@@ -70,6 +72,24 @@ export const attachStudentInfo = async () => {
         },
       );
       return student;
+    }),
+  );
+};
+
+export const attachTeacherInfo = async () => {
+  const { data } = await api.get(apiRouter.getAllTeachers);
+  const teachers: ITeacherIdentity[] = data;
+  await Promise.all(
+    teachers.map(async (teacher) => {
+      await UserModel.updateOne(
+        { idx: teacher.user_id },
+        {
+          position: teacher.position_name,
+          role: teacher.grade && teacher.class
+            ? `${teacher.grade}학년 ${teacher.class}반 ${teacher.role_name}`
+            : teacher.role_name,
+        },
+      );
     }),
   );
 };

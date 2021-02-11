@@ -9,6 +9,7 @@ import {
 import {
   reloadAllUsers,
   attachStudentInfo,
+  attachTeacherInfo,
 } from './dimi-api';
 
 const cronJobs = [
@@ -20,10 +21,11 @@ const cronJobs = [
   },
   {
     name: '사용자 정보 및 학적 갱신',
-    schedule: '0 0 * * *',
+    schedule: '0 0 * * 1',
     action: async () => {
       await reloadAllUsers();
       await attachStudentInfo();
+      await attachTeacherInfo();
     },
     runOnSetup: true,
   },
