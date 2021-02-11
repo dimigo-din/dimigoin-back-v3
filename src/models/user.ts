@@ -17,12 +17,16 @@ const userSchema = createSchema({
   gender: Type.string({ enum: [...GenderValues, null] }),
   phone: Type.string({ select: false }),
   userType: Type.string({ required: true, enum: UserTypeValues }),
+  photo: Type.array({ select: false }).of(Type.string()),
+  tokens: Type.array({ select: false, default: [] }).of(Type.string()),
+  // 학생 정보
   grade: Type.number({ enum: GradeValues }),
   class: Type.number({ enum: ClassValues }),
   number: Type.number(),
   serial: Type.number(),
-  photo: Type.array({ select: false }).of(Type.string()),
-  tokens: Type.array({ select: false, default: [] }).of(Type.string()),
+  // 교사 정보
+  position: Type.string({ trim: true }),
+  role: Type.string({ trim: true }),
 }, { versionKey: false, timestamps: true });
 
 type UserDoc = ExtractDoc<typeof userSchema>;
@@ -31,9 +35,6 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
   findByIdx(idx: number): UserDoc {
     return this.findOne({ idx });
   },
-  findBySerial(serial: number): UserDoc {
-    return this.findOne({ serial });
-  },
   findStudentById(id: ObjectId): UserDoc {
     return this.findOne({ userType: 'S', _id: id });
   },
@@ -41,7 +42,10 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
     return this.find({ userType: { $in: userType } });
   },
   findStudents(): UserDoc[] {
-    return this.find({ userType: 'S' });
+    return this.find({
+      userType: 'S',
+      serial: { $ne: null },
+    }).sort('serial');
   },
   findTeachers(): UserDoc[] {
     return this.findByUserType(['D', 'T']);
