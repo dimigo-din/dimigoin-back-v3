@@ -76,16 +76,14 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
 };
 
 export const getMyAttendanceLogs = async (req: Request, res: Response) => {
-  const { grade, class: klass } = req.user;
   const logs = (await AttendanceLogModel
-    .find({ date: getTodayDateString() })
+    .find({
+      date: getTodayDateString(),
+      student: req.user._id,
+    })
     .populateTs('student')
     .populateTs('place')
-    .sort('-createdAt'))
-    .filter(({ student }) => (
-      student.grade === grade
-      && student.class === klass
-    ));
+    .sort('-createdAt'));
 
   res.json({ logs });
 };
