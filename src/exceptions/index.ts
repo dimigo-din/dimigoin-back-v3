@@ -8,6 +8,7 @@ export class HttpException extends Error {
     message: string = '알 수 없는 서버 오류가 발생했습니다.',
   ) {
     super(message);
+    this.name = 'HttpException';
     this.status = status;
     this.message = message;
   }
