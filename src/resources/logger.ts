@@ -1,5 +1,6 @@
 import winston from 'winston';
 import WinstonDaily from 'winston-daily-rotate-file';
+import { sendSlackMessage } from './slack';
 
 const logDir = 'logs';
 const { combine, timestamp, printf } = winston.format;
@@ -40,6 +41,10 @@ if (process.env.NODE_ENV !== 'prod') {
       winston.format.simple(),
     ),
   }));
+} else {
+  logger.on('data', ({ level, message, timestamp: time }) => {
+    sendSlackMessage(`[${level}] ${message} (${time})`);
+  });
 }
 
 export default logger;
