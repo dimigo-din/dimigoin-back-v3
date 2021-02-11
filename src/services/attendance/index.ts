@@ -30,7 +30,7 @@ export default {
     {
       method: 'get',
       path: '/date/:date/student/:studentId',
-      allowedUserTypes: ['S'],
+      allowedUserTypes: ['T'],
       handler: controllers.getStudentAttendanceHistory,
     },
   ],
