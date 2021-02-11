@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { HttpException } from '../exceptions';
+import logger from '../resources/logger';
 
 const errorHandler = (
   error: HttpException,
@@ -7,10 +8,8 @@ const errorHandler = (
   res: Response,
   next: NextFunction,
 ) => {
-  // eslint-disable-next-line
-  if (process.env.NODE_ENV === 'develop') console.error(error);
-
-  const { status = 500, message } = error;
+  const { name, status = 500, message } = error;
+  logger.error(`[${name}]${message}`);
   res.status(status).json({ message });
 };
 

@@ -14,6 +14,8 @@ export const defaultPlaces = (() => {
     { name: '우정학사', location: '우정학사' },
     { name: '영어 전용 교실', location: '신관 1층', type: PlaceType.ingang },
     { name: '열람실', location: '신관 3층' },
+    { name: '외출', location: '교외 외출' },
+    { name: '기타', location: '기타' },
   ];
 
   const getClassLocation = (grade: Grade, klass: Class) => {

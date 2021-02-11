@@ -20,7 +20,7 @@ export default {
     {
       method: 'patch',
       path: '/:placeId',
-      allowedUserTypes: ['S'],
+      allowedUserTypes: ['T'],
       validateSchema: {
         name: Joi.string(),
         type: Joi.string(),
@@ -32,7 +32,7 @@ export default {
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: '*',
+      allowedUserTypes: ['T'],
       validateSchema: {
         name: Joi.string().required(),
         type: Joi.string(),
@@ -44,7 +44,7 @@ export default {
     {
       method: 'get',
       path: '/:placeId',
-      allowedUserTypes: '*',
+      allowedUserTypes: ['T'],
       handler: controllers.getPlace,
     },
     {

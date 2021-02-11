@@ -1,10 +1,10 @@
 import admin from 'firebase-admin';
-import config from '../config';
+import firebaseConfig from '../firebase-config';
 import { UserModel } from '../models';
 
 admin.initializeApp({
-  credential: admin.credential.applicationDefault(),
-  databaseURL: config.firebaseDatabaseURL,
+  credential: admin.credential.cert(firebaseConfig),
+  databaseURL: firebaseConfig.databaseURL,
 });
 
 export const sendPushMessage = async (userFilter: object, title: string, body: string) => {
