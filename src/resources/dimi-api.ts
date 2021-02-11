@@ -66,7 +66,7 @@ export const attachStudentInfo = async () => {
           grade: student.grade,
           class: student.class,
           number: student.number,
-          serial: parseInt(student.serial),
+          serial: student.serial,
         },
       );
       return student;
