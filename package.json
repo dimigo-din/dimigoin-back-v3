@@ -68,7 +68,9 @@
     "mongoose": "^5.9.4",
     "node-cron": "^2.0.3",
     "ts-mongoose": "^0.0.21",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "winston": "^3.3.3",
+    "winston-daily-rotate-file": "^4.5.0"
   },
   "jest": {
     "transform": {
