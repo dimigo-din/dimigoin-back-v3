@@ -58,4 +58,8 @@ export const defaultConfigs = {
   [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'heif'],
   [ConfigKeys.weeklyIngangTicketCount]: 6,
   [ConfigKeys.ingangMaxAppliers]: [0, 8, 6, 0],
+  [ConfigKeys.ingangApplyPeriod]: {
+    start: { hour: 7, minute: 0 },
+    end: { hour: 8, minute: 15 },
+  },
 };
