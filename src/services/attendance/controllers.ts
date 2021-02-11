@@ -18,19 +18,22 @@ export const getClassStatus = async (req: Request, res: Response) => {
   const studentsInClass = await UserModel
     .find({ grade, class: klass });
 
-  const studentsWithLogs = await Promise.all(
+  const studentsWithLog = await Promise.all(
     studentsInClass.map(async (student) => {
-      const logs = await AttendanceLogModel.find({
+      const log = await AttendanceLogModel.findOne({
         date,
         student: student._id,
-      }).populateTs('place');
+      })
+        .populateTs('place')
+        .sort('-createdAt');
+
       return {
         student,
-        logs,
+        log,
       };
     }),
   );
-  res.json({ logs: studentsWithLogs });
+  res.json({ status: studentsWithLog });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
