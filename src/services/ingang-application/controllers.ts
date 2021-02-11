@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectID } from 'mongodb';
+import moment from 'moment-timezone';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
 import { getConfig } from '../../resources/config';
@@ -11,6 +12,7 @@ import {
   getWeekStartString,
   getWeekEndString,
   getKoreanTodayFullString,
+  getMinutesValue,
 } from '../../resources/date';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => await IngangApplicationModel.countDocuments({
@@ -89,8 +91,18 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
 };
 
 export const createIngangApplication = async (req: Request, res: Response) => {
+  const applyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
+  const applyStart = getMinutesValue(applyPeriod.start);
+  const applyEnd = getMinutesValue(applyPeriod.end);
+  const now = getMinutesValue({
+    hour: moment().hour(),
+    minute: moment().minute(),
+  });
+  if (now < applyStart || applyEnd < now) {
+    throw new HttpException(403, '인강실 신청 시간이 아닙니다.');
+  }
+
   const { _id: applier, grade } = req.user;
-  const maxApply = await getMaxApplicationPerIngang(grade);
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
@@ -107,11 +119,13 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 
   // 신청하려는 인강실 (학년과 신청 타임 기준)에 존재하는 모든 신청 불러옴
   const classAll = todayAll.filter((v) => v.applier.grade === grade);
+
+  const maxApply = await getMaxApplicationPerIngang(grade);
   if (classAll.length >= maxApply) {
     throw new HttpException(403, '최대 인강실 인원을 초과했습니다.');
   }
 
-  // 티켓 개수 이상으로 신청했는지 확인
+  // 자신이 보유한 티켓 개수 이상으로 신청했는지 확인
   const weeklyUsedTicket = await getWeeklyUsedTicket(applier);
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   if (weeklyTicketCount <= weeklyUsedTicket) {

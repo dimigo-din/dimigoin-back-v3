@@ -36,6 +36,10 @@ export const getTomorrowDateString = (date?: string) => {
   return moment().clone().add(1, 'days').format(format);
 };
 
+export const getMinutesValue = ({ hour, minute }: {
+  hour: number, minute: number
+}) => hour * 60 + minute;
+
 // @Need-Refactor
 export const getTime = (date: Date): Time | null => {
   const now = (
