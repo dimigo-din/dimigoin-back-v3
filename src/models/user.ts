@@ -31,9 +31,6 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
   findByIdx(idx: number): UserDoc {
     return this.findOne({ idx });
   },
-  findBySerial(serial: number): UserDoc {
-    return this.findOne({ serial });
-  },
   findStudentById(id: ObjectId): UserDoc {
     return this.findOne({ userType: 'S', _id: id });
   },
@@ -41,7 +38,10 @@ const UserModel = typedModel('User', userSchema, undefined, undefined, {
     return this.find({ userType: { $in: userType } });
   },
   findStudents(): UserDoc[] {
-    return this.find({ userType: 'S' });
+    return this.find({
+      userType: 'S',
+      serial: { $ne: null },
+    }).sort('serial');
   },
   findTeachers(): UserDoc[] {
     return this.findByUserType(['D', 'T']);
