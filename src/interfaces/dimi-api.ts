@@ -40,3 +40,15 @@ export interface IStudentIdentity {
   'photofile1': string;
   'photofile2': string;
 }
+
+export interface ITeacherIdentity {
+  'user_id': number;
+  'username': string;
+  'name': string;
+  'gender': string;
+  'position_name': string;
+  'role_name': string;
+  'grade': number;
+  'class': number;
+  'phone': string;
+}
