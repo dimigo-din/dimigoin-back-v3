@@ -27,6 +27,7 @@ export default {
         chair: Joi.string().required(),
         viceChair: Joi.string().required(),
         videoLink: Joi.string().required(),
+        category: Joi.string().required(),
       },
       handler: controllers.createCircle,
     },
