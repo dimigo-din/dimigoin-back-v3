@@ -26,7 +26,7 @@ export default {
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['T', 'S'],
+      allowedUserTypes: ['T'],
       validateSchema: {
         title: Joi.string().required(),
         content: Joi.string().required(),
