@@ -8,7 +8,7 @@ import { userSchema } from './user';
 
 const circleSchema = createSchema({
   name: Type.string({ required: true, unique: true, trim: true }),
-  imageKey: Type.string({ required: true }),
+  imageUrl: Type.string({ required: true }),
   description: Type.string({ required: true }),
   chair: Type.ref(Type.objectId()).to('User', userSchema),
   viceChair: Type.ref(Type.objectId()).to('User', userSchema),
