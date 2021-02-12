@@ -26,7 +26,7 @@ export default {
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['T'],
+      allowedUserTypes: ['T', 'S'],
       validateSchema: {
         title: Joi.string().required(),
         content: Joi.string().required(),
@@ -48,6 +48,12 @@ export default {
         endDate: Joi.date(),
       },
       handler: controllers.editNotice,
+    },
+    {
+      method: 'delete',
+      path: '/:noticeId',
+      allowedUserTypes: ['T'],
+      handler: controllers.getNotice,
     },
   ],
 };

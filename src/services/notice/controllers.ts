@@ -16,6 +16,13 @@ export const getNotice = async (req: Request, res: Response) => {
   res.json({ notice });
 };
 
+export const removeNotice = async (req: Request, res: Response) => {
+  const notice = await NoticeModel.findById(req.params.noticeId);
+  if (!notice) throw new HttpException(404, '해당 공지를 찾을 수 없습니다.');
+  await notice.remove();
+  res.json({ notice });
+};
+
 export const getCurrentNotices = async (req: Request, res: Response) => {
   const today = getTodayDateString();
   const { user } = req;
