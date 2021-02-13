@@ -13,7 +13,7 @@ export default {
     {
       method: 'get',
       path: '/export/grade/:grade',
-      allowedUserTypes: ['S', 'T'], // S -> 테스트
+      allowedUserTypes: ['T'],
       handler: controllers.exportTodayIngangApplications,
     },
     {
