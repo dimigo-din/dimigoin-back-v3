@@ -1,5 +1,10 @@
 import {
-  PlaceType, ConfigKeys, CirclePeriod, Grade, Class,
+  PlaceType,
+  ConfigKeys,
+  CirclePeriod,
+  Grade,
+  Class,
+  NightTimeValues,
 } from '../types';
 
 export const defaultPlaces = (() => {
@@ -57,9 +62,24 @@ export const defaultConfigs = {
   [ConfigKeys.circleCategory]: ['IT(프로젝트)', '음악', '경영'],
   [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'heif'],
   [ConfigKeys.weeklyIngangTicketCount]: 6,
-  [ConfigKeys.ingangMaxAppliers]: [0, 8, 6, 0],
+  [ConfigKeys.ingangMaxAppliers]: [null, 8, 6, 0],
   [ConfigKeys.ingangApplyPeriod]: {
     start: { hour: 7, minute: 0 },
     end: { hour: 8, minute: 15 },
   },
+  [ConfigKeys.nightSelfStudyTimes]: [
+    null,
+    {
+      [NightTimeValues[0]]: '19:50 - 21:10',
+      [NightTimeValues[1]]: '21:30 - 22:50',
+    },
+    {
+      [NightTimeValues[0]]: '19:50 - 21:10',
+      [NightTimeValues[1]]: '21:30 - 23:00',
+    },
+    {
+      [NightTimeValues[0]]: '19:50 - 21:10',
+      [NightTimeValues[1]]: '21:30 - 23:10',
+    },
+  ],
 };

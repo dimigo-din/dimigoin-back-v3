@@ -8,6 +8,7 @@ export enum ConfigKeys {
   weeklyIngangTicketCount = 'WEEKLY_INGANG_TICKET_COUNT',
   ingangMaxAppliers = 'INGANG_MAX_APPLIERS',
   ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
+  nightSelfStudyTimes = 'NIGHT_SELF_STUDY_TIMES',
 }
 
 export enum CirclePeriod {
