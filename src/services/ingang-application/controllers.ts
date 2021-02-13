@@ -32,12 +32,16 @@ const getApplicationsByClass = async (grade: number, klass: number) => (await In
   ));
 
 const getMaxApplicationPerIngang = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
+const getNightSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.nightSelfStudyTimes))[grade];
 
 export const getIngangStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   const ingangMaxApplier = await getMaxApplicationPerIngang(grade);
+
+  const nightSelfStudyTimes = await getNightSelfStudyTimes(grade);
+  const ingangApplyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
 
   const weeklyUsedTicket = await getWeeklyUsedTicket(applier);
   const applicationsInClass = await getApplicationsByClass(grade, klass);
@@ -49,6 +53,8 @@ export const getIngangStatus = async (req: Request, res: Response) => {
     weeklyRemainTicket,
     ingangMaxApplier,
     applicationsInClass,
+    nightSelfStudyTimes,
+    ingangApplyPeriod,
   });
 };
 
