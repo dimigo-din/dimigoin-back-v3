@@ -34,7 +34,7 @@ const getApplicationsByClass = async (grade: number, klass: number) => (await In
 const getMaxApplicationPerIngang = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
 const getNightSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.nightSelfStudyTimes))[grade];
 
-export const getIngangStatus = async (req: Request, res: Response) => {
+export const getIngangApplicationStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);

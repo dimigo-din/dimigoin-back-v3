@@ -20,7 +20,7 @@ export default {
       method: 'get',
       path: '/status',
       allowedUserTypes: ['S'],
-      handler: controllers.getIngangStatus,
+      handler: controllers.getIngangApplicationStatus,
     },
     {
       method: 'post',
