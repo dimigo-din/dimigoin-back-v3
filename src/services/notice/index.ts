@@ -49,5 +49,11 @@ export default {
       },
       handler: controllers.editNotice,
     },
+    {
+      method: 'delete',
+      path: '/:noticeId',
+      allowedUserTypes: ['T'],
+      handler: controllers.getNotice,
+    },
   ],
 };
