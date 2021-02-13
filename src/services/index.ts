@@ -43,9 +43,9 @@ const createRouter = (routes: Route[]) => {
     router[route.method](
       route.path,
       ...(route.allowedUserTypes
-        ? [checkUserType(...route.allowedUserTypes)] : []),
+        ? [wrapper(checkUserType(...route.allowedUserTypes))] : []),
       ...(route.middlewares
-        ? route.middlewares : []),
+        ? route.middlewares.map(wrapper) : []),
       ...(route.validateSchema
         ? [validator(Joi.object(route.validateSchema))] : []),
       wrapper(route.handler),

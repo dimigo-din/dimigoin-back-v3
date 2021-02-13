@@ -5,25 +5,18 @@ import { UserType } from '../types';
 
 const checkUserType = (...userTypes: ((UserType | '*')[])) =>
   async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.token) return next(new HttpException(403, '토큰이 없습니다.'));
-    const { token } = req;
-    let tokenType;
-    try {
-      tokenType = await getTokenType(token);
-    } catch (error) {
-      return next(
-        new HttpException(403, '토큰이 정상적으로 검증되지 않았습니다.'),
-      );
+    if (!req.token) {
+      throw new HttpException(401, '액세스 토큰이 Authorization 헤더에 Bearer Token Type으로 전송되어야 합니다.');
     }
+    const { token } = req;
+    const tokenType = await getTokenType(token);
     if (tokenType !== 'ACCESS') {
-      return next(
-        new HttpException(403, '액세스 토큰이 아닙니다.'),
-      );
+      throw new HttpException(401, '액세스 토큰이 아닙니다.');
     }
     const identity = await verifyToken(token);
     if (userTypes[0] === '*') return next(); // Route for All Users
     if (userTypes.includes(identity.userType)) return next();
-    return next(new HttpException(403, '권한이 없습니다.'));
+    throw new HttpException(403, '권한이 없습니다.');
   };
 
 export default checkUserType;
