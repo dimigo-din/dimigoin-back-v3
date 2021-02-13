@@ -55,7 +55,9 @@ const cronJobs = [
 
 export const setCronJobs = async () => {
   for (const { schedule, action } of cronJobs) {
-    cron.schedule(schedule, action);
+    cron.schedule(schedule, action, {
+      timezone: 'Asia/Seoul',
+    });
   }
 };
 
