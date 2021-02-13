@@ -1,5 +1,8 @@
 import Joi from 'joi';
+import { GradeValues } from '../../types';
 import * as controllers from './controllers';
+
+const yyyymmdd = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
 
 export default {
   name: '공지사항 서비스',
@@ -30,9 +33,9 @@ export default {
       validateSchema: {
         title: Joi.string().required(),
         content: Joi.string().required(),
-        targetGrade: Joi.array().items(Joi.number()).required(),
-        startDate: Joi.date().required(),
-        endDate: Joi.date().required(),
+        targetGrade: Joi.array().items(Joi.number().valid(...GradeValues)).required(),
+        startDate: Joi.string().regex(yyyymmdd).required(),
+        endDate: Joi.string().regex(yyyymmdd).required(),
       },
       handler: controllers.createNotice,
     },
@@ -43,9 +46,9 @@ export default {
       validateSchema: {
         title: Joi.string(),
         content: Joi.string(),
-        targetGrade: Joi.array().items(Joi.number()),
-        startDate: Joi.date(),
-        endDate: Joi.date(),
+        targetGrade: Joi.array().items(Joi.number().valid(...GradeValues)),
+        startDate: Joi.string().regex(yyyymmdd),
+        endDate: Joi.string().regex(yyyymmdd),
       },
       handler: controllers.editNotice,
     },
