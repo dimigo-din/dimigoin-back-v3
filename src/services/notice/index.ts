@@ -56,7 +56,7 @@ export default {
       method: 'delete',
       path: '/:noticeId',
       allowedUserTypes: ['T'],
-      handler: controllers.getNotice,
+      handler: controllers.removeNotice,
     },
   ],
 };
