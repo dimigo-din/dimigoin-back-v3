@@ -7003,10 +7003,10 @@ ts-jest@^26.5.0:
     semver "7.x"
     yargs-parser "20.x"
 
-ts-mongoose@^0.0.21:
-  version "0.0.21"
-  resolved "https://registry.yarnpkg.com/ts-mongoose/-/ts-mongoose-0.0.21.tgz#8be3769863e89919da8020351855726d09f7126a"
-  integrity sha512-pbRN2JJY9N7Z5ehyMo6PJ7hlftRdELzO5nh/XvS1y31TDbeefc/GjM7C7jWb6ESZz+KlOmYDUpAT/L8i4wFbmQ==
+ts-mongoose@^0.0.24:
+  version "0.0.24"
+  resolved "https://registry.yarnpkg.com/ts-mongoose/-/ts-mongoose-0.0.24.tgz#d6d1d4c5c62669560a3f3e26c0dd8a7365d1aee4"
+  integrity sha512-BaiyNFqieRqEBnvj2pgWB6/eQJRm7U18kAzDJ92/sfcFx1aQBZeZztzutxr49VVlUvPHxukleIoU/t3VMCBsSA==
 
 tsc-watch@^4.2.3:
   version "4.2.9"
