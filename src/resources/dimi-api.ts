@@ -85,7 +85,7 @@ export const attachTeacherInfo = async () => {
         { idx: teacher.user_id },
         {
           position: teacher.position_name,
-          role: teacher.grade && teacher.class
+          role: teacher.role_name === '담임' && teacher.grade && teacher.class
             ? `${teacher.grade}학년 ${teacher.class}반 ${teacher.role_name}`
             : teacher.role_name,
         },
