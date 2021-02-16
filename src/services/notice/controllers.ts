@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { sendPushMessage } from '../../resources/push';
 import { HttpException } from '../../exceptions';
 import { NoticeModel } from '../../models';
 import { getTodayDateString } from '../../resources/date';
@@ -48,5 +49,15 @@ export const editNotice = async (req: Request, res: Response) => {
 
 export const createNotice = async (req: Request, res: Response) => {
   const notice = await new NoticeModel(req.body).save();
+
+  const today = getTodayDateString();
+  if (today === notice.startDate) {
+    await sendPushMessage(
+      { grade: { $in: notice.targetGrade } },
+      '새로운 공지사항이 등록되었어요!',
+      `[${notice.title}]\n${notice.content}`,
+    );
+  }
+
   res.json({ notice });
 };
