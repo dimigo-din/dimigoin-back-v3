@@ -4,7 +4,7 @@ import {
   refreshWeeklyTimetable,
 } from './timetable';
 import {
-  notifyIngangAppliers,
+  notifyIngangAppliers, notifyNewNotice,
 } from './notifier';
 import {
   reloadAllUsers,
@@ -16,7 +16,7 @@ const cronJobs = [
   {
     name: 'NEIS 시간표 갱신',
     schedule: '0 */2 * * *',
-    action: refreshWeeklyTimetable,
+    action: async () => await refreshWeeklyTimetable(),
     runOnSetup: true,
   },
   {
@@ -39,6 +39,12 @@ const cronJobs = [
     name: '인강실 신청자 푸시 알림 (2타임)',
     schedule: '15 21 * * 1-5',
     action: async () => await notifyIngangAppliers('NSS2'),
+    runOnSetup: false,
+  },
+  {
+    name: '신규 공지사항 알림',
+    schedule: '00 8 * * *',
+    action: async () => await notifyNewNotice(),
     runOnSetup: false,
   },
 ].map((c) => ({
