@@ -17,7 +17,7 @@ export default {
       allowedUserTypes: ['S'],
       validateSchema: {
         place: Joi.string().required(),
-        remark: Joi.string().required(),
+        remark: Joi.string().optional(),
       },
       handler: controllers.createAttendanceLog,
     },
