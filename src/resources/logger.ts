@@ -43,7 +43,9 @@ if (process.env.NODE_ENV !== 'prod') {
   }));
 } else {
   logger.on('data', ({ level, message, timestamp: time }) => {
-    sendSlackMessage(`[${level}] ${message} (${time})`);
+    if (!message.startsWith('[HttpException]')) {
+      sendSlackMessage(`[${level}] ${message} (${time})`);
+    }
   });
 }
 
