@@ -37,10 +37,9 @@ export const restructureUserIdentity = (identity: IUserIdentity) => ({
   userType: identity.user_type,
   gender: identity.gender,
   phone: identity.phone,
-  photo: [
-    identity.photofile1,
-    identity.photofile2,
-  ].filter((v) => v),
+  photos: [identity.photofile1, identity.photofile2]
+    .filter((v) => v)
+    .map((v) => `https://api.dimigo.hs.kr/user_photo/${v}`),
 });
 
 export const reloadAllUsers = async () => {

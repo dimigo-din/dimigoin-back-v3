@@ -7,9 +7,9 @@ import { issue as issueToken, verify, getTokenType } from '../../resources/token
 import { IUser } from '../../interfaces';
 
 const getIdentityWithPhoto = async (userIdx: number): Promise<IUser> => {
-  const { photo } = await UserModel.findOne({ idx: userIdx }).select('photo');
+  const { photos } = await UserModel.findOne({ idx: userIdx }).select('photos');
   const identity = await UserModel.findByIdx(userIdx) as IUser;
-  identity.photo = photo;
+  identity.photos = photos;
   return identity;
 };
 

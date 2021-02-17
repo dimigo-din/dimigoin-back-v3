@@ -17,7 +17,7 @@ const userSchema = createSchema({
   gender: Type.string({ enum: [...GenderValues, null] }),
   phone: Type.string({ select: false }),
   userType: Type.string({ required: true, enum: UserTypeValues }),
-  photo: Type.array({ select: false }).of(Type.string()),
+  photos: Type.array({ select: false }).of(Type.string()),
   tokens: Type.array({ select: false, default: [] }).of(Type.string()),
   // 학생 정보
   grade: Type.number({ enum: GradeValues }),

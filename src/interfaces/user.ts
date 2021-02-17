@@ -15,5 +15,5 @@ export default interface IUser {
   number?: number;
   serial?: number;
 
-  photo: string[];
+  photos: string[];
 }
