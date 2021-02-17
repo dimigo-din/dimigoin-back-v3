@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { getTodayDateString, isValidDate } from '../../resources/date';
+import { getTodayDateString, isValidDate, newDate } from '../../resources/date';
 import { AttendanceLogModel, UserModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
@@ -65,6 +65,8 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
     ...payload,
   });
 
+  attendanceLog.createdAt = newDate();
+  attendanceLog.updatedAt = newDate();
   await attendanceLog.save();
 
   const populatedLog = await AttendanceLogModel
