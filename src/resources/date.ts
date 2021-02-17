@@ -10,13 +10,6 @@ moment.tz.setDefault(timezone);
 
 const format = 'YYYY-MM-DD';
 
-// KST Timezone 반영된 Date Object 생성
-export const newDate = () => {
-  const offset = 9 * 60 * 60 * 1000;
-  const rawDate = new Date();
-  return new Date(rawDate.getTime() + offset);
-};
-
 export const getTodayDateString = () => moment().format(format);
 
 export const getDateString = (date: moment.Moment) => date.format(format);
