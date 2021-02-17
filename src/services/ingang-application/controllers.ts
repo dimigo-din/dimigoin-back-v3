@@ -96,7 +96,7 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   res.json({ exportedFile: file });
 };
 
-export const createIngangApplication = async (req: Request, res: Response) => {
+const checkIngangApplyPeriod = async () => {
   const applyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
   const applyStart = getMinutesValue(applyPeriod.start);
   const applyEnd = getMinutesValue(applyPeriod.end);
@@ -105,8 +105,12 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     minute: moment().minute(),
   });
   if (now < applyStart || applyEnd < now) {
-    throw new HttpException(403, '인강실 신청 시간이 아닙니다.');
+    throw new HttpException(403, '인강실 추가 신청 및 취소가 가능한 시간이 아닙니다.');
   }
+};
+
+export const createIngangApplication = async (req: Request, res: Response) => {
+  await checkIngangApplyPeriod();
 
   const { _id: applier, grade } = req.user;
   const today = getTodayDateString();
@@ -148,6 +152,8 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 };
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
+  await checkIngangApplyPeriod();
+
   const { _id: applier } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
