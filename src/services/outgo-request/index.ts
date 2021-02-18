@@ -1,27 +1,33 @@
 import Joi from 'joi';
-import { Service } from '../index';
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '외출 신청 서비스',
   baseURL: '/outgo-request',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getMyOutgoRequests,
     },
     {
       method: 'get',
       path: '/:outgoRequestId',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getOutgoRequest,
     },
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       validateSchema: {
         applier: Joi.array().items(Joi.string()).required(),
         approver: Joi.string().required(),
@@ -35,4 +41,4 @@ export default {
       handler: controllers.createOutgoRequest,
     },
   ],
-} as Service;
+});

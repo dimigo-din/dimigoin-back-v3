@@ -1,38 +1,48 @@
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '인강실 신청 서비스',
   baseURL: '/ingang-application',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getTodayIngangApplications,
     },
     {
       method: 'get',
       path: '/export/grade/:grade',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.exportTodayIngangApplications,
     },
     {
       method: 'get',
       path: '/status',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getIngangApplicationStatus,
     },
     {
       method: 'post',
       path: '/time/:time',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.createIngangApplication,
     },
     {
       method: 'delete',
       path: '/time/:time',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.removeIngangApplication,
     },
   ],
-};
+});

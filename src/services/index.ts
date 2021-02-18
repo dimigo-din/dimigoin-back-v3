@@ -3,9 +3,8 @@ import Joi from 'joi';
 import {
   Router, RequestHandler, Request, Response, NextFunction,
 } from 'express';
-
-import { HTTPMethod, UserType } from '../types';
-import { checkUserType, validator } from '../middlewares';
+import { HTTPMethod } from '../types';
+import { validator } from '../middlewares';
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -17,7 +16,9 @@ export interface Route {
   middlewares?: RequestHandler[];
   handler: RequestHandler;
   validateSchema?: any;
-  allowedUserTypes?: (UserType | '*')[];
+  needAuth: boolean; // 인증이 필요한지
+  needPermission: boolean; // 관리자 권한이 필요한지
+  studentOnly?: boolean; // 학생만 접근할 수 있는 라우트인지 (신청 관련)
 }
 
 export interface Service {
@@ -36,14 +37,20 @@ const wrapper = (asyncFn: any) =>
   }
   );
 
+interface ServiceSchema {
+  name: string;
+  baseURL: string;
+  routes: Route[];
+}
+
+export const createService = (serviceSchema: ServiceSchema) => serviceSchema;
+
 const createRouter = (routes: Route[]) => {
   const router = Router();
 
   routes.forEach((route) => {
     router[route.method](
       route.path,
-      ...(route.allowedUserTypes
-        ? [wrapper(checkUserType(...route.allowedUserTypes))] : []),
       ...(route.middlewares
         ? route.middlewares.map(wrapper) : []),
       ...(route.validateSchema
@@ -87,9 +94,9 @@ const createDocsRouter = (services: Service[]) => {
 };
 
 export const services = fs.readdirSync(__dirname)
-  .filter((s) => !s.startsWith('index'))
-  // eslint-disable-next-line
+  .filter((s) => !s.startsWith('index'));
 
+// eslint-disable-next-line
 export const importedServices = services.map((s) => require(`${__dirname}/${s}`).default);
 
 export const routes = importedServices.map((s) => s.routes.map((r: Route): Route => ({

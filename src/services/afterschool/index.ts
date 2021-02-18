@@ -1,27 +1,31 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
 import { AfterschoolTimeValues, DayValues } from '../../types';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '방과후 수업 서비스',
   baseURL: '/afterschool',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllAfterschools,
     },
     {
       method: 'get',
       path: '/:afterschoolId',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAfterschool,
     },
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         name: Joi.string().required(),
         description: Joi.string().required(),
@@ -38,8 +42,9 @@ export default {
     {
       method: 'delete',
       path: '/:afterschoolId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.deleteAfterschool,
     },
   ],
-};
+});

@@ -1,35 +1,40 @@
 import Joi from 'joi';
 import { GradeValues } from '../../types';
 import * as controllers from './controllers';
+import { createService } from '../index';
 
 const yyyymmdd = /^(19|20)\d{2}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[0-1])$/;
 
-export default {
+export default createService({
   name: '공지사항 서비스',
   baseURL: '/notice',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllNotices,
     },
     {
       method: 'get',
       path: '/current',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getCurrentNotices,
     },
     {
       method: 'get',
       path: '/:noticeId',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getNotice,
     },
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         title: Joi.string().required(),
         content: Joi.string().required(),
@@ -42,7 +47,8 @@ export default {
     {
       method: 'patch',
       path: '/:noticeId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         title: Joi.string(),
         content: Joi.string(),
@@ -55,8 +61,9 @@ export default {
     {
       method: 'delete',
       path: '/:noticeId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.removeNotice,
     },
   ],
-};
+});
