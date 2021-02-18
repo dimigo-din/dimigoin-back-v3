@@ -3,8 +3,10 @@ import Joi from 'joi';
 import {
   Router, RequestHandler, Request, Response, NextFunction,
 } from 'express';
+import { join as pathJoin } from 'path';
 import { HTTPMethod } from '../types';
 import { validator } from '../middlewares';
+import checkPermission from '../middlewares/check-permission';
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -21,42 +23,49 @@ export interface Route {
   studentOnly?: boolean; // 학생만 접근할 수 있는 라우트인지 (신청 관련)
 }
 
+// 임포트 된 서비스 (서비스 디렉토리 명 추가)
 export interface Service {
+  code?: string;
   name: string;
   baseURL: string;
   routes: Route[];
 }
 
-const wrapper = (asyncFn: any) =>
-  (async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      return await asyncFn(req, res, next);
-    } catch (error) {
-      return next(error);
-    }
-  }
-  );
-
+// 각 서비스 정의 시 사용되는 인터페이스
 interface ServiceSchema {
   name: string;
   baseURL: string;
   routes: Route[];
 }
 
+const wrapper = (asyncFn: any) =>
+  (
+    async (req: Request, res: Response, next: NextFunction) => {
+      try {
+        return await asyncFn(req, res, next);
+      } catch (error) {
+        return next(error);
+      }
+    }
+  );
+
 export const createService = (serviceSchema: ServiceSchema) => serviceSchema;
 
-const createRouter = (routes: Route[]) => {
+const createRouter = (services: Service[]) => {
   const router = Router();
 
-  routes.forEach((route) => {
-    router[route.method](
-      route.path,
-      ...(route.middlewares
-        ? route.middlewares.map(wrapper) : []),
-      ...(route.validateSchema
-        ? [validator(Joi.object(route.validateSchema))] : []),
-      wrapper(route.handler),
-    );
+  services.forEach((service) => {
+    service.routes.forEach((route) => {
+      router[route.method](
+        pathJoin(service.baseURL, route.path),
+        ...(route.middlewares
+          ? route.middlewares.map(wrapper) : []),
+        wrapper(checkPermission(service.code, route)),
+        ...(route.validateSchema
+          ? [validator(Joi.object(route.validateSchema))] : []),
+        wrapper(route.handler),
+      );
+    });
   });
 
   return router;
@@ -96,13 +105,11 @@ const createDocsRouter = (services: Service[]) => {
 export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'));
 
-// eslint-disable-next-line
-export const importedServices = services.map((s) => require(`${__dirname}/${s}`).default);
+export const importedServices = services.map((s) => ({
+  code: s,
+  // eslint-disable-next-line
+  ...(require(`${__dirname}/${s}`).default),
+}));
 
-export const routes = importedServices.map((s) => s.routes.map((r: Route): Route => ({
-  ...r,
-  path: s.baseURL + r.path,
-}))).reduce((a, s) => [...a, ...s]);
-
-export const serviceRouter = createRouter(routes);
+export const serviceRouter = createRouter(importedServices);
 export const serviceDocsRouter = createDocsRouter(importedServices);
