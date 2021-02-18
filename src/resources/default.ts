@@ -57,16 +57,24 @@ export const defaultPlaces = (() => {
 })();
 
 export const defaultConfigs = {
+  // 현재 동아리 지원 기간
   [ConfigKeys.circlePeriod]: CirclePeriod.application,
+  // 최대 지원 가능한 동아리의 수
   [ConfigKeys.circleMaxApply]: 3,
+  // 동아리 카테고리 목록
   [ConfigKeys.circleCategory]: ['IT(프로젝트)', '음악', '경영'],
+  // 허용된 이미지 확장자 목록
   [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'heif'],
+  // 전체 학년 학생별 한 주에 최대 사용 가능한 티켓의 수
   [ConfigKeys.weeklyIngangTicketCount]: 6,
-  [ConfigKeys.ingangMaxAppliers]: [null, 8, 6, 0],
+  // 각 학년의 학급별 최대 신청 인원 지정
+  [ConfigKeys.ingangMaxApplicationPerClass]: [null, 8, 6, 0],
+  // 전체 학년 인강실 신청 시간
   [ConfigKeys.ingangApplyPeriod]: {
     start: { hour: 7, minute: 0 },
     end: { hour: 8, minute: 15 },
   },
+  // 학년별 야자 진행 시간
   [ConfigKeys.nightSelfStudyTimes]: [
     null,
     {

@@ -31,14 +31,14 @@ const getApplicationsByClass = async (grade: number, klass: number) => (await In
       && application.applier.class === klass
   ));
 
-const getMaxApplicationPerIngang = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxAppliers))[grade];
+const getMaxApplicationPerClass = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxApplicationPerClass))[grade];
 const getNightSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.nightSelfStudyTimes))[grade];
 
 export const getIngangApplicationStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
-  const ingangMaxApplier = await getMaxApplicationPerIngang(grade);
+  const ingangMaxApplier = await getMaxApplicationPerClass(grade);
 
   const nightSelfStudyTimes = await getNightSelfStudyTimes(grade);
   const ingangApplyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
@@ -112,7 +112,7 @@ const checkIngangApplyPeriod = async () => {
 export const createIngangApplication = async (req: Request, res: Response) => {
   await checkIngangApplyPeriod();
 
-  const { _id: applier, grade } = req.user;
+  const { _id: applier, grade, class: klass } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
@@ -122,24 +122,25 @@ export const createIngangApplication = async (req: Request, res: Response) => {
     throw new HttpException(409, '이미 해당 시간 인강실을 신청했습니다.');
   }
 
+  // 오늘 생성된 모든 인강실 신청을 불러옴
   const todayAll = await IngangApplicationModel.find({
     date: today,
     time,
   }).populateTs('applier');
 
-  // 신청하려는 인강실 (학년과 신청 타임 기준)에 존재하는 모든 신청 불러옴
-  const classAll = todayAll.filter((v) => v.applier.grade === grade);
+  // 신청하려는 타임 인강실 신청 중 같은 반 학생들의 신청을 불러옴
+  const classAll = todayAll.filter((v) => v.applier.grade === grade && v.applier.class === klass);
 
-  const maxApply = await getMaxApplicationPerIngang(grade);
+  const maxApply = await getMaxApplicationPerClass(grade);
   if (classAll.length >= maxApply) {
-    throw new HttpException(403, '최대 인강실 인원을 초과했습니다.');
+    throw new HttpException(403, '학급별 최대 인강실 인원을 초과했습니다.');
   }
 
   // 자신이 보유한 티켓 개수 이상으로 신청했는지 확인
   const weeklyUsedTicket = await getWeeklyUsedTicket(applier);
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   if (weeklyTicketCount <= weeklyUsedTicket) {
-    throw new HttpException(409, '이번 주 인강실 티켓을 모두 사용했습니다.');
+    throw new HttpException(403, '이번 주 인강실 티켓을 모두 사용했습니다.');
   }
 
   const ingangApplication = await new IngangApplicationModel({

@@ -6,7 +6,7 @@ export enum ConfigKeys {
   circleCategory = 'CIRCLE_CATEGORY',
   imageExtension = 'IMAGE_EXTENSION',
   weeklyIngangTicketCount = 'WEEKLY_INGANG_TICKET_COUNT',
-  ingangMaxAppliers = 'INGANG_MAX_APPLIERS',
+  ingangMaxApplicationPerClass = 'INGANG_MAX_APPLICATION_PER_CLASS',
   ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
   nightSelfStudyTimes = 'NIGHT_SELF_STUDY_TIMES',
 }
