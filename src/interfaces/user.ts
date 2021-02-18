@@ -9,11 +9,14 @@ export default interface IUser {
   userType: UserType;
   gender: Gender;
   phone: string;
+  permissions: string[];
+  photos: string[];
+
+  position?: string;
+  role?: string;
 
   grade?: number;
   class?: number;
   number?: number;
   serial?: number;
-
-  photos: string[];
 }

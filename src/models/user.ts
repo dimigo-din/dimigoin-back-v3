@@ -9,6 +9,7 @@ import {
   ClassValues,
   UserType,
 } from '../types';
+import { services } from '../services';
 
 const userSchema = createSchema({
   idx: Type.number({ required: true, unique: true }),
@@ -19,6 +20,8 @@ const userSchema = createSchema({
   userType: Type.string({ required: true, enum: UserTypeValues }),
   photos: Type.array({ select: false }).of(Type.string()),
   tokens: Type.array({ select: false, default: [] }).of(Type.string()),
+  permissions: Type.array({ required: true, default: [] })
+    .of(Type.string({ enum: services })),
   // 학생 정보
   grade: Type.number({ enum: GradeValues }),
   class: Type.number({ enum: ClassValues }),

@@ -89,12 +89,13 @@ const createDocsRouter = (services: Service[]) => {
 export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'))
   // eslint-disable-next-line
-  .map((s) => require(`${__dirname}/${s}`).default);
 
-export const routes = services.map((s) => s.routes.map((r: Route): Route => ({
+export const importedServices = services.map((s) => require(`${__dirname}/${s}`).default);
+
+export const routes = importedServices.map((s) => s.routes.map((r: Route): Route => ({
   ...r,
   path: s.baseURL + r.path,
 }))).reduce((a, s) => [...a, ...s]);
 
 export const serviceRouter = createRouter(routes);
-export const serviceDocsRouter = createDocsRouter(services);
+export const serviceDocsRouter = createDocsRouter(importedServices);
