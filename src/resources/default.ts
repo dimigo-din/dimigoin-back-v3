@@ -90,4 +90,6 @@ export const defaultConfigs = {
       [NightTimeValues[1]]: '21:30 - 23:10',
     },
   ],
+  // 자습 이동반 시행 여부 (코로나)
+  [ConfigKeys.isMovingClassSystem]: true,
 };

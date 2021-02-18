@@ -9,6 +9,7 @@ export enum ConfigKeys {
   ingangMaxApplicationPerClass = 'INGANG_MAX_APPLICATION_PER_CLASS',
   ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
   nightSelfStudyTimes = 'NIGHT_SELF_STUDY_TIMES',
+  isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
 }
 
 export enum CirclePeriod {
