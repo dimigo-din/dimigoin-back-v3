@@ -1,20 +1,26 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '인원 현황 서비스',
   baseURL: '/attendance',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getMyAttendanceLogs,
     },
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['S'],
+
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       validateSchema: {
         place: Joi.string().required(),
         remark: Joi.string().optional(),
@@ -24,14 +30,16 @@ export default {
     {
       method: 'get',
       path: '/date/:date/grade/:grade/class/:class',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getClassStatus,
     },
     {
       method: 'get',
       path: '/date/:date/student/:studentId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.getStudentAttendanceHistory,
     },
   ],
-};
+});

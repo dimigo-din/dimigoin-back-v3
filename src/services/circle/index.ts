@@ -1,26 +1,31 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '동아리 관련 서비스',
   baseURL: '/circle',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllCircles,
     },
     {
       method: 'get',
       path: '/:circleId',
-      allowedUserTypes: ['S', 'T'],
+
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getOneCircle,
     },
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['S', 'T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         name: Joi.string().required(),
         imageUrl: Joi.string().required(),
@@ -35,8 +40,9 @@ export default {
     {
       method: 'delete',
       path: '/:circleId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.removeCircle,
     },
   ],
-};
+});

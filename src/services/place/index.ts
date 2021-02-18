@@ -1,26 +1,31 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '각종 실 관련 서비스',
   baseURL: '/place',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllPlaces,
     },
     {
       method: 'get',
       path: '/primary',
-      allowedUserTypes: ['S'],
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
       handler: controllers.getPrimaryPlaces,
     },
     {
       method: 'patch',
       path: '/:placeId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         name: Joi.string(),
         type: Joi.string(),
@@ -32,7 +37,8 @@ export default {
     {
       method: 'post',
       path: '/',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       validateSchema: {
         name: Joi.string().required(),
         type: Joi.string(),
@@ -44,14 +50,16 @@ export default {
     {
       method: 'get',
       path: '/:placeId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getPlace,
     },
     {
       method: 'delete',
       path: '/:placeId',
-      allowedUserTypes: ['T'],
+      needAuth: true,
+      needPermission: true,
       handler: controllers.deletePlace,
     },
   ],
-};
+});

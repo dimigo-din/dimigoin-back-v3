@@ -1,32 +1,37 @@
 import * as controllers from './controllers';
+import { createService } from '../index';
 
-export default {
+export default createService({
   name: '사용자 조회 서비스',
   baseURL: '/user',
   routes: [
     {
       method: 'get',
       path: '/',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllUsers,
     },
     {
       method: 'get',
       path: '/student',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllStudents,
     },
     {
       method: 'get',
       path: '/teacher',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.getAllTeachers,
     },
     {
       method: 'get',
       path: '/me',
-      allowedUserTypes: '*',
+      needAuth: true,
+      needPermission: false,
       handler: controllers.decodeJWT,
     },
   ],
-};
+});

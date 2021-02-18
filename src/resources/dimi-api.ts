@@ -6,6 +6,7 @@ import {
   ITeacherIdentity,
 } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
+import { services as allServices } from '../services';
 import config from '../config';
 
 const apiRouter = {
@@ -47,6 +48,9 @@ export const reloadAllUsers = async () => {
   Object.keys(users).forEach(async (idx) => {
     users[idx] = restructureUserIdentity(users[idx]);
     const user = await UserModel.findOne({ idx: users[idx].idx });
+    if (users[idx].userType === 'T') {
+      users[idx].permissions = allServices;
+    }
     if (!user) {
       // eslint-disable-next-line
       await UserModel.create(users[idx]).catch((e) => console.error(e));
