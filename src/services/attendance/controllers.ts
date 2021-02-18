@@ -4,16 +4,17 @@ import { getTodayDateString, isValidDate } from '../../resources/date';
 import { AttendanceLogModel, UserModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
-  const { grade, class: klass, userType } = req.user;
-  if (userType !== 'T' && (
-    grade !== parseInt(req.params.grade)
-      || klass !== parseInt(req.params.class)
+  if (req.user.userType !== 'T' && (
+    req.user.grade !== parseInt(req.params.grade)
+      || req.user.class !== parseInt(req.params.class)
   )) {
     throw new HttpException(403, '권한이 없습니다.');
   }
 
   const { date } = req.params;
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+  const grade = parseInt(req.params.grade);
+  const klass = parseInt(req.params.class);
 
   const studentsInClass = await UserModel
     .find({ grade, class: klass });
