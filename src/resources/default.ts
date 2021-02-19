@@ -5,6 +5,7 @@ import {
   Grade,
   Class,
   NightTimeValues,
+  AfterschoolTimeValues,
 } from '../types';
 
 export const defaultPlaces = (() => {
@@ -74,20 +75,62 @@ export const defaultConfigs = {
     start: { hour: 7, minute: 0 },
     end: { hour: 8, minute: 15 },
   },
-  // 학년별 야자 진행 시간
-  [ConfigKeys.nightSelfStudyTimes]: [
+  // 학년별 자습 시간
+  [ConfigKeys.selfStudyTimes]: [
     null,
     {
-      [NightTimeValues[0]]: '19:50 - 21:10',
-      [NightTimeValues[1]]: '21:30 - 22:50',
+      [AfterschoolTimeValues[0]]: {
+        start: { hour: 17, minute: 5 },
+        end: { hour: 17, minute: 50 },
+      },
+      [AfterschoolTimeValues[1]]: {
+        start: { hour: 17, minute: 55 },
+        end: { hour: 18, minute: 35 },
+      },
+      [NightTimeValues[0]]: {
+        start: { hour: 19, minute: 50 },
+        end: { hour: 21, minute: 10 },
+      },
+      [NightTimeValues[1]]: {
+        start: { hour: 21, minute: 30 },
+        end: { hour: 22, minute: 50 },
+      },
     },
     {
-      [NightTimeValues[0]]: '19:50 - 21:10',
-      [NightTimeValues[1]]: '21:30 - 23:00',
+      [AfterschoolTimeValues[0]]: {
+        start: { hour: 17, minute: 5 },
+        end: { hour: 17, minute: 50 },
+      },
+      [AfterschoolTimeValues[1]]: {
+        start: { hour: 17, minute: 55 },
+        end: { hour: 18, minute: 35 },
+      },
+      [NightTimeValues[0]]: {
+        start: { hour: 19, minute: 50 },
+        end: { hour: 21, minute: 10 },
+      },
+      [NightTimeValues[1]]: {
+        start: { hour: 21, minute: 30 },
+        end: { hour: 23, minute: 0 },
+      },
     },
     {
-      [NightTimeValues[0]]: '19:50 - 21:10',
-      [NightTimeValues[1]]: '21:30 - 23:10',
+      [AfterschoolTimeValues[0]]: {
+        start: { hour: 17, minute: 5 },
+        end: { hour: 17, minute: 50 },
+      },
+      [AfterschoolTimeValues[1]]: {
+        start: { hour: 17, minute: 55 },
+        end: { hour: 18, minute: 35 },
+      },
+      [NightTimeValues[0]]: {
+        start: { hour: 19, minute: 50 },
+        end: { hour: 21, minute: 10 },
+      },
+      [NightTimeValues[1]]: {
+        start: { hour: 21, minute: 30 },
+        end: { hour: 23, minute: 10 },
+      },
     },
   ],
   // 자습 이동반 시행 여부 (코로나)
