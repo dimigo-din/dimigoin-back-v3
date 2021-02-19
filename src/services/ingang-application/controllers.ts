@@ -70,6 +70,16 @@ export const getTodayIngangApplications = async (req: Request, res: Response) =>
   res.json({ ingangApplications });
 };
 
+export const getTodayEntireIngangApplications = async (req: Request, res: Response) => {
+  const ingangApplications = await IngangApplicationModel
+    .find({
+      date: getTodayDateString(),
+    })
+    .populateTs('applier');
+
+  res.json({ ingangApplications });
+};
+
 export const exportTodayIngangApplications = async (req: Request, res: Response) => {
   const grade = parseInt(req.params.grade) as Grade;
   const applications = (
