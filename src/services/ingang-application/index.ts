@@ -21,7 +21,7 @@ export default createService({
       handler: controllers.getTodayEntireIngangApplications,
     },
     {
-      method: 'get',
+      method: 'post',
       path: '/export/grade/:grade',
       needAuth: true,
       needPermission: true,
