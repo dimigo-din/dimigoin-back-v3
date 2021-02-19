@@ -59,14 +59,24 @@ export const getIngangApplicationStatus = async (req: Request, res: Response) =>
 };
 
 export const getTodayIngangApplications = async (req: Request, res: Response) => {
-  const { userType, _id: applier } = req.user;
+  const { _id: applier } = req.user;
 
   const ingangApplications = await IngangApplicationModel
     .find({
-      ...(userType === 'S' ? { applier } : {}),
+      applier,
       date: getTodayDateString(),
     })
     .populateTs('applier');
+  res.json({ ingangApplications });
+};
+
+export const getTodayEntireIngangApplications = async (req: Request, res: Response) => {
+  const ingangApplications = await IngangApplicationModel
+    .find({
+      date: getTodayDateString(),
+    })
+    .populateTs('applier');
+
   res.json({ ingangApplications });
 };
 
