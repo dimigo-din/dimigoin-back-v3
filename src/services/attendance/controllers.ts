@@ -55,6 +55,7 @@ export const getClassTimeline = async (req: Request, res: Response) => {
   const logs = (await AttendanceLogModel.find({ date })
     .populateTs('student')
     .populateTs('place')
+    .populateTs('updatedBy')
     .sort('-createdAt'))
     .filter(({ student }) => (
       student.grade === grade
