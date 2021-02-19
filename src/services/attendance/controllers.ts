@@ -37,6 +37,31 @@ export const getClassStatus = async (req: Request, res: Response) => {
   res.json({ status: studentsWithLog });
 };
 
+export const getClassTimeline = async (req: Request, res: Response) => {
+  if (req.user.userType !== 'T' && (
+    req.user.grade !== parseInt(req.params.grade)
+      || req.user.class !== parseInt(req.params.class)
+  )) {
+    throw new HttpException(403, '권한이 없습니다.');
+  }
+
+  const { date } = req.params;
+  if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+  const grade = parseInt(req.params.grade);
+  const klass = parseInt(req.params.class);
+
+  const logs = (await AttendanceLogModel.find({ date })
+    .populateTs('student')
+    .populateTs('place')
+    .sort('-createdAt'))
+    .filter(({ student }) => (
+      student.grade === grade
+      && student.class === klass
+    ));
+
+  res.json({ logs });
+};
+
 export const getStudentAttendanceHistory = async (req: Request, res: Response) => {
   const { date } = req.params;
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');

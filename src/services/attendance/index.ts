@@ -36,6 +36,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/date/:date/grade/:grade/class/:class/timeline',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getClassTimeline,
+    },
+    {
+      method: 'get',
       path: '/date/:date/student/:studentId',
       needAuth: true,
       needPermission: true,
