@@ -25,7 +25,9 @@ export const getClassStatus = async (req: Request, res: Response) => {
         date,
         student: student._id,
       })
+        .populateTs('student')
         .populateTs('place')
+        .populateTs('updatedBy')
         .sort('-createdAt');
 
       return {
@@ -92,13 +94,7 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   });
 
   await attendanceLog.save();
-
-  const populatedLog = await AttendanceLogModel
-    .findById(attendanceLog._id)
-    .populateTs('place')
-    .populateTs('student');
-
-  res.json({ attendanceLog: populatedLog });
+  res.json({ attendanceLog });
 };
 
 export const getMyAttendanceLogs = async (req: Request, res: Response) => {
@@ -109,7 +105,19 @@ export const getMyAttendanceLogs = async (req: Request, res: Response) => {
     })
     .populateTs('student')
     .populateTs('place')
+    .populateTs('updatedBy')
     .sort('-createdAt'));
 
   res.json({ logs });
+};
+
+export const editAttendanceLog = async (req: Request, res: Response) => {
+  const log = await AttendanceLogModel.findById(req.params.attendanceLogId);
+  if (!log) throw new HttpException(404, '해당 자습 로그를 찾을 수 없습니다.');
+
+  Object.assign(log, req.body);
+  log.updatedBy = req.user._id;
+  await log.save();
+
+  res.json({ log });
 };

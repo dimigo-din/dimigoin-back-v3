@@ -7,6 +7,7 @@ const attendanceLogSchema = createSchema({
   student: Type.ref(Type.objectId()).to('User', userSchema),
   remark: Type.string({ trim: true, default: null }),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
+  updatedBy: Type.ref(Type.objectId({ default: null })).to('User', userSchema),
 }, { versionKey: false, timestamps: true });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema);
