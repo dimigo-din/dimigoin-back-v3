@@ -41,5 +41,16 @@ export default createService({
       needPermission: true,
       handler: controllers.getStudentAttendanceHistory,
     },
+    {
+      method: 'patch',
+      path: '/:attendanceLogId',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        place: Joi.string().optional(),
+        remark: Joi.string().optional(),
+      },
+      handler: controllers.editAttendanceLog,
+    },
   ],
 });
