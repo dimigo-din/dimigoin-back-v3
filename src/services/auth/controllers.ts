@@ -6,10 +6,13 @@ import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { IUser } from '../../interfaces';
 
-const getIdentityWithPhoto = async (userIdx: number): Promise<IUser> => {
-  const { photos } = await UserModel.findOne({ idx: userIdx }).select('photos');
+const getEntierIdentity = async (userIdx: number): Promise<IUser> => {
+  const { photos, permissions } = await UserModel.findOne({ idx: userIdx })
+    .select('photos')
+    .select('permissions');
   const identity = await UserModel.findByIdx(userIdx) as IUser;
   identity.photos = photos;
+  identity.permissions = permissions;
   return identity;
 };
 
@@ -18,7 +21,7 @@ export const identifyUser = async (req: Request, res: Response) => {
 
   try {
     const { id: idx } = await getIdentity(account);
-    const identity = await getIdentityWithPhoto(idx);
+    const identity = await getEntierIdentity(idx);
 
     res.json({
       accessToken: await issueToken(identity, false),
@@ -37,7 +40,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (tokenType !== 'REFRESH') throw new HttpException(400, '리프레시 토큰이 아닙니다.');
 
   const payload = await verify(refreshToken);
-  const identity = await getIdentityWithPhoto(payload.idx);
+  const identity = await getEntierIdentity(payload.idx);
   res.json({
     accessToken: await issueToken(identity, false),
     refreshToken: await issueToken(identity, true),
