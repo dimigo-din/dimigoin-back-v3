@@ -1,6 +1,10 @@
 import { Request, Response } from 'express';
 import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
+import { Grade } from '../../types';
+import { getKoreanTodayFullString } from '../../resources/date';
+import { createAfterschoolApplierBook } from '../../resources/exporter';
+import { writeFile } from '../../resources/file';
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await AfterschoolApplicationModel.find({
@@ -41,4 +45,14 @@ export const cancelApplication = async (req: Request, res: Response) => {
   }
   await afterschoolApplication.remove();
   res.json({ afterschoolApplication });
+};
+
+export const exportAfterschoolApplications = async (req: Request, res: Response) => {
+  const grade = parseInt(req.params.grade) as Grade;
+  const buffer = await createAfterschoolApplierBook(grade);
+  const today = getKoreanTodayFullString();
+  const fileName = `${grade}학년 방과 후 수강 신청 현황 (${today} 기준)`;
+  const file = await writeFile(buffer, fileName, 'xlsx', req.user);
+
+  res.json({ exportedFile: file });
 };

@@ -8,3 +8,4 @@ export const setAlignCenter = (sheet: exceljs.Worksheet, cellKey: string) => {
 };
 
 export * from './ingang-application';
+export * from './afterschool-application';
