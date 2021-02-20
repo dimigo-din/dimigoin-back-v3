@@ -1,5 +1,5 @@
 import exceljs from 'exceljs';
-import { setAlignCenter, createStandardBuffer } from './index';
+import { setAlignCenter } from './index';
 import { Grade } from '../../types';
 import { getKoreanTodayFullString } from '../date';
 
@@ -56,5 +56,5 @@ export const createIngangApplierBook = async (grade: Grade, applications: [any[]
   const maxLength = Math.max(...applications.map((a) => a.length));
   setAlignCenter(sheet, `A6:F${maxLength + 6}`);
 
-  return createStandardBuffer(await book.xlsx.writeBuffer());
+  return await book.xlsx.writeBuffer();
 };
