@@ -32,7 +32,7 @@ const userSchema = createSchema({
   role: Type.string({ trim: true }),
 }, { versionKey: false, timestamps: true });
 
-type UserDoc = ExtractDoc<typeof userSchema>;
+export type UserDoc = ExtractDoc<typeof userSchema>;
 
 const UserModel = typedModel('User', userSchema, undefined, undefined, {
   findByIdx(idx: number): UserDoc {
