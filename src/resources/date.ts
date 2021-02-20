@@ -19,13 +19,13 @@ export const getKoreanTodayFullString = () => moment().format(
 );
 
 export const getWeekStartString = (date?: string) => {
-  if (date) return moment(date).startOf('week').format(format);
-  return moment().startOf('week').format(format);
+  if (date) return moment(date).startOf('isoWeek').format(format);
+  return moment().startOf('isoWeek').format(format);
 };
 
 export const getWeekEndString = (date?: string) => {
-  if (date) return moment(date).endOf('week').format(format);
-  return moment().endOf('week').format(format);
+  if (date) return moment(date).endOf('isoWeek').format(format);
+  return moment().endOf('isoWeek').format(format);
 };
 
 export const isValidDate = (string: string): Boolean =>
