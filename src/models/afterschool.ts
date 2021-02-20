@@ -20,7 +20,7 @@ const afterschoolSchema = createSchema({
   key: Type.string(),
   teacher: Type.ref(Type.objectId()).to('User', userSchema),
   days: Type.array().of(Type.string({ required: true, enum: DayValues })),
-  time: Type.array().of(Type.string({ required: true, enum: [...AfterschoolTimeValues, ...NightTimeValues] })),
+  times: Type.array().of(Type.string({ required: true, enum: [...AfterschoolTimeValues, ...NightTimeValues] })),
   capacity: Type.number({ required: true }),
 }, { versionKey: false, timestamps: true });
 
@@ -36,7 +36,7 @@ const AfterschoolModel = typedModel('Afterschool', afterschoolSchema, undefined,
         // 겹치는 요일이 존재하는 동시에 타임까지 겹치는지
         return (
           afterschool.days.filter((day) => target.days.includes(day)).length
-          && afterschool.time.filter((time) => target.time.includes(time)).length
+          && afterschool.times.filter((time) => target.times.includes(time)).length
         );
       });
     return overlapped.length > 0;
