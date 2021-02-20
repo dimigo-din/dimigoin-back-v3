@@ -15,6 +15,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/entire',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getTodayEntireIngangApplications,
+    },
+    {
+      method: 'post',
       path: '/export/grade/:grade',
       needAuth: true,
       needPermission: true,

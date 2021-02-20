@@ -32,7 +32,7 @@ const getApplicationsByClass = async (grade: number, klass: number) => (await In
   ));
 
 const getMaxApplicationPerClass = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxApplicationPerClass))[grade];
-const getNightSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.nightSelfStudyTimes))[grade];
+const getSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.selfStudyTimes))[grade];
 
 export const getIngangApplicationStatus = async (req: Request, res: Response) => {
   const { _id: applier, grade, class: klass } = req.user;
@@ -40,7 +40,7 @@ export const getIngangApplicationStatus = async (req: Request, res: Response) =>
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   const ingangMaxApplier = await getMaxApplicationPerClass(grade);
 
-  const nightSelfStudyTimes = await getNightSelfStudyTimes(grade);
+  const selfStudyTimes = await getSelfStudyTimes(grade);
   const ingangApplyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
 
   const weeklyUsedTicket = await getWeeklyUsedTicket(applier);
@@ -53,20 +53,30 @@ export const getIngangApplicationStatus = async (req: Request, res: Response) =>
     weeklyRemainTicket,
     ingangMaxApplier,
     applicationsInClass,
-    nightSelfStudyTimes,
+    selfStudyTimes,
     ingangApplyPeriod,
   });
 };
 
 export const getTodayIngangApplications = async (req: Request, res: Response) => {
-  const { userType, _id: applier } = req.user;
+  const { _id: applier } = req.user;
 
   const ingangApplications = await IngangApplicationModel
     .find({
-      ...(userType === 'S' ? { applier } : {}),
+      applier,
       date: getTodayDateString(),
     })
     .populateTs('applier');
+  res.json({ ingangApplications });
+};
+
+export const getTodayEntireIngangApplications = async (req: Request, res: Response) => {
+  const ingangApplications = await IngangApplicationModel
+    .find({
+      date: getTodayDateString(),
+    })
+    .populateTs('applier');
+
   res.json({ ingangApplications });
 };
 
