@@ -15,7 +15,7 @@ export const getTodayDateString = () => moment().format(format);
 export const getDateString = (date: moment.Moment) => date.format(format);
 
 export const getKoreanTodayFullString = () => moment().format(
-  'YYYY년 MM월 DD일 HH시 MM분',
+  'YYYY년 MM월 DD일 HH시 mm분',
 );
 
 export const getWeekStartString = (date?: string) => {
