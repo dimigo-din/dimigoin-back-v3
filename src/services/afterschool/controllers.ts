@@ -6,8 +6,8 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
   const { userType, grade, class: klass } = req.user;
   const afterschools = await AfterschoolModel.find(
     userType === 'T' ? {} : {
-      grade: { $all: [grade] },
-      class: { $all: [klass] },
+      targetGrades: { $all: [grade] },
+      targetClasses: { $all: [klass] },
     },
   );
 
@@ -15,7 +15,9 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
 };
 
 export const getAfterschool = async (req: Request, res: Response) => {
-  const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
+  const afterschool = await AfterschoolModel.findById(
+    req.params.afterschoolId,
+  );
   if (!afterschool) {
     throw new HttpException(404, '해당 방과 후 수업을 찾을 수 없습니다.');
   }
