@@ -32,7 +32,8 @@ export const downloadFile = async (req: Request, res: Response) => {
   }
 
   const filePath = pathJoin(config.fileStoragePath, fileId);
-  const fileName = convertFileName(`${file.name}.${file.extension}`, req);
+  const rawFileName = `${file.name}.${file.extension}`;
+  const fileName = convertFileName(rawFileName, req);
   if (!fs.existsSync(filePath)) {
     throw new HttpException(500, '요청하신 파일을 찾을 수 없습니다.');
   }
@@ -42,6 +43,6 @@ export const downloadFile = async (req: Request, res: Response) => {
 
   const stream = fs.createReadStream(filePath);
   res.setHeader('Content-disposition', `attachment; fileName=${fileName}`);
-  res.setHeader('Content-Type', mime.getType(filePath));
+  res.setHeader('Content-Type', mime.getType(rawFileName));
   stream.pipe(res);
 };
