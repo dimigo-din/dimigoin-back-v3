@@ -34,7 +34,7 @@ export default createService({
         key: Joi.string(),
         teacher: Joi.string().required(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).required(),
-        time: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).required(),
+        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).required(),
         capacity: Joi.number().required(),
       },
       handler: controllers.createAfterschool,
