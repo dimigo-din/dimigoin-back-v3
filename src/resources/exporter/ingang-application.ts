@@ -1,17 +1,8 @@
 import exceljs from 'exceljs';
-import { Grade } from '../types';
-import { getKoreanTodayFullString } from './date';
+import { setAlignCenter, createStandardBuffer } from './index';
+import { Grade } from '../../types';
+import { getKoreanTodayFullString } from '../date';
 
-const createStandardBuffer = (eBuffer: exceljs.Buffer) => Buffer.from(eBuffer.toString());
-
-const setAlignCenter = (sheet: exceljs.Worksheet, cellKey: string) => {
-  sheet.getCell(cellKey).alignment = {
-    horizontal: 'center',
-    vertical: 'middle',
-  };
-};
-
-// TODO: any -> IngangApplication populated type
 export const createIngangApplierBook = async (grade: Grade, applications: [any[], any[]]) => {
   const book = new exceljs.Workbook();
   const sheet = book.addWorksheet('신청자 명단');
