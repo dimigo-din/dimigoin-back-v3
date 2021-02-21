@@ -3,9 +3,9 @@ import exceljs from 'exceljs';
 import { join as pathJoin } from 'path';
 import config from '../config';
 import { FileModel } from '../models';
-import { IUser } from '../interfaces';
+import { User } from '../interfaces';
 
-export const writeFile = async (buffer: Buffer | exceljs.Buffer, name: string, extension: string, user: IUser, downloadLimit: number = 0) => {
+export const writeFile = async (buffer: Buffer | exceljs.Buffer, name: string, extension: string, user: User, downloadLimit: number = 0) => {
   const file = await new FileModel({
     name, extension, downloadLimit, owner: user._id,
   }).save();

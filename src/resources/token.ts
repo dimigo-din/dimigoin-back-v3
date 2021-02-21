@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import { IUser } from '../interfaces';
+import { User } from '../interfaces';
 import config from '../config';
 import { HttpException } from '../exceptions';
 import { TokenType } from '../types';
@@ -39,7 +39,7 @@ export const verify = async (token: string) => {
   }
 };
 
-export const issue = async (identity: IUser, refresh: boolean) => {
+export const issue = async (identity: User, refresh: boolean) => {
   if (refresh) {
     const token = await jwt.sign(
       {
