@@ -13,7 +13,7 @@ export const updateApplicationForm = async (req: Request, res: Response) => {
 
 export const getAllApplications = async (req: Request, res: Response) => {
   const applications = await CircleApplicationModel.find()
-    .populate('circle', ['name'])
-    .populate('applier', ['name', 'serial']);
+    .populateTs('circle')
+    .populateTs('applier');
   res.json({ applications });
 };

@@ -19,7 +19,10 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        form: Joi.object().required(),
+        form: Joi.array().items(Joi.object({
+          question: Joi.string().required(),
+          maxLength: Joi.number().required(),
+        })).min(1).required(),
       },
       handler: controllers.updateApplicationForm,
     },
