@@ -14,6 +14,7 @@ export default {
   neisAPIKey: process.env.NEIS_API_KEY!,
   manualCronPassword: process.env.MANUAL_CRON_PASSWORD!,
   slackWebhookUri: process.env.SLACK_WEBHOOK_URI!,
+  redisUri: process.env.REDIS_URI!,
   fileStoragePath: process.env.NODE_ENV === 'prod'
     ? process.env.FILE_STORAGE_PATH!
     : path.join(path.parse(__dirname).dir, 'exported-files'),
