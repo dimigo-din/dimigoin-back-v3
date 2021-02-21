@@ -6,6 +6,10 @@ import { Grade } from '../../types';
 import { getKoreanTodayFullString } from '../../resources/date';
 import { createAfterschoolApplierBook } from '../../resources/exporter';
 import { writeFile } from '../../resources/file';
+import {
+  getAfterschoolApplierCount,
+  mutateAfterschoolApplierCount,
+} from '../../resources/redis';
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await AfterschoolApplicationModel.find({
@@ -47,7 +51,11 @@ export const applyAfterschool = async (req: Request, res: Response) => {
     afterschool: afterschool._id,
   });
   await afterschoolApplication.save();
-
+  await mutateAfterschoolApplierCount(
+    afterschool._id,
+    1,
+  );
+  console.log(await getAfterschoolApplierCount(afterschool._id));
   res.json({ afterschoolApplication });
 };
 
@@ -60,7 +68,15 @@ export const cancelApplication = async (req: Request, res: Response) => {
   if (!afterschoolApplication) {
     throw new HttpException(404, '해당 강좌를 신청한 이력이 없습니다.');
   }
+  const afterschool = await AfterschoolModel.findById(
+    afterschoolApplication.afterschool,
+  );
   await afterschoolApplication.remove();
+  await mutateAfterschoolApplierCount(
+    afterschool._id,
+    -1,
+  );
+  console.log(await getAfterschoolApplierCount(afterschool._id));
   res.json({ afterschoolApplication });
 };
 
