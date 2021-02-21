@@ -40,7 +40,7 @@ export const applyMentoring = async (req: Request, res: Response) => {
 
   // 신청 대상 학년인지 검사
   const { _id: userId, grade } = req.user;
-  if (!mentoring.targetGrades.includes(grade)) {
+  if (mentoring.targetGrade !== grade) {
     throw new HttpException(403, '신청 대상 학년이 아닙니다.');
   }
 

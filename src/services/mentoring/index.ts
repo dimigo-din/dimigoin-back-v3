@@ -39,10 +39,7 @@ export default createService({
           Joi.string().valid(...DayValues),
         ).min(1).max(7)
           .required(),
-        targetGrades: Joi.array().items(
-          Joi.number().valid(...GradeValues),
-        ).min(1).max(3)
-          .required(),
+        targetGrade: Joi.number().valid(...GradeValues).required(),
         duration: Joi.object({
           start: timeSchema.required(),
           end: timeSchema.required(),
@@ -70,10 +67,7 @@ export default createService({
           Joi.string().valid(...DayValues),
         ).min(1).max(7)
           .optional(),
-        targetGrades: Joi.array().items(
-          Joi.number().valid(...GradeValues),
-        ).min(1).max(3)
-          .optional(),
+        targetGrade: Joi.number().valid(...GradeValues).required(),
         duration: Joi.object({
           start: timeSchema.required(),
           end: timeSchema.required(),
