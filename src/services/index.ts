@@ -17,7 +17,7 @@ export interface Route {
   path: string;
   middlewares?: RequestHandler[];
   handler: RequestHandler;
-  validateSchema?: any;
+  validateSchema?: KeyValue<Joi.Schema>;
   needAuth: boolean; // 인증이 필요한지
   needPermission: boolean; // 관리자 권한이 필요한지
   studentOnly?: boolean; // 학생만 접근할 수 있는 라우트인지 (신청 관련)
