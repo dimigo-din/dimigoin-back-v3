@@ -4,8 +4,8 @@ import { DayValues, GradeValues } from '../types';
 import { notEmptyArray } from '../resources/model-validators';
 
 const timeSchema = Type.object({ required: true }).of({
-  hour: Type.number({ required: true }),
-  minute: Type.number({ required: true }),
+  hour: Type.number({ required: true, min: 0, max: 23 }),
+  minute: Type.number({ required: true, min: 0, max: 59 }),
 });
 
 const mentoringSchema = createSchema({
