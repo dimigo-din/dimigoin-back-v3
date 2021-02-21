@@ -45,3 +45,13 @@ export const deleteAfterschool = async (req: Request, res: Response) => {
   await afterschool.deleteOne();
   res.json({ afterschool });
 };
+
+export const editAfterschool = async (req: Request, res: Response) => {
+  const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
+  if (!afterschool) {
+    throw new HttpException(404, '해당 방과 후 수업을 찾을 수 없습니다.');
+  }
+  Object.assign(afterschool, req.body);
+  await afterschool.save();
+  res.json({ afterschool });
+};

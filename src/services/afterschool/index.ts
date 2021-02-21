@@ -1,6 +1,8 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
-import { AfterschoolTimeValues, DayValues } from '../../types';
+import {
+  AfterschoolTimeValues, ClassValues, DayValues, GradeValues,
+} from '../../types';
 import { createService } from '../index';
 
 export default createService({
@@ -29,9 +31,11 @@ export default createService({
       validateSchema: {
         name: Joi.string().required(),
         description: Joi.string().required(),
-        targetGrades: Joi.array().items(Joi.number()).required(),
-        targetClasses: Joi.array().items(Joi.number()).required(),
-        key: Joi.string(),
+        targetGrades: Joi.array().items(Joi.number().valid(...GradeValues)).min(1).max(3)
+          .required(),
+        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).min(1).max(3)
+          .required(),
+        key: Joi.string().optional(),
         teacher: Joi.string().required(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).required(),
         times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).required(),
@@ -46,6 +50,25 @@ export default createService({
       needAuth: true,
       needPermission: true,
       handler: controllers.deleteAfterschool,
+    },
+    {
+      method: 'patch',
+      path: '/:afterschoolId',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        name: Joi.string().optional(),
+        description: Joi.string().optional(),
+        targetGrades: Joi.array().items(Joi.number().valid(...GradeValues)).max(3).optional(),
+        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).max(3).optional(),
+        key: Joi.string().optional,
+        teacher: Joi.string().optional(),
+        days: Joi.array().items(Joi.string().valid(...DayValues)).optional(),
+        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).optional(),
+        capacity: Joi.number().optional(),
+        place: Joi.string().optional(),
+      },
+      handler: controllers.editAfterschool,
     },
   ],
 });
