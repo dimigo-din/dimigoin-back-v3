@@ -2,7 +2,7 @@ import axios from 'axios';
 import {
   IAccount,
   IStudentIdentity,
-  IUserIdentity,
+  UserIdentity,
   ITeacherIdentity,
 } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
@@ -31,7 +31,7 @@ export const getIdentity = async (account: IAccount) => {
   return data;
 };
 
-export const restructureUserIdentity = (identity: IUserIdentity) => ({
+export const restructureUserIdentity = (identity: UserIdentity) => ({
   idx: identity.id,
   username: identity.username,
   name: identity.name,

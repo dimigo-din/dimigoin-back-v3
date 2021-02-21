@@ -8,7 +8,7 @@ export interface IAccount {
   password: string;
 }
 
-export interface IUserIdentity {
+export interface UserIdentity {
   '_id': ObjectId;
   'id': number;
   'username': string;

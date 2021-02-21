@@ -1,7 +1,7 @@
 import { ObjectId } from 'mongodb';
 import { UserType, Gender } from '../types';
 
-export default interface IUser {
+export default interface User {
   _id: ObjectId;
   idx: number;
   username: string;
