@@ -29,7 +29,7 @@ export default createService({
       needPermission: false,
       studentOnly: true,
       validateSchema: {
-        applier: Joi.array().items(Joi.string()).required(),
+        applier: Joi.array().items(Joi.string()).min(1).required(),
         approver: Joi.string().required(),
         reason: Joi.string().required(),
         detailReason: Joi.string().default(''),
