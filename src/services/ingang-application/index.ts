@@ -51,5 +51,12 @@ export default createService({
       studentOnly: true,
       handler: controllers.removeIngangApplication,
     },
+    {
+      method: 'post',
+      path: '/:applicationId/force-attendance',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.forceApplierToAttendnaceIngangsil,
+    },
   ],
 });

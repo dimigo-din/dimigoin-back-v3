@@ -2,7 +2,10 @@ import { Request, Response } from 'express';
 import { ObjectId, ObjectID } from 'mongodb';
 import moment from 'moment-timezone';
 import { HttpException } from '../../exceptions';
-import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
+import {
+  IngangApplicationDoc, IngangApplicationModel,
+  AttendanceLogModel, PlaceModel,
+} from '../../models';
 import { getConfig } from '../../resources/config';
 import { ConfigKeys, Grade, NightTime } from '../../types';
 import { createIngangApplierBook } from '../../resources/exporter';
@@ -181,4 +184,35 @@ export const removeIngangApplication = async (req: Request, res: Response) => {
   if (!ingangApplication) throw new HttpException(404, '해당 시간 신청한 인강실이 없습니다.');
   await ingangApplication.remove();
   res.json({ ingangApplication });
+};
+
+const gp = async (name: string) => (await PlaceModel.findOne({ name })).toJSON();
+
+export const forceApplierToAttendnaceIngangsil = async (req: Request, res: Response) => {
+  const ingangApplication = await IngangApplicationModel.findById(
+    req.params.applicationId,
+  ).populateTs('applier');
+  if (!ingangApplication) throw new HttpException(404, '해당 인강실 신청을 찾을 수 없습니다.');
+
+  const today = getTodayDateString();
+  if (ingangApplication.date !== today) {
+    throw new HttpException(403, '오늘자 인강실을 신청한 사람만 인강실에 출석시킬 수 있습니다.');
+  }
+
+  const { applier } = ingangApplication;
+
+  const attendanceLog = new AttendanceLogModel({
+    date: getTodayDateString(),
+    student: applier._id,
+    remark: '인강실 도우미가 등록함',
+    place: [
+      await gp('영어 전용 교실'),
+      await gp('비즈쿨실'),
+      await gp('열람실'),
+    ][applier.grade - 1],
+    updatedBy: req.user._id,
+  });
+
+  await attendanceLog.save();
+  res.json({ attendanceLog });
 };
