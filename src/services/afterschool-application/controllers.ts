@@ -38,7 +38,7 @@ export const applyAfterschool = async (req: Request, res: Response) => {
     !afterschool.targetGrades.includes(grade)
     || !afterschool.targetClasses.includes(klass)
   ) throw new HttpException(403, '신청 대상 강좌가 아닙니다.');
-  if (await checkOverlap(userId, afterschool._id)) {
+  if (await checkOverlap(userId, afterschool)) {
     throw new HttpException(409, '중복 수강이 불가능한 강좌를 이미 신청했거나, 동시간대에 이미 신청한 강좌가 있습니다.');
   }
 
