@@ -59,8 +59,10 @@ export default createService({
       validateSchema: {
         name: Joi.string().optional(),
         description: Joi.string().optional(),
-        targetGrades: Joi.array().items(Joi.number().valid(...GradeValues)).max(3).optional(),
-        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).max(3).optional(),
+        targetGrades: Joi.array().items(Joi.number().valid(...GradeValues)).min(1).max(3)
+          .optional(),
+        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).min(1).max(3)
+          .optional(),
         key: Joi.string().optional,
         teacher: Joi.string().optional(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).optional(),
