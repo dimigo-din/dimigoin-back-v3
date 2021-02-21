@@ -4,6 +4,7 @@ import {
   NightTimeValues,
   Time,
   Day,
+  DayValues,
 } from '../types';
 
 const timezone = 'Asia/Seoul';
@@ -30,6 +31,13 @@ export const getWeekStartString = (date?: string) => {
 export const getWeekEndString = (date?: string) => {
   if (date) return moment(date).endOf('isoWeek').format(format);
   return moment().endOf('isoWeek').format(format);
+};
+
+export const getDateFromDay = (weekStart: string, day: Day) => {
+  weekStart = getWeekStartString(weekStart);
+  const dayIndex = DayValues.findIndex((v) => v === day);
+  const date = moment(weekStart).add(dayIndex, 'days');
+  return date.format(format);
 };
 
 export const isValidDate = (string: string): Boolean =>
