@@ -35,7 +35,7 @@ export default createService({
     },
     {
       method: 'patch',
-      path: '/final/:circleId',
+      path: '/:applicationId/final',
       needAuth: true,
       needPermission: false,
       studentOnly: true,

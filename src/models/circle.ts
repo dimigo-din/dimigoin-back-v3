@@ -12,7 +12,6 @@ const circleSchema = createSchema({
   description: Type.string({ required: true }),
   chair: Type.ref(Type.objectId()).to('User', userSchema),
   viceChair: Type.ref(Type.objectId()).to('User', userSchema),
-  videoLink: Type.string({ required: true }),
   category: Type.string({
     required: true,
     validate: async (value: string) => {
@@ -20,7 +19,6 @@ const circleSchema = createSchema({
       return category.includes(value);
     },
   }),
-  applied: Type.boolean({ required: true, default: false }),
 }, { versionKey: false, timestamps: true });
 
 type CircleDoc = ExtractDoc<typeof circleSchema>;

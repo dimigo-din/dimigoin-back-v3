@@ -17,8 +17,6 @@ module.exports = {
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "semi": "off",
-        "@typescript-eslint/semi": ["error"],
         "import/prefer-default-export": "off",
         "import/extensions": "off",
         "import/no-unresolved": "off",
@@ -34,6 +32,7 @@ module.exports = {
         "max-len": "off",
         "no-restricted-syntax": "off",
         "radix": "off",
+        "brace-style": "off",
         "@typescript-eslint/no-unused-vars": [
             "error", { "args": "none" }
         ],

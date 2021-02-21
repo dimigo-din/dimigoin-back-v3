@@ -1,42 +1,31 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { CircleModel, CircleApplicationModel, UserModel } from '../../models';
+import { CircleModel, CircleApplicationModel } from '../../models';
 
 export const getAllCircles = async (req: Request, res: Response) => {
   const { user } = req;
-  const applications = await CircleApplicationModel.findByApplier(user._id);
-  const appliedIds = await Promise.all(
-    applications.map((application) => application.circle.toString()),
-  );
-  const circleModels = await CircleModel.find()
-    .populate('chair', ['name', 'serial'])
-    .populate('viceChair', ['name', 'serial']);
-  const circles = await Promise.all(circleModels.map((circle) => {
-    if (appliedIds.includes(circle._id.toString())) {
-      circle.applied = true;
-    }
-    return circle;
+  const appliedIds = (await CircleApplicationModel.findByApplier(user._id))
+    .map((a) => a.circle.toString());
+  const circles = await CircleModel.find()
+    .populateTs('chair')
+    .populateTs('viceChair');
+
+  const mappedCircles = circles.map((circle) => ({
+    ...(circle.toJSON()),
+    applied: appliedIds.includes(circle._id.toString()),
   }));
-  res.json({ circles });
+  res.json({ circles: mappedCircles });
 };
 
-export const getOneCircle = async (req: Request, res: Response) => {
-  const { circleId } = req.params;
-  const circle = await CircleModel.findById(circleId)
-    .populate('chair', ['name', 'serial'])
-    .populate('viceChair', ['name', 'serial']);
+export const getCircle = async (req: Request, res: Response) => {
+  const circle = await CircleModel.findById(req.params.circleId)
+    .populateTs('chair')
+    .populateTs('viceChair');
   res.json({ circle });
 };
 
 export const createCircle = async (req: Request, res: Response) => {
-  const chair = await UserModel.findStudentById(req.body.chair);
-  const viceChair = await UserModel.findStudentById(req.body.viceChair);
-  if (!chair || !viceChair) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
-
-  const circle = await new CircleModel({
-    ...req.body,
-    image: `CIRCLE_PROFILE/${req.body.name}.png`,
-  }).save();
+  const circle = await new CircleModel(req.body).save();
   res.json({ circle });
 };
 

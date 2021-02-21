@@ -19,7 +19,7 @@ export default createService({
 
       needAuth: true,
       needPermission: false,
-      handler: controllers.getOneCircle,
+      handler: controllers.getCircle,
     },
     {
       method: 'post',
@@ -32,7 +32,6 @@ export default createService({
         description: Joi.string().required(),
         chair: Joi.string().required(),
         viceChair: Joi.string().required(),
-        videoLink: Joi.string().required(),
         category: Joi.string().required(),
       },
       handler: controllers.createCircle,
