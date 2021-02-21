@@ -3,11 +3,10 @@ import { HttpException } from '../../exceptions';
 import { MentoringModel } from '../../models';
 
 export const getAllMentorings = async (req: Request, res: Response) => {
-  const { userType, grade, class: klass } = req.user;
+  const { userType, grade } = req.user;
   const mentorings = await MentoringModel.find(
     userType === 'T' ? {} : {
       targetGrades: { $all: [grade] },
-      targetClasses: { $all: [klass] },
     },
   )
     .populateTs('teacher');
