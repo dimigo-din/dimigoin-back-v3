@@ -4,13 +4,13 @@ import { IAccount } from '../../interfaces/dimi-api';
 import { UserModel } from '../../models';
 import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
-import { IUser } from '../../interfaces';
+import { User } from '../../interfaces';
 
-const getEntierIdentity = async (userIdx: number): Promise<IUser> => {
+const getEntierIdentity = async (userIdx: number): Promise<User> => {
   const { photos, permissions } = await UserModel.findOne({ idx: userIdx })
     .select('photos')
     .select('permissions');
-  const identity = await UserModel.findByIdx(userIdx) as IUser;
+  const identity = await UserModel.findByIdx(userIdx) as User;
   identity.photos = photos;
   identity.permissions = permissions;
   return identity;

@@ -5,9 +5,10 @@ import {
   AfterschoolTimeValues, NightTimeValues, DayValues,
 } from '../../types';
 import { AfterschoolApplicationModel, UserModel, UserDoc } from '../../models';
+import { PopulatedAfterschoolApplication } from '../../interfaces';
 
 const getAppliedClassName = (
-  applications: any[],
+  applications: PopulatedAfterschoolApplication[],
   applierId: ObjectId,
   day: Day,
   time: AfterschoolTime | NightTime,
