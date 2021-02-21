@@ -10,6 +10,7 @@ export enum ConfigKeys {
   ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
   selfStudyTimes = 'SELF_STUDY_TIMES',
   isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
+  mentoringNotice = 'MENTORING_NOTICE',
 }
 
 export enum CirclePeriod {
