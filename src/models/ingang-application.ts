@@ -1,9 +1,8 @@
 import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
-import { ObjectId } from 'mongodb';
 import { userSchema } from './user';
-import { NightTimeValues, NightTime } from '../types';
+import { NightTimeValues } from '../types';
 import { getTodayDateString } from '../resources/date';
 
 const ingangApplicationSchema = createSchema({
@@ -14,18 +13,9 @@ const ingangApplicationSchema = createSchema({
 
 export type IngangApplicationDoc = ExtractDoc<typeof ingangApplicationSchema>;
 
-const IngangApplicationModel = typedModel('IngangApplication', ingangApplicationSchema, undefined, undefined, {
-  async checkDuplicatedApplication(applier: ObjectId, date: string, time: NightTime) {
-    return !!(await IngangApplicationModel.findOne({
-      applier,
-      time,
-      date,
-    }));
-  },
-});
+const IngangApplicationModel = typedModel('IngangApplication', ingangApplicationSchema);
 
 export {
   ingangApplicationSchema,
-  // IngangApplicationDoc,
   IngangApplicationModel,
 };

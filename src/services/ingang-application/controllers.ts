@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ObjectID } from 'mongodb';
+import { ObjectId, ObjectID } from 'mongodb';
 import moment from 'moment-timezone';
 import { HttpException } from '../../exceptions';
 import { IngangApplicationDoc, IngangApplicationModel } from '../../models';
@@ -119,14 +119,18 @@ const checkIngangApplyPeriod = async () => {
   }
 };
 
+const checkDuplicate = async (applier: ObjectId, date: string, time: NightTime) => !!(await IngangApplicationModel.findOne({
+  applier,
+  time,
+  date,
+}));
+
 export const createIngangApplication = async (req: Request, res: Response) => {
   await checkIngangApplyPeriod();
 
   const { _id: applier, grade, class: klass } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
-
-  const checkDuplicate = IngangApplicationModel.checkDuplicatedApplication;
 
   if (await checkDuplicate(applier, today, time)) {
     throw new HttpException(409, '이미 해당 시간 인강실을 신청했습니다.');
