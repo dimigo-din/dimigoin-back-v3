@@ -2,6 +2,7 @@ import {
   createSchema, Type, typedModel, ExtractDoc,
 } from 'ts-mongoose';
 import { userSchema } from './user';
+import { placeSchema } from './place';
 import {
   AfterschoolTimeValues,
   ClassValues,
@@ -16,10 +17,11 @@ const afterschoolSchema = createSchema({
   targetGrades: Type.array().of(Type.number({ required: true, enum: GradeValues })),
   targetClasses: Type.array().of(Type.number({ required: true, enum: ClassValues })),
   key: Type.string(),
-  teacher: Type.ref(Type.objectId()).to('User', userSchema),
+  teacher: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
   days: Type.array().of(Type.string({ required: true, enum: DayValues })),
   times: Type.array().of(Type.string({ required: true, enum: [...AfterschoolTimeValues, ...NightTimeValues] })),
   capacity: Type.number({ required: true }),
+  place: Type.ref(Type.objectId({ required: true })).to('Place', placeSchema),
 }, { versionKey: false, timestamps: true });
 
 const AfterschoolModel = typedModel('Afterschool', afterschoolSchema);

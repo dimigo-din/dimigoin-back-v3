@@ -9,7 +9,9 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
       targetGrades: { $all: [grade] },
       targetClasses: { $all: [klass] },
     },
-  ).populateTs('teacher');
+  )
+    .populateTs('teacher')
+    .populateTs('place');
 
   res.json({ afterschools });
 };
@@ -17,7 +19,9 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
 export const getAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(
     req.params.afterschoolId,
-  ).populateTs('teacher');
+  )
+    .populateTs('teacher')
+    .populateTs('place');
   if (!afterschool) {
     throw new HttpException(404, '해당 방과 후 수업을 찾을 수 없습니다.');
   }
