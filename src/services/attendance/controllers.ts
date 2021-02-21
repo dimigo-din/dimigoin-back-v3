@@ -111,14 +111,3 @@ export const getMyAttendanceLogs = async (req: Request, res: Response) => {
 
   res.json({ logs });
 };
-
-export const editAttendanceLog = async (req: Request, res: Response) => {
-  const log = await AttendanceLogModel.findById(req.params.attendanceLogId);
-  if (!log) throw new HttpException(404, '해당 자습 로그를 찾을 수 없습니다.');
-
-  Object.assign(log, req.body);
-  log.updatedBy = req.user._id;
-  await log.save();
-
-  res.json({ log });
-};
