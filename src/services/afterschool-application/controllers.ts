@@ -7,7 +7,6 @@ import { getKoreanTodayFullString } from '../../resources/date';
 import { createAfterschoolApplierBook } from '../../resources/exporter';
 import { writeFile } from '../../resources/file';
 import {
-  getAfterschoolApplierCount,
   mutateAfterschoolApplierCount,
 } from '../../resources/redis';
 
@@ -55,7 +54,6 @@ export const applyAfterschool = async (req: Request, res: Response) => {
     afterschool._id,
     1,
   );
-  console.log(await getAfterschoolApplierCount(afterschool._id));
   res.json({ afterschoolApplication });
 };
 
@@ -76,7 +74,6 @@ export const cancelApplication = async (req: Request, res: Response) => {
     afterschool._id,
     -1,
   );
-  console.log(await getAfterschoolApplierCount(afterschool._id));
   res.json({ afterschoolApplication });
 };
 
