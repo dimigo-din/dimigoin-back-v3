@@ -12,10 +12,15 @@ import { serviceRouter, serviceDocsRouter } from './services';
 import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
-import { ConfigModel } from './models/config';
+import {
+  ConfigModel,
+  PlaceModel,
+  AfterschoolModel,
+  AfterschoolApplicationModel,
+} from './models';
 import { ConfigKeys } from './types';
-import { PlaceModel } from './models';
 import { defaultPlaces, defaultConfigs } from './resources/default';
+import { setAfterschoolApplierCount } from './resources/redis';
 
 class App {
   public app: express.Application;
@@ -26,11 +31,13 @@ class App {
     this.connectMongoDB();
     this.initializeRouter();
     this.initializeErrorHandlers();
-    this.initializeSettings();
+    this.initializeConfigs();
+    this.initializePlaces();
+    this.initializeFileStorage();
+    this.initializeRedisStore();
     if (process.env.NODE_ENV === 'prod') {
       this.initializeCronJobs();
     }
-    this.initializeFileStorage();
   }
 
   private initializeRouter() {
@@ -61,11 +68,6 @@ class App {
       useCreateIndex: true,
     };
     mongoose.connect(mongoUri, mongooseOption);
-  }
-
-  private async initializeSettings() {
-    await this.initializeConfigs();
-    await this.initializePlaces();
   }
 
   private async initializeConfigs() {
@@ -100,6 +102,18 @@ class App {
 
   private async initializeFileStorage() {
     fs.promises.mkdir(config.fileStoragePath, { recursive: true });
+  }
+
+  private async initializeRedisStore() {
+    const afterschools = await AfterschoolModel.find({});
+    for (const afterschool of afterschools) {
+      await setAfterschoolApplierCount(
+        afterschool._id,
+        await AfterschoolApplicationModel.countDocuments({
+          afterschool: afterschool._id,
+        }),
+      );
+    }
   }
 }
 

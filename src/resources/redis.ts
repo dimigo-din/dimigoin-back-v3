@@ -26,6 +26,15 @@ export const getAfterschoolApplierCount = async (afterschoolId: ObjectId) => {
   ))[0] || '0');
 };
 
+export const setAfterschoolApplierCount = async (afterschoolId: ObjectId, value: number) => {
+  const id = afterschoolId.toHexString();
+
+  await client.hmset(
+    RedisKeys.ingangApplierCount,
+    id, value,
+  );
+};
+
 export const mutateAfterschoolApplierCount = async (afterschoolId: ObjectId, amount: number) => {
   const id = afterschoolId.toHexString();
   const applierCount = await getAfterschoolApplierCount(
