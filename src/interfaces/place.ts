@@ -7,4 +7,4 @@ export interface PopulatedPlace {
   location: string;
   description?: string;
   type: PlaceType;
-};
+}

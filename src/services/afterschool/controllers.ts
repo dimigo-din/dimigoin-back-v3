@@ -1,6 +1,20 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
+import {
+  getAfterschoolApplierCount,
+  removeAfterschoolApplierCount,
+} from '../../resources/redis';
 import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
+
+const applierCountMapper = async (afterschool: any) => {
+  const applierCount = await getAfterschoolApplierCount(
+    afterschool._id,
+  );
+  return {
+    ...(afterschool.toJSON()),
+    applierCount,
+  };
+};
 
 export const getAllAfterschools = async (req: Request, res: Response) => {
   const { userType, grade, class: klass } = req.user;
@@ -13,7 +27,11 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
     .populateTs('teacher')
     .populateTs('place');
 
-  res.json({ afterschools });
+  const mappedAfterschools = await Promise.all(
+    afterschools.map(applierCountMapper),
+  );
+
+  res.json({ afterschools: mappedAfterschools });
 };
 
 export const getAfterschool = async (req: Request, res: Response) => {
@@ -25,7 +43,8 @@ export const getAfterschool = async (req: Request, res: Response) => {
   if (!afterschool) {
     throw new HttpException(404, '해당 방과 후 수업을 찾을 수 없습니다.');
   }
-  res.json({ afterschool });
+  const mappedAfterschool = await applierCountMapper(afterschool);
+  res.json({ afterschool: mappedAfterschool });
 };
 
 export const createAfterschool = async (req: Request, res: Response) => {
@@ -43,6 +62,7 @@ export const deleteAfterschool = async (req: Request, res: Response) => {
     afterschool: afterschool._id,
   });
   await afterschool.deleteOne();
+  await removeAfterschoolApplierCount(afterschool._id);
   res.json({ afterschool });
 };
 
