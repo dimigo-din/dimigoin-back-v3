@@ -1,6 +1,9 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { getAfterschoolApplierCount } from '../../resources/redis';
+import {
+  getAfterschoolApplierCount,
+  removeAfterschoolApplierCount,
+} from '../../resources/redis';
 import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
 
 const applierCountMapper = async (afterschool: any) => {
@@ -59,6 +62,7 @@ export const deleteAfterschool = async (req: Request, res: Response) => {
     afterschool: afterschool._id,
   });
   await afterschool.deleteOne();
+  await removeAfterschoolApplierCount(afterschool._id);
   res.json({ afterschool });
 };
 

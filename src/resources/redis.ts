@@ -38,3 +38,11 @@ export const mutateAfterschoolApplierCount = async (afterschoolId: ObjectId, amo
     applierCount + amount,
   );
 };
+
+export const removeAfterschoolApplierCount = async (afterschool: ObjectId) => {
+  const id = afterschool.toHexString();
+  await client.hdel(
+    RedisKeys.ingangApplierCount,
+    id,
+  );
+};
