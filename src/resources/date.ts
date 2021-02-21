@@ -3,6 +3,7 @@ import {
   AfterschoolTimeValues,
   NightTimeValues,
   Time,
+  Day,
 } from '../types';
 
 const timezone = 'Asia/Seoul';
@@ -12,11 +13,14 @@ const format = 'YYYY-MM-DD';
 
 export const getTodayDateString = () => moment().format(format);
 
-export const getDateString = (date: moment.Moment) => date.format(format);
-
 export const getKoreanTodayFullString = () => moment().format(
   'YYYY년 MM월 DD일 HH시 mm분',
 );
+
+export const getDayCode = (date?: string) => {
+  if (date) return moment(date).format('ddd').toLowerCase() as Day;
+  return moment().format('ddd').toLowerCase() as Day;
+};
 
 export const getWeekStartString = (date?: string) => {
   if (date) return moment(date).startOf('isoWeek').format(format);
