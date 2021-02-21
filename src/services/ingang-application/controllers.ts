@@ -193,6 +193,12 @@ export const forceApplierToAttendnaceIngangsil = async (req: Request, res: Respo
     req.params.applicationId,
   ).populateTs('applier');
   if (!ingangApplication) throw new HttpException(404, '해당 인강실 신청을 찾을 수 없습니다.');
+
+  const today = getTodayDateString();
+  if (ingangApplication.date !== today) {
+    throw new HttpException(403, '오늘자 인강실을 신청한 사람만 인강실에 출석시킬 수 있습니다.');
+  }
+
   const { applier } = ingangApplication;
 
   const attendanceLog = new AttendanceLogModel({
