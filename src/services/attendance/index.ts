@@ -29,7 +29,7 @@ export default createService({
     },
     {
       method: 'get',
-      path: '/date/:date/grade/:grade/class/:class',
+      path: '/date/:date/grade/:grade/class/:class/status',
       needAuth: true,
       needPermission: false,
       handler: controllers.getClassStatus,
