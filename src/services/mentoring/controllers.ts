@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
+import { getWeekStartString, getWeekEndString, getDateFromDay } from '../../resources/date';
 import { HttpException } from '../../exceptions';
-import { MentoringModel } from '../../models';
+import { MentoringModel, MentoringApplicationModel } from '../../models';
 
 export const getAllMentorings = async (req: Request, res: Response) => {
   const { userType, grade } = req.user;
@@ -12,6 +13,38 @@ export const getAllMentorings = async (req: Request, res: Response) => {
     .populateTs('teacher');
 
   res.json({ mentorings });
+};
+
+export const getRequestableMentorings = async (req: Request, res: Response) => {
+  const { grade } = req.user;
+  const mentorings = await MentoringModel.find({
+    targetGrades: { $all: [grade] },
+  })
+    .populateTs('teacher');
+  const applications = await MentoringApplicationModel.find({
+    date: {
+      $gte: getWeekStartString(),
+      $lte: getWeekEndString(),
+    },
+  }).populateTs('mentoring');
+
+  const weekStart = getWeekStartString();
+  const requestableMentorings = [];
+  for (const mentoring of mentorings) {
+    for (const day of mentoring.days) {
+      const date = getDateFromDay(weekStart, day);
+      requestableMentorings.push({
+        date,
+        applied: applications.filter((a) => (
+          a.mentoring._id.equals(mentoring._id)
+          && a.date === date
+        )).length > 0,
+        ...(mentoring.toJSON()),
+      });
+    }
+  }
+
+  res.json({ mentorings: requestableMentorings });
 };
 
 export const getMentoring = async (req: Request, res: Response) => {
