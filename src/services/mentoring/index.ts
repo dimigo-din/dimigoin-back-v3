@@ -21,6 +21,14 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/requestable',
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
+      handler: controllers.getRequestableMentorings,
+    },
+    {
+      method: 'get',
       path: '/:mentoringId',
       needAuth: true,
       needPermission: false,
