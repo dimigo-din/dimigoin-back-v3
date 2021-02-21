@@ -15,3 +15,4 @@ export * from './notice';
 export * from './timetable';
 export * from './file';
 export * from './mentoring';
+export * from './mentoring-application';
