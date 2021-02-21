@@ -27,6 +27,17 @@ export default createService({
       handler: controllers.createAttendanceLog,
     },
     {
+      method: 'post',
+      path: '/student/:studentId',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        place: Joi.string().required(),
+        remark: Joi.string().optional(),
+      },
+      handler: controllers.createAttendanceLogByManager,
+    },
+    {
       method: 'get',
       path: '/date/:date/grade/:grade/class/:class/status',
       needAuth: true,

@@ -98,6 +98,23 @@ export const createAttendanceLog = async (req: Request, res: Response) => {
   res.json({ attendanceLog });
 };
 
+export const createAttendanceLogByManager = async (req: Request, res: Response) => {
+  const payload = req.body;
+  const student = req.params.studentId;
+
+  const today = getTodayDateString();
+
+  const attendanceLog = new AttendanceLogModel({
+    student,
+    date: today,
+    ...payload,
+    updatedBy: req.user._id,
+  });
+
+  await attendanceLog.save();
+  res.json({ attendanceLog });
+};
+
 export const getMyAttendanceLogs = async (req: Request, res: Response) => {
   const logs = (await AttendanceLogModel
     .find({
