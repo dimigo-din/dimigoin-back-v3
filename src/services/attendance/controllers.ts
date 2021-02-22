@@ -78,7 +78,8 @@ export const getStudentAttendanceHistory = async (req: Request, res: Response) =
   const logs = await AttendanceLogModel.find({
     date: req.params.date,
     student: student._id,
-  });
+  })
+    .populateTs('updatedBy');
   res.json({ logs });
 };
 
