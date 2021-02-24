@@ -1,9 +1,9 @@
 import axios from 'axios';
 import {
-  IAccount,
-  IStudentIdentity,
+  Account,
+  StudentIdentity,
   UserIdentity,
-  ITeacherIdentity,
+  TeacherIdentity,
 } from '../interfaces/dimi-api';
 import { UserModel } from '../models';
 import { services as allServices } from '../services';
@@ -24,7 +24,7 @@ const api = axios.create({
   baseURL: config.apiUrl,
 });
 
-export const getIdentity = async (account: IAccount) => {
+export const getIdentity = async (account: Account) => {
   const { data } = await api.get(apiRouter.getIdentity, {
     params: account,
   });
@@ -38,6 +38,7 @@ export const restructureUserIdentity = (identity: UserIdentity) => ({
   userType: identity.user_type,
   gender: identity.gender,
   phone: identity.phone,
+  birthdate: identity.birthdate,
   photos: [identity.photofile1, identity.photofile2]
     .filter((v) => v)
     .map((v) => `https://api.dimigo.hs.kr/user_photo/${v}`),
@@ -62,7 +63,7 @@ export const reloadAllUsers = async () => {
 
 export const attachStudentInfo = async () => {
   const { data } = await api.get(apiRouter.getAllStudents);
-  const students: IStudentIdentity[] = data;
+  const students: StudentIdentity[] = data;
   await Promise.all(
     students.map(async (student) => {
       await UserModel.updateOne(
@@ -81,7 +82,7 @@ export const attachStudentInfo = async () => {
 
 export const attachTeacherInfo = async () => {
   const { data } = await api.get(apiRouter.getAllTeachers);
-  const teachers: ITeacherIdentity[] = data;
+  const teachers: TeacherIdentity[] = data;
   await Promise.all(
     teachers.map(async (teacher) => {
       await UserModel.updateOne(

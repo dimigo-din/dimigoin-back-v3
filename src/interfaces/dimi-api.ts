@@ -3,7 +3,7 @@
 import { ObjectId } from 'mongodb';
 import { Gender, UserType } from '../types';
 
-export interface IAccount {
+export interface Account {
   username: string;
   password: string;
 }
@@ -23,7 +23,7 @@ export interface UserIdentity {
   'photofile2': string;
 }
 
-export interface IStudentIdentity {
+export interface StudentIdentity {
   'user_id': number;
   'username': string;
   'email': string;
@@ -41,7 +41,7 @@ export interface IStudentIdentity {
   'photofile2': string;
 }
 
-export interface ITeacherIdentity {
+export interface TeacherIdentity {
   'user_id': number;
   'username': string;
   'name': string;
