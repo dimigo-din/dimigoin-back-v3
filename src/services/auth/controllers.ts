@@ -6,13 +6,13 @@ import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
 
-const getEntierIdentity = async (userIdx: number): Promise<User> => {
-  const { photos, permissions } = await UserModel.findOne({ idx: userIdx })
+const getEntierIdentity = async (userIdx: number) => {
+  const extraIdentity = await UserModel.findOne({ idx: userIdx })
     .select('photos')
-    .select('permissions');
+    .select('permissions')
+    .select('birthdate');
   const identity = await UserModel.findByIdx(userIdx) as User;
-  identity.photos = photos;
-  identity.permissions = permissions;
+  Object.assign(identity, extraIdentity);
   return identity;
 };
 
