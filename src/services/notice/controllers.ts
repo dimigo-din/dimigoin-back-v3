@@ -48,7 +48,10 @@ export const editNotice = async (req: Request, res: Response) => {
 };
 
 export const createNotice = async (req: Request, res: Response) => {
-  const notice = await new NoticeModel(req.body).save();
+  const notice = await new NoticeModel({
+    ...(req.body),
+    author: req.user._id,
+  }).save();
 
   const today = getTodayDateString();
   if (today === notice.startDate) {
