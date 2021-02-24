@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
-import { IAccount } from '../../interfaces/dimi-api';
+import { Account } from '../../interfaces/dimi-api';
 import { UserModel } from '../../models';
 import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
@@ -17,7 +17,7 @@ const getEntierIdentity = async (userIdx: number): Promise<User> => {
 };
 
 export const identifyUser = async (req: Request, res: Response) => {
-  const account: IAccount = req.body;
+  const account: Account = req.body;
 
   try {
     const { id: idx } = await getIdentity(account);
