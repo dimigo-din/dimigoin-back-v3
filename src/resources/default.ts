@@ -137,4 +137,23 @@ export const defaultConfigs = {
   [ConfigKeys.isMovingClassSystem]: true,
   // 멘토링 페이지 공지사항 컨텐트
   [ConfigKeys.mentoringNotice]: '공지사항이 등록되지 않았습니다.',
+  // 학년별 급식 시간
+  [ConfigKeys.mealTimes]: [
+    null,
+    {
+      breakfast: { hour: 6, minute: 50 },
+      lunch: { hour: 13, minute: 0 },
+      dinner: { hour: 18, minute: 30 },
+    },
+    {
+      breakfast: { hour: 7, minute: 0 },
+      lunch: { hour: 12, minute: 50 },
+      dinner: { hour: 18, minute: 40 },
+    },
+    {
+      breakfast: { hour: 7, minute: 10 },
+      lunch: { hour: 12, minute: 0 },
+      dinner: { hour: 18, minute: 50 },
+    },
+  ],
 };

@@ -11,6 +11,7 @@ export enum ConfigKeys {
   selfStudyTimes = 'SELF_STUDY_TIMES',
   isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
   mentoringNotice = 'MENTORING_NOTICE',
+  mealTimes = 'MEAL_TIMES',
 }
 
 export enum CirclePeriod {
