@@ -19,4 +19,5 @@ export interface User {
   class?: number;
   number?: number;
   serial?: number;
+  libraryId?: string;
 }
