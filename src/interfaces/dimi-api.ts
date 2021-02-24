@@ -37,6 +37,7 @@ export interface StudentIdentity {
   'user_type': UserType;
   'birthdate': string;
   'phone': string;
+  'library_id': string;
   'photofile1': string;
   'photofile2': string;
 }

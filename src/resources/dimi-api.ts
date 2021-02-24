@@ -53,8 +53,7 @@ export const reloadAllUsers = async () => {
       users[idx].permissions = allServices;
     }
     if (!user) {
-      // eslint-disable-next-line
-      await UserModel.create(users[idx]).catch((e) => console.error(e));
+      await UserModel.create(users[idx]);
     } else {
       await UserModel.updateOne({ idx: users[idx].idx }, users[idx]);
     }
@@ -73,6 +72,7 @@ export const attachStudentInfo = async () => {
           class: student.class,
           number: student.number,
           serial: student.serial,
+          libraryId: student.library_id,
         },
       );
       return student;
