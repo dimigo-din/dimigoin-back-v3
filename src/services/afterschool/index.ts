@@ -61,7 +61,7 @@ export default createService({
         description: Joi.string().optional(),
         targetGrades: Joi.array().items(Joi.number().valid(...GradeValues)).min(1).max(3)
           .optional(),
-        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).min(1).max(3)
+        targetClasses: Joi.array().items(Joi.number().valid(...ClassValues)).min(1).max(6)
           .optional(),
         key: Joi.string().optional(),
         teacher: Joi.string().optional(),
