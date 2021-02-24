@@ -5,13 +5,15 @@ import { NoticeModel } from '../../models';
 import { getTodayDateString } from '../../resources/date';
 
 export const getAllNotices = async (req: Request, res: Response) => {
-  const notices = await NoticeModel.find({});
+  const notices = await NoticeModel.find({}).populateTs('author');
 
   res.json({ notices });
 };
 
 export const getNotice = async (req: Request, res: Response) => {
-  const notice = await NoticeModel.findById(req.params.noticeId);
+  const notice = await NoticeModel.findById(
+    req.params.noticeId,
+  ).populateTs('author');
 
   res.json({ notice });
 };
@@ -32,13 +34,15 @@ export const getCurrentNotices = async (req: Request, res: Response) => {
     } : undefined),
     startDate: { $lte: today },
     endDate: { $gte: today },
-  });
+  }).populateTs('author');
 
   res.json({ notices });
 };
 
 export const editNotice = async (req: Request, res: Response) => {
-  const notice = await NoticeModel.findById(req.params.noticeId);
+  const notice = await NoticeModel.findById(
+    req.params.noticeId,
+  ).populateTs('author');
   if (!notice) throw new HttpException(404, '해당 공지사항을 찾을 수 없습니다.');
 
   Object.assign(notice, req.body);
@@ -48,7 +52,10 @@ export const editNotice = async (req: Request, res: Response) => {
 };
 
 export const createNotice = async (req: Request, res: Response) => {
-  const notice = await new NoticeModel(req.body).save();
+  const notice = await new NoticeModel({
+    ...(req.body),
+    author: req.user._id,
+  }).save();
 
   const today = getTodayDateString();
   if (today === notice.startDate) {
