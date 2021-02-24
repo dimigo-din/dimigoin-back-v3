@@ -6,7 +6,7 @@ import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
 
-const getEntireIdentity = async (userIdx: number): Promise<User> => {
+const getEntireIdentity = async (userIdx: number) => {
   const extraIdentity = await UserModel.findOne({ idx: userIdx })
     .select('photos')
     .select('permissions')
