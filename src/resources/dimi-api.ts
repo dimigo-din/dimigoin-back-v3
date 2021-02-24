@@ -73,6 +73,7 @@ export const attachStudentInfo = async () => {
           class: student.class,
           number: student.number,
           serial: student.serial,
+          libraryId: student.library_id,
         },
       );
       return student;
