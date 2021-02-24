@@ -7,12 +7,14 @@ import { issue as issueToken, verify, getTokenType } from '../../resources/token
 import { User } from '../../interfaces';
 
 const getEntierIdentity = async (userIdx: number): Promise<User> => {
-  const { photos, permissions } = await UserModel.findOne({ idx: userIdx })
+  const { photos, permissions, libraryId } = await UserModel.findOne({ idx: userIdx })
     .select('photos')
-    .select('permissions');
+    .select('permissions')
+    .select('libraryId');
   const identity = await UserModel.findByIdx(userIdx) as User;
   identity.photos = photos;
   identity.permissions = permissions;
+  identity.libraryId = libraryId;
   return identity;
 };
 
