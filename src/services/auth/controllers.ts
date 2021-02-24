@@ -6,7 +6,7 @@ import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
 
-const getEntierIdentity = async (userIdx: number): Promise<User> => {
+const getEntireIdentity = async (userIdx: number): Promise<User> => {
   const { photos, permissions, libraryId } = await UserModel.findOne({ idx: userIdx })
     .select('photos')
     .select('permissions')
@@ -23,7 +23,7 @@ export const identifyUser = async (req: Request, res: Response) => {
 
   try {
     const { id: idx } = await getIdentity(account);
-    const identity = await getEntierIdentity(idx);
+    const identity = await getEntireIdentity(idx);
 
     res.json({
       accessToken: await issueToken(identity, false),
@@ -42,7 +42,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (tokenType !== 'REFRESH') throw new HttpException(400, '리프레시 토큰이 아닙니다.');
 
   const payload = await verify(refreshToken);
-  const identity = await getEntierIdentity(payload.idx);
+  const identity = await getEntireIdentity(payload.idx);
   res.json({
     accessToken: await issueToken(identity, false),
     refreshToken: await issueToken(identity, true),
