@@ -29,7 +29,7 @@ const userSchema = createSchema({
   class: Type.number({ enum: ClassValues }),
   number: Type.number(),
   serial: Type.number(),
-  libraryId: Type.string({ trim: true }),
+  libraryId: Type.string({ selcect: false, trim: true }),
   // 교사 정보
   position: Type.string({ trim: true }),
   role: Type.string({ trim: true }),
