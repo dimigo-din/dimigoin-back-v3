@@ -13,7 +13,10 @@ const getEntireIdentity = async (userIdx: number) => {
     .select('birthdate')
     .select('libraryId');
   const identity = await UserModel.findByIdx(userIdx) as User;
-  Object.assign(identity, extraIdentity);
+  identity.photos = extraIdentity.photos;
+  identity.permissions = extraIdentity.permissions;
+  identity.birthdate = extraIdentity.birthdate;
+  identity.libraryId = extraIdentity.libraryId;
   return identity;
 };
 

@@ -11,6 +11,7 @@ export interface User {
   phone: string;
   permissions: string[];
   photos: string[];
+  birthdate: string;
 
   position?: string;
   role?: string;
