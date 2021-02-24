@@ -4,11 +4,10 @@ import {
   getWeekStartString,
   getWeekEndString,
   getTomorrowDateString,
+  getTodayDateString,
 } from '../resources/date';
 import { TimetableModel } from '../models';
 import aliases from './subject-aliases.json';
-
-const TEMP_DATE = '2020-11-15';
 
 const getAPIEndpoint = (grade: number, klass: number, date: string) => (
   'https://open.neis.go.kr/hub/hisTimetable?'
@@ -26,7 +25,7 @@ const getAPIEndpoint = (grade: number, klass: number, date: string) => (
 );
 
 export const fetchWeeklyTimetable = async () => {
-  const today = TEMP_DATE;
+  const today = getTodayDateString();
   const weekStart = getWeekStartString(today);
   const weekEnd = getWeekEndString(today);
 
@@ -50,7 +49,7 @@ export const fetchWeeklyTimetable = async () => {
               .sort((a: any, b: any) => a.PERIO - b.PERIO)
               .map(
                 (r: any) => (r.ITRT_CNTNT in aliases
-                  // @ts-expect-error
+                  // @ts-ignore
                   ? aliases[r.ITRT_CNTNT] : r.ITRT_CNTNT),
               ),
           };
@@ -64,12 +63,13 @@ export const fetchWeeklyTimetable = async () => {
 };
 
 export const refreshWeeklyTimetable = async () => {
+  const today = getTodayDateString();
   const weeklyTimetable = await fetchWeeklyTimetable();
 
   await TimetableModel.deleteMany({
     date: {
-      $gte: getWeekStartString(TEMP_DATE),
-      $lte: getWeekEndString(TEMP_DATE),
+      $gte: getWeekStartString(today),
+      $lte: getWeekEndString(today),
     },
   });
 
