@@ -1,19 +1,18 @@
 import { Request, Response } from 'express';
 import { TimetableModel } from '../../models';
-import { getWeekStartString, getWeekEndString } from '../../resources/date';
-
-const TEMP_DATE = '2020-11-15';
+import { getWeekStartString, getWeekEndString, getTodayDateString } from '../../resources/date';
 
 export const getWeeklyTimetable = async (req: Request, res: Response) => {
   const { grade, class: klass } = {
     grade: parseInt(req.params.grade),
     class: parseInt(req.params.class),
   };
+  const today = getTodayDateString();
 
   const timetable = await TimetableModel.find({
     date: {
-      $gte: getWeekStartString(TEMP_DATE),
-      $lte: getWeekEndString(TEMP_DATE),
+      $gte: getWeekStartString(today),
+      $lte: getWeekEndString(today),
     },
     grade,
     class: klass,
