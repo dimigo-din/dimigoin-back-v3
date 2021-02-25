@@ -79,6 +79,8 @@ export const getStudentAttendanceHistory = async (req: Request, res: Response) =
     date: req.params.date,
     student: student._id,
   })
+    .populateTs('place')
+    .populateTs('student')
     .populateTs('updatedBy');
   res.json({ logs });
 };
