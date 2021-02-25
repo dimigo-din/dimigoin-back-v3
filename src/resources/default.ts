@@ -156,7 +156,7 @@ export const defaultConfigs = {
   ],
   // 방과 후 수강 신청 기간
   [ConfigKeys.afterschoolApplyPeriod]: {
-    start: '2021-03-10',
-    end: '2021-03-11',
+    start: new Date('2021-03-10T07:00:00.000Z'),
+    end: new Date('2021-03-10T08:00:00.000Z'),
   },
 };
