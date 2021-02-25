@@ -154,4 +154,9 @@ export const defaultConfigs = {
       dinner: { hour: 18, minute: 50 },
     },
   ],
+  // 방과 후 수강 신청 기간
+  [ConfigKeys.afterschoolApplyPeriod]: {
+    start: '2021-03-10',
+    end: '2021-03-11',
+  },
 };
