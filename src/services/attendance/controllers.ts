@@ -25,7 +25,6 @@ export const getClassStatus = async (req: Request, res: Response) => {
         date,
         student: student._id,
       })
-        .populateTs('student')
         .populateTs('place')
         .populateTs('updatedBy')
         .sort('-createdAt');
