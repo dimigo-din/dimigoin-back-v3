@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { ObjectId, ObjectID } from 'mongodb';
-import moment from 'moment-timezone';
 import { HttpException } from '../../exceptions';
 import {
   IngangApplicationDoc, IngangApplicationModel,
@@ -15,7 +14,6 @@ import {
   getWeekStartString,
   getWeekEndString,
   getKoreanTodayFullString,
-  getMinutesValue,
 } from '../../resources/date';
 
 const getWeeklyUsedTicket = async (applier: ObjectID) => await IngangApplicationModel.countDocuments({
@@ -109,19 +107,6 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   res.json({ exportedFile: file });
 };
 
-const checkIngangApplyPeriod = async () => {
-  const applyPeriod = await getConfig(ConfigKeys.ingangApplyPeriod);
-  const applyStart = getMinutesValue(applyPeriod.start);
-  const applyEnd = getMinutesValue(applyPeriod.end);
-  const now = getMinutesValue({
-    hour: moment().hour(),
-    minute: moment().minute(),
-  });
-  if (now < applyStart || applyEnd < now) {
-    throw new HttpException(403, '인강실 추가 신청 및 취소가 가능한 시간이 아닙니다.');
-  }
-};
-
 const checkDuplicate = async (applier: ObjectId, date: string, time: NightTime) => !!(await IngangApplicationModel.findOne({
   applier,
   time,
@@ -129,8 +114,6 @@ const checkDuplicate = async (applier: ObjectId, date: string, time: NightTime) 
 }));
 
 export const createIngangApplication = async (req: Request, res: Response) => {
-  await checkIngangApplyPeriod();
-
   const { _id: applier, grade, class: klass } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
@@ -170,8 +153,6 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 };
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
-  await checkIngangApplyPeriod();
-
   const { _id: applier } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;

@@ -1,5 +1,6 @@
 import * as controllers from './controllers';
 import { createService } from '../index';
+import { checkAfterschoolApplyPeriod } from '../../middlewares/check-period';
 
 export default createService({
   name: '방과후 수강 신청 서비스',
@@ -18,6 +19,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkAfterschoolApplyPeriod],
       handler: controllers.applyAfterschool,
     },
     {
@@ -26,6 +28,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkAfterschoolApplyPeriod],
       handler: controllers.cancelApplication,
     },
     {

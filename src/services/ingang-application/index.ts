@@ -1,5 +1,6 @@
 import * as controllers from './controllers';
 import { createService } from '../index';
+import { checkIngangApplyPeriod } from '../../middlewares/check-period';
 
 export default createService({
   name: '인강실 신청 서비스',
@@ -41,6 +42,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkIngangApplyPeriod],
       handler: controllers.createIngangApplication,
     },
     {
@@ -49,6 +51,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkIngangApplyPeriod],
       handler: controllers.removeIngangApplication,
     },
     {
