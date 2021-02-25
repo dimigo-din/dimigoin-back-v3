@@ -135,8 +135,6 @@ export const defaultConfigs = {
   ],
   // 자습 이동반 시행 여부 (코로나)
   [ConfigKeys.isMovingClassSystem]: true,
-  // 멘토링 페이지 공지사항 컨텐트
-  [ConfigKeys.mentoringNotice]: '공지사항이 등록되지 않았습니다.',
   // 학년별 급식 시간
   [ConfigKeys.mealTimes]: [
     null,
