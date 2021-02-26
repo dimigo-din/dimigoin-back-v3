@@ -2,7 +2,11 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { MentoringModel, MentoringApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
-import { getDayCode, getWeekEndString, getWeekStartString } from '../../resources/date';
+import {
+  getDayCode, getKoreanTodayFullString, getWeekEndString, getWeekStartString,
+} from '../../resources/date';
+import { createMentoringApplierBook } from '../../resources/exporter';
+import { writeFile } from '../../resources/file';
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await MentoringApplicationModel.find({
@@ -74,4 +78,13 @@ export const cancelApplication = async (req: Request, res: Response) => {
   }
   await mentoringApplication.remove();
   res.json({ mentoringApplication });
+};
+
+export const exportWeeklyMentoringApplications = async (req: Request, res: Response) => {
+  const buffer = await createMentoringApplierBook();
+  const today = getKoreanTodayFullString();
+  const fileName = `금주 멘토링 수업 신청 현황 (${today} 기준)`;
+  const file = await writeFile(buffer, fileName, 'xlsx', req.user);
+
+  res.json({ exportedFile: file });
 };

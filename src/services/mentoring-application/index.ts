@@ -17,6 +17,13 @@ export default createService({
     },
     {
       method: 'post',
+      path: '/export',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.exportWeeklyMentoringApplications,
+    },
+    {
+      method: 'post',
       path: '/:mentoringId',
       needAuth: true,
       needPermission: false,
