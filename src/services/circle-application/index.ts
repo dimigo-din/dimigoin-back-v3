@@ -15,6 +15,13 @@ export default createService({
       handler: controllers.getApplicationStatus,
     },
     {
+      method: 'get',
+      path: '/applier/:applierId/circle',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getApplicationsByApplier,
+    },
+    {
       method: 'post',
       path: '/',
       needAuth: true,

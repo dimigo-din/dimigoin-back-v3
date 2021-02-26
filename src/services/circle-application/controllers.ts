@@ -1,8 +1,10 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import {
+  CircleModel,
   CircleApplicationModel,
   CircleApplicationQuestionModel,
+  UserModel,
 } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
 import { getConfig, getEntireConfigs } from '../../resources/config';
@@ -36,6 +38,24 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
     maxApplyCount: await getConfig(ConfigKeys.circleMaxApply),
     applications: mappedApplications,
   });
+};
+
+// 동아리장이 자신의 동아리 지원자가 함께 지원한 동아리 목록을 불러옴
+export const getApplicationsByApplier = async (req: Request, res: Response) => {
+  const circle = await CircleModel.findByChairs(req.user._id);
+  const applier = await UserModel.findById(req.params.applierId);
+  if (!applier) throw new HttpException(404, '해당 지원자를 찾을 수 없습니다.');
+  const application = await CircleApplicationModel.findOne({
+    circle: circle._id,
+    applier: applier._id,
+  });
+  if (!application) throw new HttpException(403, '자신의 동아리에 지원자에 대한 정보만 확인할 수 있습니다.');
+
+  const appliedCircles = await CircleApplicationModel.find({
+    applier: applier._id,
+  }).select('circle').populateTs('circle');
+
+  res.json({ circles: appliedCircles });
 };
 
 export const getApplicationForm = async (req: Request, res: Response) => {
