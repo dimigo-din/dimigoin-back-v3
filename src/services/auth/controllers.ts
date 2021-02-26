@@ -1,10 +1,23 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
-import { UserModel } from '../../models';
+import { UserModel, CircleModel } from '../../models';
 import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
+
+const getExtraPermissions = async (userIdx: number) => {
+  const user = await UserModel.findOne({ idx: userIdx });
+  const permissions = [];
+
+  // (부)동아리장은 동아리원 선발 서비스 권한 부여
+  const circle = await CircleModel.findByChairs(user._id);
+  if (circle) {
+    permissions.push('circle-applier-selection');
+  }
+
+  return permissions;
+};
 
 const getEntireIdentity = async (userIdx: number) => {
   const extraIdentity = await UserModel.findOne({ idx: userIdx })
@@ -15,6 +28,9 @@ const getEntireIdentity = async (userIdx: number) => {
   const identity = await UserModel.findByIdx(userIdx) as User;
   identity.photos = extraIdentity.photos;
   identity.permissions = extraIdentity.permissions;
+  identity.permissions.push(
+    ...await getExtraPermissions(userIdx),
+  );
   identity.birthdate = extraIdentity.birthdate;
   identity.libraryId = extraIdentity.libraryId;
   return identity;
