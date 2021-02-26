@@ -51,9 +51,13 @@ export const getApplicationsByApplier = async (req: Request, res: Response) => {
   });
   if (!application) throw new HttpException(403, '자신의 동아리에 지원자에 대한 정보만 확인할 수 있습니다.');
 
-  const appliedCircles = await CircleApplicationModel.find({
-    applier: applier._id,
-  }).select('circle').populateTs('circle');
+  const appliedCircles = (
+    await CircleApplicationModel.find({
+      applier: applier._id,
+    })
+      .select('circle')
+      .populateTs('circle')
+  ).map((a) => a.circle);
 
   res.json({ circles: appliedCircles });
 };
