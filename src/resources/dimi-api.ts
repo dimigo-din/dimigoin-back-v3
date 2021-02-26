@@ -46,13 +46,15 @@ export const restructureUserIdentity = (identity: UserIdentity) => ({
 
 export const reloadAllUsers = async () => {
   const { data: users } = await api.get(apiRouter.getAllUsers);
+  const initPermissions = allServices.filter((s) =>
+    s !== 'circle-applier-selection');
   Object.keys(users).forEach(async (idx) => {
     users[idx] = restructureUserIdentity(users[idx]);
     const user = await UserModel.findOne({ idx: users[idx].idx });
-    if (users[idx].userType === 'T') {
-      users[idx].permissions = allServices;
-    }
     if (!user) {
+      if (users[idx].userType === 'T') {
+        users[idx].permissions = initPermissions;
+      }
       await UserModel.create(users[idx]);
     } else {
       await UserModel.updateOne({ idx: users[idx].idx }, users[idx]);
