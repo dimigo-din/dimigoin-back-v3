@@ -81,7 +81,7 @@ export const getStudentAttendanceHistory = async (req: Request, res: Response) =
     .populateTs('place')
     .populateTs('student')
     .populateTs('updatedBy')
-    .sort('-createdBy');
+    .sort('-createdAt');
   res.json({ logs });
 };
 
