@@ -82,7 +82,7 @@ export const createAfterschoolApplierBook = async (grade: Grade) => {
     .populateTs('afterschool'))
     .filter((a) => a.applier.grade === grade);
 
-  students.filter((v) => v.name === '엄서훈').forEach((student) => {
+  students.forEach((student) => {
     sheet.addRow({
       serial: student.serial,
       name: student.name,
