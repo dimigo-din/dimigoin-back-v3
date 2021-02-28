@@ -28,7 +28,7 @@ export const applyMentoring = async (req: Request, res: Response) => {
   const mentoring = await MentoringModel.findById(req.params.mentoringId);
   if (!mentoring) throw new HttpException(404, '해당 멘토링 수업이 존재하지 않습니다.');
 
-  const { date } = req.body;
+  const { date } = req.params;
 
   // 이번주 멘토링을 신청하는 것인지 검사
   const weekStart = getWeekStartString();
@@ -49,17 +49,17 @@ export const applyMentoring = async (req: Request, res: Response) => {
   }
 
   // 다른 사람이 신청한 멘토링인지 검사
-  if (await checkDuplicate(mentoring._id, req.body.date)) {
+  if (await checkDuplicate(mentoring._id, req.params.date)) {
     throw new HttpException(409, '해당 날짜 이미 신청된 멘토링 수업입니다.');
   }
 
   // 과거 일자의 멘토링 수업을 신청하는 것인지 검사
-  if (req.body.date < getTodayDateString()) {
+  if (req.params.date < getTodayDateString()) {
     throw new HttpException(403, '과거의 멘토링 수업을 신청할 수 없습니다.');
   }
 
   const mentoringApplication = new MentoringApplicationModel({
-    date: req.body.date,
+    date: req.params.date,
     applier: userId,
     mentoring: mentoring._id,
   });
@@ -75,7 +75,7 @@ export const cancelApplication = async (req: Request, res: Response) => {
     date: {
       $gte: getTodayDateString(),
       $lte: getWeekEndString(),
-      $eq: req.body.date,
+      $eq: req.params.date,
     },
   });
   if (!mentoringApplication) {
