@@ -8,9 +8,9 @@ import { placeSchema } from './place';
 const detsSchema = createSchema({
   name: Type.string({ required: true, unique: true, trim: true }),
   description: Type.string({ required: true, trim: true }),
-  times: Type.array({ required: true, enum: TimeValues }),
+  times: Type.array({ required: true }).of(Type.string({ enum: TimeValues })),
   speaker: Type.ref(Type.objectId()).to('User', userSchema),
-  days: Type.array({ required: true, enum: DayValues }),
+  days: Type.array({ required: true }).of(Type.string({ enum: DayValues })),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
   capacity: Type.number({ required: true }),
   targetGrade: Type.number({ required: true, enum: GradeValues }),
