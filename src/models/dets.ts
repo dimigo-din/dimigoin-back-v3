@@ -11,7 +11,7 @@ const detsSchema = createSchema({
   times: Type.array({ required: true, enum: TimeValues }),
   speaker: Type.ref(Type.objectId()).to('User', userSchema),
   days: Type.array({ required: true, enum: DayValues }),
-  room: Type.ref(Type.objectId()).to('Place', placeSchema),
+  place: Type.ref(Type.objectId()).to('Place', placeSchema),
   capacity: Type.number({ required: true }),
   targetGrade: Type.number({ required: true, enum: GradeValues }),
   imageUrl: Type.string({ default: null }),
