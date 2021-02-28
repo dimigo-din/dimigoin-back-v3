@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 import { MentoringModel, MentoringApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
 import {
-  getDayCode, getKoreanTodayFullString, getWeekEndString, getWeekStartString,
+  getDayCode, getKoreanTodayFullString, getTodayDateString, getWeekEndString, getWeekStartString,
 } from '../../resources/date';
 import { createMentoringApplierBook } from '../../resources/exporter';
 import { writeFile } from '../../resources/file';
@@ -53,6 +53,11 @@ export const applyMentoring = async (req: Request, res: Response) => {
     throw new HttpException(409, '해당 날짜 이미 신청된 멘토링 수업입니다.');
   }
 
+  // 과거 일자의 멘토링 수업을 신청하는 것인지 검사
+  if (req.body.date < getTodayDateString()) {
+    throw new HttpException(403, '과거의 멘토링 수업을 신청할 수 없습니다.');
+  }
+
   const mentoringApplication = new MentoringApplicationModel({
     date: req.body.date,
     applier: userId,
@@ -68,7 +73,7 @@ export const cancelApplication = async (req: Request, res: Response) => {
     mentoring: req.params.mentoringId,
     applier,
     date: {
-      $gte: getWeekStartString(),
+      $gte: getTodayDateString(),
       $lte: getWeekEndString(),
       $eq: req.body.date,
     },
