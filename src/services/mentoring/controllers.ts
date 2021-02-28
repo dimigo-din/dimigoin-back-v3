@@ -7,7 +7,7 @@ export const getAllMentorings = async (req: Request, res: Response) => {
   const { userType, grade } = req.user;
   const mentorings = await MentoringModel.find(
     userType === 'T' ? {} : {
-      targetGrades: { $all: [grade] },
+      targetGrade: grade,
     },
   )
     .populateTs('teacher');
