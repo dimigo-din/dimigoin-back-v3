@@ -65,7 +65,7 @@ export const applyMentoring = async (req: Request, res: Response) => {
 export const cancelApplication = async (req: Request, res: Response) => {
   const { _id: applier } = req.user;
   const mentoringApplication = await MentoringApplicationModel.findOne({
-    mentoring: req.params.mentoringid,
+    mentoring: req.params.mentoringId,
     applier,
     date: {
       $gte: getWeekStartString(),
