@@ -1,3 +1,5 @@
+/* eslint-disable array-callback-return */
+/* eslint-disable no-unused-expressions */
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import {
@@ -26,11 +28,20 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
   )
     .populateTs('teacher')
     .populateTs('place');
+  const myAfterschoolApplicationList:string[] = [];
+
+  await AfterschoolApplicationModel.find(
+    userType === 'T' ? {} : {
+      applier: req.user._id,
+    },
+  ).map((v:any) => (myAfterschoolApplicationList.push(v.afterschool)));
 
   const mappedAfterschools = await Promise.all(
-    afterschools.map(applierCountMapper),
+    afterschools.map((v:any) => {
+      v = applierCountMapper(v);
+      myAfterschoolApplicationList.includes(v._id) ? v.isApplied = true : v.isApplied = false;
+    }),
   );
-
   res.json({ afterschools: mappedAfterschools });
 };
 
