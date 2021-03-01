@@ -51,13 +51,3 @@ export const cancelApplication = async (req: Request, res: Response) => {
   await detsApplication.remove();
   res.json({ detsApplication });
 };
-
-// export const exportAfterschoolApplications = async (req: Request, res: Response) => {
-//   const grade = parseInt(req.params.grade) as Grade;
-//   const buffer = await createAfterschoolApplierBook(grade);
-//   const today = getKoreanTodayFullString();
-//   const fileName = `${grade}학년 방과 후 수강 신청 현황 (${today} 기준)`;
-//   const file = await writeFile(buffer, fileName, 'xlsx', req.user);
-
-//   res.json({ exportedFile: file });
-// };

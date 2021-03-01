@@ -28,12 +28,5 @@ export default createService({
       studentOnly: true,
       handler: controllers.cancelApplication,
     },
-    // {
-    //   method: 'post',
-    //   path: '/export/grade/:grade',
-    //   needAuth: true,
-    //   needPermission: true,
-    //   handler: controllers.exportAfterschoolApplications,
-    // },
   ],
 });
