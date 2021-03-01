@@ -1,4 +1,6 @@
-import { createSchema, Type, typedModel } from 'ts-mongoose';
+import {
+  createSchema, Type, typedModel, ExtractDoc,
+} from 'ts-mongoose';
 import { afterschoolSchema } from './afterschool';
 import { userSchema } from './user';
 
@@ -8,6 +10,7 @@ const afterschoolApplicationSchema = createSchema({
 }, { versionKey: false, timestamps: true });
 
 const AfterschoolApplicationModel = typedModel('AfterschoolApplication', afterschoolApplicationSchema);
+export type AfterschoolApplicationDoc = ExtractDoc<typeof afterschoolSchema>;
 
 export {
   afterschoolApplicationSchema,
