@@ -16,3 +16,5 @@ export * from './timetable';
 export * from './file';
 export * from './mentoring';
 export * from './mentoring-application';
+export * from './dets';
+export * from './dets-application';
