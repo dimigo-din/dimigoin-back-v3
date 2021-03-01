@@ -26,6 +26,7 @@ const getEntireIdentity = async (userIdx: number) => {
     .select('birthdate')
     .select('libraryId');
   const identity = await UserModel.findByIdx(userIdx) as User;
+  if (!identity) throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
   identity.photos = extraIdentity.photos;
   identity.permissions = extraIdentity.permissions;
   identity.permissions.push(
@@ -48,6 +49,7 @@ export const identifyUser = async (req: Request, res: Response) => {
       refreshToken: await issueToken(identity, true),
     });
   } catch (error) {
+    if (error.name === 'HttpException') throw error;
     throw new HttpException(401, '인증에 실패했습니다.');
   }
 };
