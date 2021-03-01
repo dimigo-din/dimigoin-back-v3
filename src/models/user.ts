@@ -10,7 +10,6 @@ import {
   UserType,
 } from '../types';
 import { services } from '../services';
-import { isValidDate } from '../resources/model-validators';
 
 const userSchema = createSchema({
   idx: Type.number({ required: true, unique: true }),
@@ -23,7 +22,7 @@ const userSchema = createSchema({
   tokens: Type.array({ select: false, default: [] }).of(Type.string()),
   permissions: Type.array({ required: true, default: [], select: false })
     .of(Type.string({ enum: services })),
-  birthdate: Type.string({ select: false, validate: isValidDate }),
+  birthdate: Type.string({ select: false }),
   // 학생 정보
   grade: Type.number({ enum: GradeValues }),
   class: Type.number({ enum: ClassValues }),
