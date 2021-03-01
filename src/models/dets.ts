@@ -6,7 +6,7 @@ import { TimeValues, DayValues, GradeValues } from '../types';
 import { placeSchema } from './place';
 
 const detsSchema = createSchema({
-  name: Type.string({ required: true, unique: true, trim: true }),
+  name: Type.string({ required: true, trim: true }),
   description: Type.string({ required: true, trim: true }),
   times: Type.array({ required: true }).of(Type.string({ enum: TimeValues })),
   speaker: Type.ref(Type.objectId()).to('User', userSchema),
