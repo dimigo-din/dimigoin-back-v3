@@ -1,9 +1,15 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { CircleModel, CircleApplicationModel } from '../../models';
+import { ConfigKeys, CirclePeriod } from '../../types';
+import { getConfig } from '../../resources/config';
 
 export const getAllCircles = async (req: Request, res: Response) => {
   const { user } = req;
+  const period = await getConfig(ConfigKeys.circlePeriod);
+  if (period === CirclePeriod.registering) {
+    res.json({ circles: [] });
+  }
   const appliedIds = (await CircleApplicationModel.findByApplier(user._id))
     .map((a) => a.circle.toString());
   const circles = await CircleModel.find()
