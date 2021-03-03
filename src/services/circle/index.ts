@@ -29,7 +29,7 @@ export default createService({
       validateSchema: {
         name: Joi.string().required(),
         imageUrl: Joi.string().required(),
-        description: Joi.string().required(),
+        description: Joi.string(),
         chair: Joi.string().required(),
         viceChair: Joi.string().required(),
         category: Joi.string().required(),

@@ -15,6 +15,7 @@ export enum ConfigKeys {
 }
 
 export enum CirclePeriod {
+  submitting = 'SUBMITTING',
   registering = 'REGISTERING',
   application = 'APPLICATION',
   interview = 'INTERVIEW',
