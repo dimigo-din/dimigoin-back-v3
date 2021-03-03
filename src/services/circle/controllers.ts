@@ -24,7 +24,7 @@ export const getAllCircles = async (req: Request, res: Response) => {
     const circles = await CircleModel.find()
       .populateTs('chair')
       .populateTs('viceChair');
-
+    
     const mappedCircles = circles.map((circle) => ({
       ...(circle.toJSON()),
       applied: appliedIds.includes(circle._id.toString()),
