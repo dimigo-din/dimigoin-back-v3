@@ -45,7 +45,9 @@ export const getCircle = async (req: Request, res: Response) => {
 
 export const getMyCircle = async (req: Request, res: Response) => {
   const { user } = req;
-  const circle = await CircleModel.findByChairs(user._id);
+  const circle = await CircleModel.findByChairs(user._id)
+    .populate('chair')
+    .populate('viceChair');
   if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
 
   res.json({
