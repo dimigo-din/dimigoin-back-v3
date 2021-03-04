@@ -3,7 +3,6 @@ import { NextFunction, Request, Response } from 'express';
 export enum ConfigKeys {
   circlePeriod = 'CIRCLE_PERIOD',
   circleMaxApply = 'CIRCLE_MAX_APPLY',
-  circleCategory = 'CIRCLE_CATEGORY',
   imageExtension = 'IMAGE_EXTENSION',
   weeklyIngangTicketCount = 'WEEKLY_INGANG_TICKET_COUNT',
   ingangMaxApplicationPerClass = 'INGANG_MAX_APPLICATION_PER_CLASS',

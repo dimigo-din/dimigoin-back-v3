@@ -62,8 +62,6 @@ export const defaultConfigs = {
   [ConfigKeys.circlePeriod]: CirclePeriod.application,
   // 최대 지원 가능한 동아리의 수
   [ConfigKeys.circleMaxApply]: 3,
-  // 동아리 카테고리 목록
-  [ConfigKeys.circleCategory]: ['IT(프로젝트)', '음악', '경영'],
   // 허용된 이미지 확장자 목록
   [ConfigKeys.imageExtension]: ['png', 'jpg', 'jpeg', 'heif'],
   // 전체 학년 학생별 한 주에 최대 사용 가능한 티켓의 수
