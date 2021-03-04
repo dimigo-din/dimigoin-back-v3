@@ -43,6 +43,16 @@ export const getCircle = async (req: Request, res: Response) => {
   res.json({ circle });
 };
 
+export const getMyCircle = async (req: Request, res: Response) => {
+  const { user } = req;
+  const circle = await CircleModel.findByChairs(user._id);
+  if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
+
+  res.json({
+    circle,
+  });
+};
+
 export const createCircle = async (req: Request, res: Response) => {
   const circle = await new CircleModel(req.body).save();
   res.json({ circle });

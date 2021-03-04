@@ -15,6 +15,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/my-circle',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getMyCircle,
+    },
+    {
+      method: 'get',
       path: '/:circleId',
 
       needAuth: true,
