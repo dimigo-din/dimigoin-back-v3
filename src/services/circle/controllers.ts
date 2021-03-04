@@ -7,15 +7,18 @@ import { getConfig } from '../../resources/config';
 export const getAllCircles = async (req: Request, res: Response) => {
   const { user } = req;
   const period = await getConfig(ConfigKeys.circlePeriod);
-  if (period === CirclePeriod.submitting) {
+  if (period === CirclePeriod.registering) {
     res.json({ circles: [] });
   }
-  else if (period === CirclePeriod.registering) {
+  else if (period === CirclePeriod.submitting) {
     const circles = await CircleModel.find()
       .populateTs('chair')
       .populateTs('viceChair');
 
-    const mappedCircles = Promise.all(circles.map((circle) => (circle.description = '')));
+    const mappedCircles = circles.map((circle) => ({
+      ...circle.toObject(),
+      description: null,
+    }));
     res.json({ circles: mappedCircles });
   }
   else {
@@ -24,7 +27,7 @@ export const getAllCircles = async (req: Request, res: Response) => {
     const circles = await CircleModel.find()
       .populateTs('chair')
       .populateTs('viceChair');
-    
+
     const mappedCircles = circles.map((circle) => ({
       ...(circle.toJSON()),
       applied: appliedIds.includes(circle._id.toString()),
