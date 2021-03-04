@@ -43,5 +43,20 @@ export default createService({
       needPermission: true,
       handler: controllers.removeCircle,
     },
+    {
+      method: 'patch',
+      path: '/:circleId',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        name: Joi.string().required(),
+        imageUrl: Joi.string().required(),
+        description: Joi.string().required(),
+        chair: Joi.string().required(),
+        viceChair: Joi.string().required(),
+        category: Joi.string().required(),
+      },
+      handler: controllers.editCircle,
+    },
   ],
 });

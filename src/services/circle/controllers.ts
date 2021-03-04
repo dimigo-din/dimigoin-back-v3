@@ -48,6 +48,13 @@ export const createCircle = async (req: Request, res: Response) => {
   res.json({ circle });
 };
 
+export const editCircle = async (req: Request, res: Response) => {
+  const circle = await CircleModel.findById(req.params.circleId);
+  Object.assign(circle, req.body);
+  await circle.save();
+  res.json({ circle });
+};
+
 export const removeCircle = async (req: Request, res: Response) => {
   const circle = await CircleModel.findById(req.params.circleId);
   if (!circle) throw new HttpException(404, '해당 동아리를 찾을 수 없습니다.');
