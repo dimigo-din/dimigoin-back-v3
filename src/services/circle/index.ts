@@ -35,6 +35,7 @@ export default createService({
       needPermission: true,
       validateSchema: {
         name: Joi.string().required(),
+        fullName: Joi.string(),
         imageUrl: Joi.string().required(),
         description: Joi.string(),
         chair: Joi.string().required(),
@@ -57,6 +58,7 @@ export default createService({
       needPermission: true,
       validateSchema: {
         name: Joi.string().required(),
+        fullName: Joi.string(),
         imageUrl: Joi.string().required(),
         description: Joi.string().required(),
         chair: Joi.string().required(),
