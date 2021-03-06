@@ -61,7 +61,11 @@ export const createCircle = async (req: Request, res: Response) => {
 };
 
 export const editCircle = async (req: Request, res: Response) => {
-  const circle = await CircleModel.findById(req.params.circleId);
+  const { user } = req;
+  const circle = await CircleModel.findByChairs(user._id)
+    .populate('chair')
+    .populate('viceChair');
+  if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
   Object.assign(circle, req.body);
   await circle.save();
   res.json({ circle });

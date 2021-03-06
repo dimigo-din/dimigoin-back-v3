@@ -55,7 +55,7 @@ export default createService({
       method: 'patch',
       path: '/:circleId',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
       validateSchema: {
         name: Joi.string().required(),
         fullName: Joi.string(),
