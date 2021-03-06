@@ -2,11 +2,16 @@ import {
   createSchema, Type, typedModel,
 } from 'ts-mongoose';
 
+const mealContentSchema = Type.object({ require: true }).of({
+  content: Type.array({ required: true }).of(Type.string()),
+  image: Type.objectId({ default: null }),
+});
+
 const mealSchema = createSchema({
   date: Type.string({ required: true, unique: true }),
-  breakfast: Type.array({ required: true }).of(Type.string()),
-  lunch: Type.array({ required: true }).of(Type.string()),
-  dinner: Type.array({ required: true }).of(Type.string()),
+  breakfast: mealContentSchema,
+  lunch: mealContentSchema,
+  dinner: mealContentSchema,
 }, { versionKey: false, timestamps: true });
 
 const MealModel = typedModel('Meal', mealSchema);
