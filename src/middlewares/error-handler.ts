@@ -25,7 +25,7 @@ const errorHandler = (
       const { code, keyValue } = error as MongoError;
       const duplicated = Object.keys(keyValue).join(', ');
       if (code === 11000) {
-        sendError(res, 404, `'${duplicated}' 항목이 중복되었습니다.`);
+        sendError(res, 409, `'${duplicated}' 항목이 중복되었습니다.`);
       }
       break;
     }
