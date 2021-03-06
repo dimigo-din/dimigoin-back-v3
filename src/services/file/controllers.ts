@@ -46,3 +46,7 @@ export const downloadFile = async (req: Request, res: Response) => {
   res.setHeader('Content-Type', mime.getType(rawFileName));
   stream.pipe(res);
 };
+
+export const uploadFile = async (req: Request, res: Response) => {
+
+};
