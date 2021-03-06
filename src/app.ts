@@ -31,12 +31,12 @@ class App {
     this.connectMongoDB();
     this.initializeRouter();
     this.initializeErrorHandlers();
-    this.initializeConfigs();
-    this.initializePlaces();
     this.initializeFileStorage();
     this.initializeRedisStore();
     if (process.env.NODE_ENV === 'prod') {
       this.initializeCronJobs();
+      this.initializeConfigs();
+      this.initializePlaces();
     }
   }
 

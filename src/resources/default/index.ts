@@ -6,23 +6,14 @@ import {
   Class,
   NightTimeValues,
   AfterschoolTimeValues,
-} from '../types';
+} from '../../types';
+import placeList from './places.json';
 
 export const defaultPlaces = (() => {
-  // 기본 장소들
-  const places = [
-    { name: '비즈쿨실', location: '본관 1층', type: PlaceType.ingang },
-    { name: '안정실', location: '본관 1층' },
-    { name: '큐브', location: '본관 2층' },
-    { name: '시청각실', location: '신관 1층' },
-    { name: '세미나실', location: '신관 1층' },
-    { name: '학봉관', location: '학봉관' },
-    { name: '우정학사', location: '우정학사' },
-    { name: '영어 전용 교실', location: '신관 1층', type: PlaceType.ingang },
-    { name: '열람실', location: '신관 3층' },
-    { name: '외출', location: '교외 외출' },
-    { name: '기타', location: '기타' },
-  ];
+  const places = placeList.map((p) => ({
+    ...p,
+    type: 'ETC',
+  }));
 
   const getClassLocation = (grade: Grade, klass: Class) => {
     if (grade === 3) return '신관 2층';
@@ -53,7 +44,6 @@ export const defaultPlaces = (() => {
       type: PlaceType.circle,
     });
   }
-
   return places;
 })();
 
