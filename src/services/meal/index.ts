@@ -50,10 +50,9 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        date: Joi.date(),
-        breakfast: Joi.array().items(Joi.string()),
-        lunch: Joi.array().items(Joi.string()),
-        dinner: Joi.array().items(Joi.string()),
+        breakfast: mealContentSchema,
+        lunch: mealContentSchema,
+        dinner: mealContentSchema,
       },
       handler: controllers.editMealByDate,
     },
