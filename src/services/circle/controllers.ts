@@ -61,7 +61,9 @@ export const createCircle = async (req: Request, res: Response) => {
 };
 
 export const editCircle = async (req: Request, res: Response) => {
-  const circle = await CircleModel.findById(req.params.circleId);
+  const circle = await CircleModel.findById(req.params.circleId)
+    .populateTs('chair')
+    .populateTs('viceChair');
   Object.assign(circle, req.body);
   await circle.save();
   res.json({ circle });
