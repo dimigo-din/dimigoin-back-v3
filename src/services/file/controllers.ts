@@ -1,11 +1,13 @@
 import { Request, Response } from 'express';
-import { join as pathJoin } from 'path';
+import { join as pathJoin, parse as pathParse } from 'path';
 import iconv from 'iconv-lite';
 import mime from 'mime';
 import fs from 'fs';
+import { UploadedFile } from 'express-fileupload';
 import config from '../../config';
 import { FileModel } from '../../models';
 import { HttpException } from '../../exceptions';
+import { writeFile } from '../../resources/file';
 
 const convertFileName = (fileName: string, req: Request) => {
   const userAgent = req.headers['user-agent'];
@@ -45,4 +47,19 @@ export const downloadFile = async (req: Request, res: Response) => {
   res.setHeader('Content-disposition', `attachment; fileName=${fileName}`);
   res.setHeader('Content-Type', mime.getType(rawFileName));
   stream.pipe(res);
+};
+
+export const uploadFile = async (req: Request, res: Response) => {
+  const file = req.files.file as UploadedFile;
+  if (!file) throw new HttpException(400, '파일이 Multipart Form의 \'file\' 필드에 전송되어야 합니다.');
+  const { name: fileName, ext: fileExt } = pathParse(file.name);
+  const fileModel = await writeFile(
+    file.data,
+    fileName,
+    fileExt.slice(1).toLowerCase(),
+    req.user,
+    req.body.downloadLimit,
+  );
+  await file.mv(pathJoin(config.fileStoragePath, fileModel._id.toString()));
+  res.json({ file: fileModel });
 };
