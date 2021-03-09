@@ -17,6 +17,7 @@ export enum CirclePeriod {
   submitting = 'SUBMITTING',
   registering = 'REGISTERING',
   application = 'APPLICATION',
+  screening = 'SCREENING',
   interview = 'INTERVIEW',
   final = 'FINAL',
 }
