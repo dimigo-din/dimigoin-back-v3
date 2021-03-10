@@ -18,7 +18,7 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
   const mappedApplications = applications.map((application) => {
     // 지원 기간에는 서류 전형 상태가 비공개임
     // 따라서 사용자에게는 지원 완료 상태로 보여야 함
-    if (period === CirclePeriod.application) {
+    if (period === CirclePeriod.application || period === CirclePeriod.screening) {
       application.status = 'applied';
     }
     // 면접 기간에는 면접 전형 상태가 비공개임
