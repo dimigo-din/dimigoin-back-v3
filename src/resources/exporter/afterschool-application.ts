@@ -4,7 +4,9 @@ import {
   AfterschoolTime, Day, Grade, NightTime,
   AfterschoolTimeValues, NightTimeValues, DayValues,
 } from '../../types';
-import { AfterschoolApplicationModel, UserModel, UserDoc } from '../../models';
+import {
+  AfterschoolApplicationModel, UserModel, UserDoc, AfterschoolModel,
+} from '../../models';
 import { PopulatedAfterschoolApplication } from '../../interfaces';
 
 const getAppliedClassName = (
@@ -65,32 +67,69 @@ const generateRowContent = (applications: any, student: UserDoc) => {
   return row;
 };
 
-export const createAfterschoolApplierBook = async (grade: Grade) => {
-  const book = new exceljs.Workbook();
-  const sheet = book.addWorksheet('신청자 명단');
+const addApplierByClassSheet = async (book: exceljs.Workbook, grade: Grade) => {
+  for (let klass = 1; klass <= 6; klass += 1) {
+    const sheet = book.addWorksheet(`${klass}반 신청자 명단`);
+
+    sheet.columns = [
+      { header: '학번', key: 'serial', width: 6 },
+      { header: '이름', key: 'name', width: 10 },
+      ...generateColumnSchema(),
+      { header: '비고', key: 'remark', width: 15 },
+    ] as exceljs.Column[];
+
+    const students = await UserModel.find({ grade, class: klass }).sort('serial');
+    const applications = (await AfterschoolApplicationModel.find()
+      .populateTs('applier')
+      .populateTs('afterschool'))
+      .filter((a) => a.applier.grade === grade);
+
+    students.forEach((student) => {
+      sheet.addRow({
+        serial: student.serial,
+        name: student.name,
+        ...generateRowContent(
+          applications,
+          student,
+        ),
+      });
+    });
+  }
+};
+
+const addApplierByAfterschoolSheet = async (book: exceljs.Workbook, grade: Grade) => {
+  const sheet = book.addWorksheet('강좌별 신청자 명단');
+  const afterschools = await AfterschoolModel.find(
+    { targetGrades: { $all: [grade] } },
+  );
+  const afterschoolIds = afterschools.map((a) => a._id);
+  const applications = await AfterschoolApplicationModel.find(
+    { afterschool: { $in: afterschoolIds } },
+  )
+    .sort('afterschool')
+    .populateTs('afterschool')
+    .populateTs('applier');
 
   sheet.columns = [
-    { header: '학번', key: 'serial', width: 6 },
-    { header: '이름', key: 'name', width: 10 },
-    ...generateColumnSchema(),
-    { header: '비고', key: 'remark', width: 15 },
+    { header: '강좌명', key: 'className', width: 20 },
+    { header: '신청자 학번', key: 'applierSerial', width: 13 },
+    { header: '신청자 이름', key: 'applierName', width: 13 },
   ] as exceljs.Column[];
 
-  const students = await UserModel.find({ grade }).sort('serial');
-  const applications = (await AfterschoolApplicationModel.find()
-    .populateTs('applier')
-    .populateTs('afterschool'))
-    .filter((a) => a.applier.grade === grade);
-
-  students.forEach((student) => {
+  for (const application of applications) {
     sheet.addRow({
-      serial: student.serial,
-      name: student.name,
-      ...generateRowContent(
-        applications,
-        student,
-      ),
+      className: application.afterschool.name,
+      applierSerial: application.applier.serial,
+      applierName: application.applier.name,
     });
-  });
+  }
+};
+
+export const createAfterschoolApplierBook = async (grade: Grade) => {
+  const book = new exceljs.Workbook();
+
+  await addApplierByAfterschoolSheet(book, grade);
+  await addApplierByClassSheet(book, grade);
+
   return await book.xlsx.writeBuffer();
 };
