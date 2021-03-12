@@ -111,16 +111,14 @@ const addApplierByAfterschoolSheet = async (book: exceljs.Workbook, grade: Grade
     .populateTs('applier');
 
   sheet.columns = [
-    { header: '강좌명', key: 'className', width: 20 },
-    { header: '신청자 학번', key: 'applierSerial', width: 13 },
-    { header: '신청자 이름', key: 'applierName', width: 13 },
+    { header: '강좌명', key: 'className', width: 25 },
+    { header: '신청자', key: 'applier', width: 15 },
   ] as exceljs.Column[];
 
-  for (const application of applications) {
+  for (const { afterschool, applier } of applications) {
     sheet.addRow({
-      className: application.afterschool.name,
-      applierSerial: application.applier.serial,
-      applierName: application.applier.name,
+      className: afterschool.name,
+      applier: `${applier.serial} ${applier.name}`,
     });
   }
 };
