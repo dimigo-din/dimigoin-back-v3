@@ -18,7 +18,7 @@ const getAppliedClassName = (
   const application = applications.find((a) => a.applier._id.equals(applierId)
       && a.afterschool.days.includes(day)
       && a.afterschool.times.includes(time));
-  return application?.afterschool.name || '신청 안 함';
+  return application?.afterschool.name || '자습반';
 };
 
 const times = [
