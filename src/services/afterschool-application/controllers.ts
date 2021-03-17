@@ -44,17 +44,24 @@ export const applyAfterschool = async (req: Request, res: Response) => {
   if (await checkOverlap(userId, afterschool)) {
     throw new HttpException(409, '중복 수강이 불가능한 강좌를 이미 신청했거나, 동시간대에 이미 신청한 강좌가 있습니다.');
   }
-
-  const afterschoolApplication = new AfterschoolApplicationModel({
-    applier: userId,
+  const applierCount = await AfterschoolApplicationModel.count({
     afterschool: afterschool._id,
   });
-  await afterschoolApplication.save();
-  await mutateAfterschoolApplierCount(
-    afterschool._id,
-    1,
-  );
-  res.json({ afterschoolApplication });
+  if (applierCount < afterschool.capacity) {
+    const afterschoolApplication = new AfterschoolApplicationModel({
+      applier: userId,
+      afterschool: afterschool._id,
+    });
+    await afterschoolApplication.save();
+    await mutateAfterschoolApplierCount(
+      afterschool._id,
+      1,
+    );
+    res.json({ afterschoolApplication });
+  }
+  else {
+    throw new HttpException(400, '이미 정원을 초과한 방과후 입니다.');
+  }
 };
 
 export const cancelApplication = async (req: Request, res: Response) => {
