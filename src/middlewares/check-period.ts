@@ -6,7 +6,9 @@ import { HttpException } from '../exceptions';
 import { getMinutesValue } from '../resources/date';
 
 export const checkAfterschoolApplyPeriod = async (req: Request, res: Response, next: NextFunction) => {
-  const applyPeriod = await getConfig(ConfigKeys.afterschoolApplyPeriod);
+  const userGrade = req.user.grade;
+  const applyPeriod = (await getConfig(ConfigKeys.afterschoolApplyPeriod))[userGrade - 1];
+
   const now = new Date();
   if (now < applyPeriod.start || applyPeriod.end < now) {
     throw new HttpException(403, '방과 후 수강 신청 기간이 아닙니다.');
