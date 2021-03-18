@@ -53,9 +53,6 @@ export const fetchWeeklyTimetable = async () => {
                   ? aliases[r.ITRT_CNTNT] : r.ITRT_CNTNT),
               ),
           };
-          if (grade + klass === 9) {
-            console.log(dailyTimetable);
-          }
 
           timetable.push(dailyTimetable);
         }
