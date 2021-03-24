@@ -48,9 +48,12 @@ export const fetchWeeklyTimetable = async () => {
             sequence: result
               .sort((a: any, b: any) => a.PERIO - b.PERIO)
               .map(
-                (r: any) => (r.ITRT_CNTNT in aliases
+                (r: any) => {
+                  const subject = r.ITRT_CNTNT.replace(/\[보강\]\*/i, '');
                   // @ts-ignore
-                  ? aliases[r.ITRT_CNTNT] : r.ITRT_CNTNT),
+                  if (subject in aliases) return aliases[subject];
+                  return subject;
+                },
               ),
           };
 
