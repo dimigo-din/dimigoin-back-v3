@@ -1,6 +1,6 @@
 import { sendPushMessage } from './push';
-import { IngangApplicationModel, NoticeModel } from '../models';
-import { NightTime } from '../types';
+import { IngangApplicationModel, MealModel, NoticeModel } from '../models';
+import { Grade, NightTime } from '../types';
 import { getTodayDateString } from './date';
 
 const ingangPlace = [
@@ -36,4 +36,23 @@ export const notifyNewNotice = async () => {
       `[${notice.title}]\n${notice.content}`,
     );
   }
+};
+
+type MealTime = 'breakfast' | 'lunch' | 'dinner';
+const mealString = {
+  breakfast: '아침',
+  lunch: '점심',
+  dinner: '저녁',
+};
+
+export const notifyMealMenu = async (targetGrades: Grade[], time: MealTime) => {
+  const today = getTodayDateString();
+  const meal = await MealModel.findOne({ date: today });
+  if (!meal) return;
+  if (!(time as string in meal)) return;
+  await sendPushMessage(
+    { grade: { $in: targetGrades } },
+    `오늘의 ${mealString[time]} 메뉴를 확인하세요!`,
+    meal[time].join(', '),
+  );
 };

@@ -4,7 +4,7 @@ import {
   refreshWeeklyTimetable,
 } from './timetable';
 import {
-  notifyIngangAppliers, notifyNewNotice,
+  notifyIngangAppliers, notifyMealMenu, notifyNewNotice,
 } from './notifier';
 import {
   reloadAllUsers,
@@ -45,6 +45,30 @@ const cronJobs = [
     name: '신규 공지사항 알림',
     schedule: '00 8 * * *',
     action: async () => await notifyNewNotice(),
+    runOnSetup: false,
+  },
+  {
+    name: '아침 급식 알림',
+    schedule: '30 6 * * *',
+    action: async () => await notifyMealMenu([1, 2, 3], 'breakfast'),
+    runOnSetup: false,
+  },
+  {
+    name: '점심 급식 알림 (3학년)',
+    schedule: '30 11 * * *',
+    action: async () => await notifyMealMenu([3], 'lunch'),
+    runOnSetup: false,
+  },
+  {
+    name: '점심 급식 알림 (1학년, 2학년)',
+    schedule: '20 12 * * *',
+    action: async () => await notifyMealMenu([1, 2], 'lunch'),
+    runOnSetup: false,
+  },
+  {
+    name: '저녁 급식 알림',
+    schedule: '00 18 * * *',
+    action: async () => await notifyMealMenu([1, 2, 3], 'dinner'),
     runOnSetup: false,
   },
 ].map((c) => ({
