@@ -4,9 +4,9 @@ import { getTodayDateString, isValidDate } from '../../resources/date';
 import { AttendanceLogModel, UserModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
-  if (req.user.userType !== 'T' && (
+  if ((['T', 'D'].includes(req.user.userType)) && (
     req.user.grade !== parseInt(req.params.grade)
-      || req.user.class !== parseInt(req.params.class)
+    || req.user.class !== parseInt(req.params.class)
   )) {
     throw new HttpException(403, '권한이 없습니다.');
   }
@@ -41,7 +41,7 @@ export const getClassStatus = async (req: Request, res: Response) => {
 export const getClassTimeline = async (req: Request, res: Response) => {
   if (req.user.userType !== 'T' && (
     req.user.grade !== parseInt(req.params.grade)
-      || req.user.class !== parseInt(req.params.class)
+    || req.user.class !== parseInt(req.params.class)
   )) {
     throw new HttpException(403, '권한이 없습니다.');
   }
