@@ -4,7 +4,7 @@ import { getTodayDateString, isValidDate } from '../../resources/date';
 import { AttendanceLogModel, UserModel } from '../../models';
 
 export const getClassStatus = async (req: Request, res: Response) => {
-  if ((['T', 'D'].includes(req.user.userType)) && (
+  if (!(['T', 'D'].includes(req.user.userType)) && (
     req.user.grade !== parseInt(req.params.grade)
     || req.user.class !== parseInt(req.params.class)
   )) {
