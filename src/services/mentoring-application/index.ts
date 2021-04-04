@@ -1,5 +1,6 @@
 import * as controllers from './controllers';
 import { createService } from '../index';
+import { checkMetoringApplyPeriod } from '../../middlewares/check-period';
 
 export default createService({
   name: '멘토링 수강 신청 서비스',
@@ -25,6 +26,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkMetoringApplyPeriod],
       handler: controllers.applyMentoring,
     },
     {
@@ -33,6 +35,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
+      middlewares: [checkMetoringApplyPeriod],
       handler: controllers.cancelApplication,
     },
   ],

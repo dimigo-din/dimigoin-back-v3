@@ -63,6 +63,10 @@ export const defaultConfigs = {
     start: { hour: 7, minute: 0 },
     end: { hour: 8, minute: 15 },
   },
+  [ConfigKeys.mentoringApplyPeriod]: {
+    start: { hour: 8, minute: 45 },
+    end: { hour: 9, minute: 0 },
+  },
   // 학년별 자습 시간
   [ConfigKeys.selfStudyTimes]: [
     null,

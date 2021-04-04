@@ -7,6 +7,7 @@ export enum ConfigKeys {
   weeklyIngangTicketCount = 'WEEKLY_INGANG_TICKET_COUNT',
   ingangMaxApplicationPerClass = 'INGANG_MAX_APPLICATION_PER_CLASS',
   ingangApplyPeriod = 'INGANG_APPLY_PERIOD',
+  mentoringApplyPeriod = 'MENTORING_APPLY_PERIOD',
   selfStudyTimes = 'SELF_STUDY_TIMES',
   isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
   mealTimes = 'MEAL_TIMES',
