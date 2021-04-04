@@ -29,3 +29,17 @@ export const checkIngangApplyPeriod = async (req: Request, res: Response, next: 
   }
   next();
 };
+
+export const checkMetoringApplyPeriod = async (req: Request, res: Response, next: NextFunction) => {
+  const applyPeriod = await getConfig(ConfigKeys.mentoringApplyPeriod);
+  const applyStart = getMinutesValue(applyPeriod.start);
+  const applyEnd = getMinutesValue(applyPeriod.end);
+  const now = getMinutesValue({
+    hour: moment().hour(),
+    minute: moment().minute(),
+  });
+  if (now < applyStart || applyEnd < now) {
+    throw new HttpException(403, '멘토링 신청 및 취소가 가능한 시간이 아닙니다.');
+  }
+  next();
+};
