@@ -38,9 +38,9 @@ export const applyMentoring = async (req: Request, res: Response) => {
   }
 
   // 신청하려는 날짜가 진행하는 요일인지 검사
-  if (!mentoring.days.includes(getDayCode(date))) {
-    throw new HttpException(404, '신청하려는 날짜에 진행되지 않는 멘토링 수업입니다.');
-  }
+//   if (!mentoring.days.includes(getDayCode(date))) {
+//     throw new HttpException(404, '신청하려는 날짜에 진행되지 않는 멘토링 수업입니다.');
+//   }
 
   // 신청 대상 학년인지 검사
   const { _id: userId, grade } = req.user;
