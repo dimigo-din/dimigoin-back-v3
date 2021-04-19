@@ -4,7 +4,7 @@ import {
 
 const userLatestPlaceSchema = createSchema({
   userId: Type.objectId({ required: true, unique: true }),
-  location: Type.objectId({ required: true }),
+  placeId: Type.objectId({ required: true }),
   description: Type.string({ trim: true }),
 }, { versionKey: false, timestamps: true });
 
