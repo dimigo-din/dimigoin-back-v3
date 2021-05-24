@@ -53,6 +53,6 @@ export const notifyMealMenu = async (targetGrades: Grade[], time: MealTime) => {
   await sendPushMessage(
     { grade: { $in: targetGrades } },
     `오늘의 ${mealString[time]} 메뉴를 확인하세요!`,
-    meal[time].join(', '),
+    meal[time].content.join(', '),
   );
 };
