@@ -12,7 +12,6 @@ export const getWeeklyMeals = async (req: Request, res: Response) => {
       $lte: getWeekEndString(),
     },
   });
-
   res.json({ meals });
 };
 
@@ -57,4 +56,27 @@ export const createMeal = async (req: Request, res: Response) => {
     ...req.body,
   }).save();
   res.json({ meal });
+};
+
+export const createWeeklyMeal = async (req: Request, res: Response) => {
+  interface dailyMeal {
+    date: string, // YYYY-MM-DD
+    meals: {
+      breakfast: string[],
+      lunch: string[],
+      dinner: string[],
+    }
+  }
+
+  const weeklyMealData: dailyMeal[] = req.body.weeklyMeals;
+  weeklyMealData.map(async (v: dailyMeal) => {
+    const { date, meals } = v;
+    if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+    const meal = await new MealModel({
+      date,
+      ...meals,
+    }).save();
+    res.json({ meal });
+  });
 };

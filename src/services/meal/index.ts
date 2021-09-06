@@ -2,10 +2,7 @@ import Joi from 'joi';
 import * as controllers from './controllers';
 import { createService } from '../index';
 
-const mealContentSchema = Joi.object({
-  menu: Joi.array().items(Joi.string()).required(),
-  image: Joi.string().optional(),
-}).required();
+const mealContentSchema = Joi.array().items(Joi.string());
 
 export default createService({
   name: '식단표 서비스',
@@ -41,6 +38,24 @@ export default createService({
         breakfast: mealContentSchema,
         lunch: mealContentSchema,
         dinner: mealContentSchema,
+      },
+      handler: controllers.createMeal,
+    },
+    {
+      method: 'post',
+      path: '/weekly',
+      needAuth: true,
+      needPermission: true,
+      validateSchema:
+      {
+        weeklyMeals: Joi.array().items({
+          date: Joi.string().required(), // YYYY-MM-DD
+          meals: {
+            breakfast: mealContentSchema,
+            lunch: mealContentSchema,
+            dinner: mealContentSchema,
+          },
+        }),
       },
       handler: controllers.createMeal,
     },

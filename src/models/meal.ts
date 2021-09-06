@@ -2,10 +2,12 @@ import {
   createSchema, Type, typedModel,
 } from 'ts-mongoose';
 
-const mealContentSchema = Type.object({ require: true }).of({
-  content: Type.array({ required: true }).of(Type.string()),
-  image: Type.objectId({ default: null }),
-});
+// const mealContentSchema = Type.object({ require: true }).of({
+//   content: Type.array({ required: true }).of(Type.string()),
+//   // image: Type.objectId({ default: null }),
+// });
+
+const mealContentSchema = Type.array({ required: true });
 
 const mealSchema = createSchema({
   date: Type.string({ required: true, unique: true }),
