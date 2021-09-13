@@ -50,6 +50,7 @@
     "tsc-watch": "^4.2.3"
   },
   "dependencies": {
+    "@dimigo/dimibob-parser": "^1.1.0",
     "axios": "^0.21.1",
     "bl": "^2.2.1",
     "cors": "^2.8.5",
