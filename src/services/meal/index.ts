@@ -57,7 +57,7 @@ export default createService({
           },
         }),
       },
-      handler: controllers.createMeal,
+      handler: controllers.createWeeklyMeal,
     },
     {
       method: 'patch',
