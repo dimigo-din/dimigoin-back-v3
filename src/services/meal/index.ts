@@ -71,5 +71,17 @@ export default createService({
       },
       handler: controllers.editMealByDate,
     },
+    {
+      method: 'post',
+      path: '/xlsxfile',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        breakfast: mealContentSchema,
+        lunch: mealContentSchema,
+        dinner: mealContentSchema,
+      },
+      handler: controllers.editMealByDate,
+    },
   ],
 });

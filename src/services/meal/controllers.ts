@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import * as dimibobParser from '@dimigo/dimibob-parser';
 import { HttpException } from '../../exceptions';
 import { MealModel } from '../../models';
 import {
@@ -69,6 +70,31 @@ export const createWeeklyMeal = async (req: Request, res: Response) => {
   }
 
   const weeklyMealData: dailyMeal[] = req.body.weeklyMeals;
+  weeklyMealData.map(async (v: dailyMeal) => {
+    const { date, meals } = v;
+    if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
+
+    const meal = await new MealModel({
+      date,
+      ...meals,
+    }).save();
+    res.json({ meal });
+  });
+};
+
+export const createWeeklyMealWithExcelFile = async (req: Request, res: Response) => {
+  interface dailyMeal {
+    date: string, // YYYY-MM-DD
+    meals: {
+      breakfast: string[],
+      lunch: string[],
+      dinner: string[],
+    }
+  }
+
+  const { excelFileBuffer } = req.body;
+
+  const weeklyMealData: any = await dimibobParser.parse(excelFileBuffer);
   weeklyMealData.map(async (v: dailyMeal) => {
     const { date, meals } = v;
     if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
