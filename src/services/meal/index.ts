@@ -71,15 +71,5 @@ export default createService({
       },
       handler: controllers.editMealByDate,
     },
-    {
-      method: 'post',
-      path: '/xlsxfile',
-      needAuth: true,
-      needPermission: true,
-      validateSchema: {
-        excelFileBuffer: Joi.string().required(),
-      },
-      handler: controllers.editMealByDate,
-    },
   ],
 });
