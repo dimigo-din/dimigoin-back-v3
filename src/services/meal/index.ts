@@ -77,9 +77,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        breakfast: mealContentSchema,
-        lunch: mealContentSchema,
-        dinner: mealContentSchema,
+        excelFileBuffer: Joi.string().required(),
       },
       handler: controllers.editMealByDate,
     },
