@@ -7,7 +7,7 @@ import {
 //   // image: Type.objectId({ default: null }),
 // });
 
-const mealContentSchema = Type.array({ required: true });
+const mealContentSchema = Type.array({ required: true }).of(Type.string());
 
 const mealSchema = createSchema({
   date: Type.string({ required: true, unique: true }),
