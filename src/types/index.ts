@@ -30,10 +30,25 @@ export enum OutgoRequestStatus {
 }
 
 export enum PlaceType {
-  ingang = 'INGANG',
   classroom = 'CLASSROOM',
+  restroom = 'RESTROOM',
   circle = 'CIRCLE',
-  etc = 'ETC',
+  afterschool = 'AFTERSCHOOL',
+  teacher = 'TEACHER',
+  corridor = 'CORRIDOR',
+  farm = 'FARM',
+  playground = 'PLAYGROUND',
+  gym = 'GYM',
+  laundry = 'LAUNDRY',
+  absent = 'ABSENT',
+  etc = 'ETC'
+}
+export enum PlaceBuildingType {
+  main = 'MAIN',
+  newbuilding = 'NEWBUILDING',
+  hakbong = 'HAKBONG',
+  ujeong = 'UJEONG',
+  etc = 'ETC'
 }
 
 export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
