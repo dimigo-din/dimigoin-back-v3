@@ -94,3 +94,10 @@ export type TokenType = typeof TokenTypeValues[number];
 
 export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
+
+export const MealExceptionValues = ['first', 'last'];
+
+export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
+export type MealStatusType = typeof MealStatusValues[number];
+
+export const MealOrderValues = ['sequences', 'times', 'intervalTime'] as const;
