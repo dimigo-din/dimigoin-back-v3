@@ -21,8 +21,8 @@ export const checkTardy = async (req: Request, res: Response) => {
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
-  if (nowTime < 1200) throw new HttpException(401, '점심 시간 전 입니다.');
-  if (nowTime > 1350 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
+  if (nowTime < 1150) throw new HttpException(401, '점심 시간 전 입니다.');
+  if (nowTime > 1400 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
   if (nowTime > 2000) throw new HttpException(401, '저녁시간이 지났습니다.');
 
   const student = await StudentModel.findById(req.user._id);
@@ -33,7 +33,7 @@ export const checkTardy = async (req: Request, res: Response) => {
   type nowType = 'lunch' | 'dinner';
   let now: nowType;
 
-  if (nowTime >= 1200 && nowTime <= 1350) now = 'lunch';
+  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
   else if (nowTime >= 1830) now = 'dinner';
 
   const gradeIdx = req.user.grade - 1;
