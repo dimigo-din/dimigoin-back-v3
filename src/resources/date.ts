@@ -13,6 +13,9 @@ moment.tz.setDefault(timezone);
 const format = 'YYYY-MM-DD';
 
 export const getTodayDateString = () => moment().format(format);
+export const getNowTimeString = () => moment().format('YYYY-MM-DD HH:mm');
+export const getNowTime = () => parseInt(moment().format('HHmm'));
+export const getExtraTime = (extraM: number, time: number) => parseInt(moment(`${time}`, 'HHmm').add(extraM, 'm').format('HHmm'));
 
 export const getKoreanTodayFullString = () => moment().format(
   'YYYY년 MM월 DD일 HH시 mm분',
