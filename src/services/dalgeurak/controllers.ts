@@ -7,51 +7,29 @@ import {
   MealOrderModel,
   StudentModel,
 } from '../../models/dalgeurak';
-import { MealExceptionValues, MealStatusType } from '../../types';
-import {
-  getNowTime,
-  getNowTimeString,
-  getExtraTime,
-} from '../../resources/date';
+import { MealExceptionValues } from '../../types';
+import { getNowTimeString } from '../../resources/date';
+import { checkTardy } from '../../resources/dalgeurak';
 
-export const checkTardy = async (req: Request, res: Response) => {
-  const nowTime = getNowTime();
-  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
-  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
-  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
-  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+export const checkEntrance = async (req: Request, res: Response) => {
+  const mealStatus = await checkTardy(req);
 
-  if (nowTime < 1150) throw new HttpException(401, '점심 시간 전 입니다.');
-  if (nowTime > 1400 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
-  if (nowTime > 2000) throw new HttpException(401, '저녁시간이 지났습니다.');
+  switch (mealStatus) {
+    case 'beforeLunch':
+      throw new HttpException(401, '점심 시간 전 입니다.');
+    case 'beforeDinner':
+      throw new HttpException(401, '저녁 시간 전 입니다.');
+    case 'afterDinner':
+      throw new HttpException(401, '저녁시간이 지났습니다.');
+    case 'certified':
+      throw new HttpException(401, '이미 인증된 사용자입니다.');
+    case 'early':
+      throw new HttpException(401, '아직 반 식사시간이 아닙니다. 선밥을 신청해주세요.');
+    default:
+      break;
+  }
 
   const student = await StudentModel.findById(req.user._id);
-  if (student.status !== 'empty') throw new HttpException(401, '이미 인증된 사용자입니다.');
-
-  const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
-
-  type nowType = 'lunch' | 'dinner';
-  let now: nowType;
-
-  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
-  else if (nowTime >= 1830) now = 'dinner';
-
-  const gradeIdx = req.user.grade - 1;
-  const classIdx = mealSequences[now][gradeIdx].indexOf(req.user.class);
-  const extraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx]); // 본인 반의 밥시간
-  let nextExtraTime; // 다음 반의 밥시간
-
-  if (classIdx === 5) nextExtraTime = getExtraTime(extraMinute + 3, mealTimes[now][gradeIdx][classIdx]); // 순서가 마지막일 때 반 시간에서 3분 추가
-  else nextExtraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx + 1]); // 다음 반 밥시간
-
-  let mealStatus: MealStatusType = 'empty';
-
-  const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
-  if (nowTime < extraTime) {
-    if (exception) mealStatus = 'onTime'; // 선밥
-    else throw new HttpException(401, '아직 반 식사시간이 아닙니다. 선밥을 신청해주세요.');
-  } else if (nowTime >= extraTime && nowTime <= nextExtraTime) mealStatus = 'onTime';
-  else if (nowTime > nextExtraTime) mealStatus = 'tardy'; // 지각
 
   Object.assign(student, { status: mealStatus });
   await student.save();
@@ -62,6 +40,17 @@ export const checkTardy = async (req: Request, res: Response) => {
   }).save();
 
   res.json({ mealStatus });
+};
+
+export const getUserInfo = async (req: Request, res: Response) => {
+  const mealStatus = await checkTardy(req);
+
+  const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
+
+  res.json({
+    mealStatus,
+    exception: exception ? exception.exceptionType : 'normal',
+  });
 };
 
 export const editExtraTime = async (req: Request, res: Response) => {
