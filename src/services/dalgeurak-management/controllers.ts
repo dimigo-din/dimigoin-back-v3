@@ -51,5 +51,5 @@ export const mandate = async (req: Request, res: Response) => {
   Object.assign(user, { permissions });
   await user.save();
 
-  res.json(student);
+  res.json({ student });
 };
