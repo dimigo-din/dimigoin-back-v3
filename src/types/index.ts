@@ -101,3 +101,6 @@ export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
 export type MealStatusType = typeof MealStatusValues[number];
 
 export const MealOrderValues = ['sequences', 'times', 'intervalTime'] as const;
+
+export const MealTardyStatusValues = ['onTime', 'tardy', 'empty', 'beforeLunch', 'beforeDinner', 'afterDinner', 'certified', 'early'] as const;
+export type MealTardyStatusType = typeof MealTardyStatusValues[number];

@@ -12,7 +12,14 @@ export default createService({
       path: '/',
       needAuth: true,
       needPermission: false,
-      handler: controllers.checkTardy,
+      handler: controllers.checkEntrance,
+    },
+    {
+      method: 'get',
+      path: '/me',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getUserInfo,
     },
     {
       method: 'post',
@@ -27,8 +34,8 @@ export default createService({
     {
       method: 'get',
       path: '/exception/:type',
-      needAuth: false,
-      needPermission: false,
+      needAuth: true,
+      needPermission: true,
       handler: controllers.getMealExceptions,
     },
     {
