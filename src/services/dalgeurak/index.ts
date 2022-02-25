@@ -46,10 +46,21 @@ export default createService({
     },
     {
       method: 'get',
-      path: '/exception/:type',
+      path: '/exception',
       needAuth: true,
       needPermission: true,
       handler: controllers.getMealExceptions,
+    },
+    {
+      method: 'patch',
+      path: '/exception/application',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        permission: Joi.boolean().required(),
+        serial: Joi.number().required(),
+      },
+      handler: controllers.permissionMealException,
     },
     {
       method: 'post',

@@ -28,6 +28,10 @@ const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
       throw new HttpException(401, '이미 인증된 사용자입니다.');
     case 'early':
       throw new HttpException(401, '아직 반 식사시간이 아닙니다.');
+    case 'waiting':
+      throw new HttpException(401, '선/후밥 신청 대기 중 입니다.');
+    case 'rejected':
+      throw new HttpException(401, '선/후밥 신청이 거부되었습니다.');
     default:
       break;
   }
@@ -89,10 +93,7 @@ export const editExtraTime = async (req: Request, res: Response) => {
 };
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const { type } = req.params;
-  if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
-
-  const users = await MealExceptionModel.find({ exceptionType: type });
+  const users = await MealExceptionModel.find({ });
 
   res.json({ users });
 };
@@ -119,6 +120,18 @@ export const cancelMealException = async (req: Request, res: Response) => {
   if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
 
   await exception.deleteOne();
+  res.json({ exception });
+};
+export const permissionMealException = async (req: Request, res: Response) => {
+  const { serial, permission } = req.body;
+
+  const exception = await MealExceptionModel.findOne({ serial });
+  if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
+
+  if (permission) Object.assign(exception, { applicationStatus: 'permitted' });
+  else Object.assign(exception, { applicationStatus: 'rejected' });
+
+  await exception.save();
   res.json({ exception });
 };
 

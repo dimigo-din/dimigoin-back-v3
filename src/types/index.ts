@@ -96,13 +96,17 @@ export type Middleware =
   (req: Request, res: Response, next: NextFunction) => Promise<void>;
 
 export const MealExceptionValues = ['first', 'last'];
+export type MealExceptionType = typeof MealExceptionValues[number];
+
+export const MealExceptionApplicationStatusValues = ['waiting', 'permitted', 'rejected'] as const;
+export type MealExceptionApplicationStatus = typeof MealExceptionApplicationStatusValues[number];
 
 export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
 export type MealStatusType = typeof MealStatusValues[number];
 
 export const MealOrderValues = ['sequences', 'times', 'intervalTime'] as const;
 
-export const MealTardyStatusValues = ['onTime', 'tardy', 'empty', 'beforeLunch', 'beforeDinner', 'afterDinner', 'certified', 'early'] as const;
+export const MealTardyStatusValues = ['onTime', 'tardy', 'empty', 'beforeLunch', 'beforeDinner', 'afterDinner', 'certified', 'early', 'rejected', 'waiting'] as const;
 export type MealTardyStatusType = typeof MealTardyStatusValues[number];
 
 export const MealTimeValues = ['lunch', 'dinner'] as const;

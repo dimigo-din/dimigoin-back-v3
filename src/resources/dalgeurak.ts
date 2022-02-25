@@ -70,17 +70,24 @@ export const checkTardy = async (student: IStudent): Promise<MealTardyStatusType
   if (classIdx === 5) nextExtraTime = getExtraTime(extraMinute + 3, mealTimes[now][gradeIdx][classIdx]); // 순서가 마지막일 때 반 시간에서 3분 추가
   else nextExtraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx + 1]); // 다음 반 밥시간
 
+  type noPermission = 'rejected' | 'waiting';
+
   const exception = await MealExceptionModel.findOne({ serial: student.serial });
   if (nowTime < extraTime) {
     if (exception) {
-      if (exception.exceptionType === 'first') mealStatus = 'onTime'; // 선밥
-      else mealStatus = 'early';
+      if (exception.applicationStatus === 'permitted') {
+        if (exception.exceptionType === 'first') mealStatus = 'onTime'; // 선밥
+        else mealStatus = 'early';
+      } else mealStatus = exception.applicationStatus as noPermission; // 선후밥 신청 거부/대기 중
     } else mealStatus = 'early';
   } else if (nowTime >= extraTime && nowTime < nextExtraTime) mealStatus = 'onTime';
   else if (nowTime >= nextExtraTime) {
-    if (exception) { if (exception.exceptionType === 'last') mealStatus = 'onTime'; // 후밥
-    else mealStatus = 'tardy'; } // 지각
-    else mealStatus = 'tardy';
+    if (exception) {
+      if (exception.exceptionType === 'last' && exception.applicationStatus === 'permitted') mealStatus = 'onTime'; // 후밥
+      else if (exception.exceptionType === 'first') mealStatus = 'tardy';
+      else mealStatus = exception.applicationStatus as noPermission;
+    }
+    else mealStatus = 'tardy'; // 지각
   }
 
   return mealStatus;
