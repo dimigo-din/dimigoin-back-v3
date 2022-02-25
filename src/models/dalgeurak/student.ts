@@ -9,7 +9,7 @@ import {
 } from '../../types';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
 
-interface IStudent extends Document {
+export interface IStudent extends Document {
   idx: number;
   name: string;
   grade: number;

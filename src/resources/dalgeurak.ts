@@ -1,8 +1,8 @@
-import { Request } from 'express';
 import { ObjectId } from 'mongodb';
 import { HttpException } from '../exceptions';
 import { UserModel } from '../models';
 import {
+  IStudent,
   MealExceptionModel,
   MealOrderModel,
   StudentModel,
@@ -38,7 +38,7 @@ export const resetExtraTimes = async () => {
   await MealOrderModel.findOneAndUpdate({ field: 'intervalTime' }, { extraMinute: 0 });
 };
 
-export const checkTardy = async (req: Request): Promise<MealTardyStatusType> => {
+export const checkTardy = async (student: IStudent): Promise<MealTardyStatusType> => {
   let mealStatus: MealTardyStatusType;
 
   const nowTime = getNowTime();
@@ -52,7 +52,6 @@ export const checkTardy = async (req: Request): Promise<MealTardyStatusType> => 
   if (nowTime > 1400 && nowTime < 1830) return 'beforeDinner';
   if (nowTime > 2000) return 'afterDinner';
 
-  const student = await StudentModel.findById(req.user._id);
   if (student.status !== 'empty') return 'certified';
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
@@ -63,15 +62,15 @@ export const checkTardy = async (req: Request): Promise<MealTardyStatusType> => 
   if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
   else if (nowTime >= 1830) now = 'dinner';
 
-  const gradeIdx = req.user.grade - 1;
-  const classIdx = mealSequences[now][gradeIdx].indexOf(req.user.class);
+  const gradeIdx = student.grade - 1;
+  const classIdx = mealSequences[now][gradeIdx].indexOf(student.class);
   const extraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx]); // 본인 반의 밥시간
   let nextExtraTime; // 다음 반의 밥시간
 
   if (classIdx === 5) nextExtraTime = getExtraTime(extraMinute + 3, mealTimes[now][gradeIdx][classIdx]); // 순서가 마지막일 때 반 시간에서 3분 추가
   else nextExtraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx + 1]); // 다음 반 밥시간
 
-  const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
+  const exception = await MealExceptionModel.findOne({ serial: student.serial });
   if (nowTime < extraTime) {
     if (exception) {
       if (exception.exceptionType === 'first') mealStatus = 'onTime'; // 선밥

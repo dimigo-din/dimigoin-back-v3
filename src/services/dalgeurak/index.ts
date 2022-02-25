@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
 import { createService } from '../index';
-import { ClassValues } from '../../types';
+import { ClassValues, MealTimeValues } from '../../types';
 
 export default createService({
   name: '달그락 서비스',
@@ -12,13 +12,26 @@ export default createService({
       path: '/',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       handler: controllers.checkEntrance,
+    },
+    {
+      method: 'post',
+      path: '/entrance',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        serial: Joi.number().required(),
+        name: Joi.string().required(),
+      },
+      handler: controllers.entranceProcess,
     },
     {
       method: 'get',
       path: '/me',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       handler: controllers.getUserInfo,
     },
     {
@@ -43,6 +56,7 @@ export default createService({
       path: '/exception/:type',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       validateSchema: {
         reason: Joi.string().required(),
       },
@@ -53,6 +67,7 @@ export default createService({
       path: '/exception',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       handler: controllers.cancelMealException,
     },
     {
@@ -90,6 +105,28 @@ export default createService({
         dinner: Joi.array().length(3).items(Joi.array().length(6).items(Joi.number())).required(),
       },
       handler: controllers.editMealTimes,
+    },
+    {
+      method: 'patch',
+      path: '/sequence/:grade',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        time: Joi.string().valid(...MealTimeValues).required(),
+        sequences: Joi.array().length(6).items(Joi.number().valid(...ClassValues)).required(),
+      },
+      handler: controllers.editGradeMealSequences,
+    },
+    {
+      method: 'patch',
+      path: '/time/:grade',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        time: Joi.string().valid(...MealTimeValues).required(),
+        classTimes: Joi.array().length(6).items(Joi.number()).required(),
+      },
+      handler: controllers.editGradeMealTimes,
     },
   ],
 });
