@@ -5,8 +5,8 @@ import {
   CheckinLogModel,
   MealExceptionModel,
   MealOrderModel,
-  StudentModel,
 } from '../../models/dalgeurak';
+import { UserModel } from '../../models';
 import {
   ClassType,
   MealExceptionValues,
@@ -38,7 +38,10 @@ const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
 };
 
 export const checkEntrance = async (req: Request, res: Response) => {
-  const student = await StudentModel.findById(req.user._id);
+  const student = await UserModel.findOne({
+    _id: req.user._id,
+    userType: 'S',
+  }).select('mealStatus');
 
   const mealStatus = await checkTardy(student);
   mealStatusFilter(mealStatus);
@@ -57,7 +60,7 @@ export const checkEntrance = async (req: Request, res: Response) => {
 export const entranceProcess = async (req: Request, res: Response) => {
   const { serial, name } = req.body;
 
-  const student = await StudentModel.findOne({ serial, name });
+  const student = await UserModel.findOne({ serial, name }).select('mealStatus');
   if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
 
   const mealStatus = await checkTardy(student);
@@ -75,7 +78,7 @@ export const entranceProcess = async (req: Request, res: Response) => {
 };
 
 export const getUserInfo = async (req: Request, res: Response) => {
-  const student = await StudentModel.findById(req.user._id);
+  const student = await UserModel.findById(req.user._id).select('mealStatus');
   const mealStatus = await checkTardy(student);
 
   const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
@@ -206,4 +209,9 @@ export const editGradeMealTimes = async (req: Request, res: Response) => {
   await mealTimes.save();
 
   res.json({ classTimes });
+};
+
+export const reloadUsersMealStatus = async (req: Request, res: Response) => {
+  await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
+  res.json({ success: true });
 };

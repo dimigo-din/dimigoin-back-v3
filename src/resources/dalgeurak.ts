@@ -1,35 +1,14 @@
-import { ObjectId } from 'mongodb';
-import { HttpException } from '../exceptions';
 import { UserModel } from '../models';
+import { HttpException } from '../exceptions';
 import {
-  IStudent,
   MealExceptionModel,
   MealOrderModel,
-  StudentModel,
 } from '../models/dalgeurak';
 import { MealTardyStatusType } from '../types';
 import { getExtraTime, getNowTime } from './date';
 
-export const reloadDalgeurakStudents = async () => {
-  await StudentModel.deleteMany({});
-  const users = await UserModel.find({ userType: 'S', serial: { $exists: true } });
-  await Promise.all(
-    users.map(async (student) => {
-      await new StudentModel({
-        _id: new ObjectId(student._id),
-        idx: student.idx,
-        name: student.name,
-        grade: student.grade,
-        class: student.class,
-        number: student.number,
-        serial: student.serial,
-      }).save();
-    }),
-  );
-};
-
-export const resetStudentMealStatus = async () => {
-  await StudentModel.updateMany({}, { status: 'empty' });
+export const resetStudentsMealStatus = async () => {
+  await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
 };
 export const resetMealExceptions = async () => {
   await MealExceptionModel.deleteMany({});
@@ -38,7 +17,13 @@ export const resetExtraTimes = async () => {
   await MealOrderModel.findOneAndUpdate({ field: 'intervalTime' }, { extraMinute: 0 });
 };
 
-export const checkTardy = async (student: IStudent): Promise<MealTardyStatusType> => {
+interface Istudent {
+  mealStatus: string;
+  grade: number;
+  class: number;
+  serial: number;
+}
+export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType> => {
   let mealStatus: MealTardyStatusType;
 
   const nowTime = getNowTime();
@@ -52,7 +37,7 @@ export const checkTardy = async (student: IStudent): Promise<MealTardyStatusType
   if (nowTime > 1400 && nowTime < 1830) return 'beforeDinner';
   if (nowTime > 2000) return 'afterDinner';
 
-  if (student.status !== 'empty') return 'certified';
+  if (student.mealStatus !== 'empty') return 'certified';
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 

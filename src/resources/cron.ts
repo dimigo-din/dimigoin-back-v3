@@ -12,10 +12,9 @@ import {
   attachTeacherInfo,
 } from './dimi-api';
 import {
-  reloadDalgeurakStudents,
-  resetStudentMealStatus,
   resetMealExceptions,
   resetExtraTimes,
+  resetStudentsMealStatus,
 } from './dalgeurak';
 
 const cronJobs = [
@@ -36,18 +35,10 @@ const cronJobs = [
     runOnSetup: true,
   },
   {
-    name: '달그락 학생 정보 갱신',
-    schedule: '0 1 * * 1',
-    action: async () => {
-      await reloadDalgeurakStudents();
-    },
-    runOnSetp: true,
-  },
-  {
     name: '달그락 일시적 정보 초기화',
     schedule: '0 14,20 * * *',
     action: async () => {
-      await resetStudentMealStatus();
+      await resetStudentsMealStatus();
       await resetMealExceptions();
       await resetExtraTimes();
     },

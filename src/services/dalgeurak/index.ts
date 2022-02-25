@@ -139,5 +139,12 @@ export default createService({
       },
       handler: controllers.editGradeMealTimes,
     },
+    {
+      method: 'patch',
+      path: '/reload',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.reloadUsersMealStatus,
+    },
   ],
 });
