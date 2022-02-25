@@ -8,6 +8,7 @@ import {
   GradeValues,
   ClassValues,
   UserType,
+  MealStatusValues,
 } from '../types';
 import { services } from '../services';
 
@@ -29,6 +30,7 @@ const userSchema = createSchema({
   number: Type.number(),
   serial: Type.number(),
   libraryId: Type.string({ select: false, trim: true }),
+  mealStatus: Type.string({ enum: MealStatusValues, select: false }),
   // 교사 정보
   position: Type.string({ trim: true }),
   role: Type.string({ trim: true }),

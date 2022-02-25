@@ -5,15 +5,18 @@ import {
   CheckinLogModel,
   MealExceptionModel,
   MealOrderModel,
-  StudentModel,
 } from '../../models/dalgeurak';
-import { MealExceptionValues } from '../../types';
+import { UserModel } from '../../models';
+import {
+  ClassType,
+  MealExceptionValues,
+  MealTardyStatusType,
+  MealTimeType,
+} from '../../types';
 import { getNowTimeString } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
 
-export const checkEntrance = async (req: Request, res: Response) => {
-  const mealStatus = await checkTardy(req);
-
+const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
     case 'beforeLunch':
       throw new HttpException(401, '점심 시간 전 입니다.');
@@ -24,12 +27,44 @@ export const checkEntrance = async (req: Request, res: Response) => {
     case 'certified':
       throw new HttpException(401, '이미 인증된 사용자입니다.');
     case 'early':
-      throw new HttpException(401, '아직 반 식사시간이 아닙니다. 선밥을 신청해주세요.');
+      throw new HttpException(401, '아직 반 식사시간이 아닙니다.');
+    case 'waiting':
+      throw new HttpException(401, '선/후밥 신청 대기 중 입니다.');
+    case 'rejected':
+      throw new HttpException(401, '선/후밥 신청이 거부되었습니다.');
     default:
       break;
   }
+};
 
-  const student = await StudentModel.findById(req.user._id);
+export const checkEntrance = async (req: Request, res: Response) => {
+  const student = await UserModel.findOne({
+    _id: req.user._id,
+    userType: 'S',
+  }).select('mealStatus');
+
+  const mealStatus = await checkTardy(student);
+  mealStatusFilter(mealStatus);
+
+  Object.assign(student, { status: mealStatus });
+  await student.save();
+  await new CheckinLogModel({
+    date: getNowTimeString(),
+    student: new ObjectId(student._id),
+    status: mealStatus,
+  }).save();
+
+  res.json({ mealStatus });
+};
+
+export const entranceProcess = async (req: Request, res: Response) => {
+  const { serial, name } = req.body;
+
+  const student = await UserModel.findOne({ serial, name }).select('mealStatus');
+  if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
+
+  const mealStatus = await checkTardy(student);
+  mealStatusFilter(mealStatus);
 
   Object.assign(student, { status: mealStatus });
   await student.save();
@@ -43,7 +78,8 @@ export const checkEntrance = async (req: Request, res: Response) => {
 };
 
 export const getUserInfo = async (req: Request, res: Response) => {
-  const mealStatus = await checkTardy(req);
+  const student = await UserModel.findById(req.user._id).select('mealStatus');
+  const mealStatus = await checkTardy(student);
 
   const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
 
@@ -60,10 +96,7 @@ export const editExtraTime = async (req: Request, res: Response) => {
 };
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const { type } = req.params;
-  if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
-
-  const users = await MealExceptionModel.find({ exceptionType: type });
+  const users = await MealExceptionModel.find({ });
 
   res.json({ users });
 };
@@ -90,6 +123,18 @@ export const cancelMealException = async (req: Request, res: Response) => {
   if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
 
   await exception.deleteOne();
+  res.json({ exception });
+};
+export const permissionMealException = async (req: Request, res: Response) => {
+  const { serial, permission } = req.body;
+
+  const exception = await MealExceptionModel.findOne({ serial });
+  if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
+
+  if (permission) Object.assign(exception, { applicationStatus: 'permitted' });
+  else Object.assign(exception, { applicationStatus: 'rejected' });
+
+  await exception.save();
   res.json({ exception });
 };
 
@@ -123,4 +168,50 @@ export const editMealTimes = async (req: Request, res: Response) => {
   await mealTimes.save();
 
   res.json({ mealTimes });
+};
+
+export const editGradeMealSequences = async (req: Request, res: Response) => {
+  interface GradeMealSequences {
+    time: MealTimeType;
+    sequences: ClassType;
+  }
+
+  const gradeIdx = parseInt(req.params.grade) - 1;
+  const { time, sequences }: GradeMealSequences = req.body;
+
+  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
+  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
+
+  mealSequences[time].splice(gradeIdx, 1, sequences);
+  Object.assign(mealSequences, {
+    ...mealSequences,
+  });
+  await mealSequences.save();
+
+  res.json({ sequences });
+};
+export const editGradeMealTimes = async (req: Request, res: Response) => {
+  interface GradeMealTimes {
+    time: MealTimeType;
+    classTimes: ClassType;
+  }
+
+  const gradeIdx = parseInt(req.params.grade) - 1;
+  const { time, classTimes }: GradeMealTimes = req.body;
+
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  mealTimes[time].splice(gradeIdx, 1, classTimes);
+  Object.assign(mealTimes, {
+    ...mealTimes,
+  });
+  await mealTimes.save();
+
+  res.json({ classTimes });
+};
+
+export const reloadUsersMealStatus = async (req: Request, res: Response) => {
+  await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
+  res.json({ success: true });
 };

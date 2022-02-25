@@ -1,11 +1,11 @@
 import { createSchema, Type } from 'ts-mongoose';
-import { studentSchema } from '.';
+import { userSchema } from '../user';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
 import { MealStatusValues } from '../../types';
 
 const checkinLogSchema = createSchema({
   date: Type.string({ required: true }),
-  student: Type.ref(Type.objectId()).to('Student', studentSchema),
+  student: Type.ref(Type.objectId()).to('Student', userSchema),
   status: Type.string({ required: true, enum: MealStatusValues, default: 'empty' }),
 }, { versionKey: false, timestamps: true });
 

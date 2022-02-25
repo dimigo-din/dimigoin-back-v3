@@ -75,6 +75,7 @@ export const attachStudentInfo = async () => {
           number: student.number,
           serial: student.serial,
           libraryId: student.library_id,
+          mealStatus: 'empty',
         },
       );
       return student;

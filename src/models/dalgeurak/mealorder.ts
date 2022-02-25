@@ -1,11 +1,11 @@
 import { createSchema, Type } from 'ts-mongoose';
 import { Document, Model } from 'mongoose';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
-import { MealOrderValues } from '../../types';
+import { MealOrderValues, ClassType } from '../../types';
 
 export interface ImealOrder extends Document {
-  lunch?: [[number, number, number, number, number, number]];
-  dinner?: [[number, number, number, number, number, number]];
+  lunch?: Array<ClassType>;
+  dinner?: Array<ClassType>;
   field: 'sequences' | 'times' | 'intervalTime';
   extraMinute?: number;
 }
