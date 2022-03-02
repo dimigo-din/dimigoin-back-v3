@@ -8,6 +8,7 @@ export default {
   port: process.env.SERVER_PORT!,
   mongoUri: process.env.MONGO_URI!,
   dalgeurakMongoUri: process.env.DALGEURAK_MONGO_URI!,
+  dalgeurakKey: process.env.DALGEURAK_KEY!,
   jwtSecret: process.env.JWT_SECRET!,
   apiId: process.env.DIMIAPI_ID!,
   apiPw: process.env.DIMIAPI_PW!,
