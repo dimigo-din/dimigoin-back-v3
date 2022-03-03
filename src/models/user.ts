@@ -30,7 +30,7 @@ const userSchema = createSchema({
   number: Type.number(),
   serial: Type.number(),
   libraryId: Type.string({ select: false, trim: true }),
-  mealStatus: Type.string({ enum: MealStatusValues, select: false }),
+  mealStatus: Type.string({ enum: MealStatusValues }),
   // 교사 정보
   position: Type.string({ trim: true }),
   role: Type.string({ trim: true }),

@@ -39,15 +39,12 @@ const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
 };
 
 export const checkEntrance = async (req: Request, res: Response) => {
-  const student = await UserModel.findOne({
-    _id: req.user._id,
-    userType: 'S',
-  }).select('mealStatus');
+  const student = await UserModel.findById(req.user._id);
 
   const mealStatus = await checkTardy(student);
   mealStatusFilter(mealStatus);
 
-  Object.assign(student, { status: mealStatus });
+  Object.assign(student, { mealStatus });
   await student.save();
   await new CheckinLogModel({
     date: getNowTimeString(),
@@ -61,13 +58,13 @@ export const checkEntrance = async (req: Request, res: Response) => {
 export const entranceProcess = async (req: Request, res: Response) => {
   const { serial, name } = req.body;
 
-  const student = await UserModel.findOne({ serial, name }).select('mealStatus');
+  const student = await UserModel.findOne({ serial, name });
   if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
 
   const mealStatus = await checkTardy(student);
   mealStatusFilter(mealStatus);
 
-  Object.assign(student, { status: mealStatus });
+  Object.assign(student, { mealStatus });
   await student.save();
   await new CheckinLogModel({
     date: getNowTimeString(),
@@ -119,7 +116,7 @@ export const getNowSequence = async (req: Request, res: Response) => {
 };
 
 export const getUserInfo = async (req: Request, res: Response) => {
-  const student = await UserModel.findById(req.user._id).select('mealStatus');
+  const student = await UserModel.findById(req.user._id);
   const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
   const mealStatus = await checkTardy(student);
   const extraTime = await getUserMealTime(student);

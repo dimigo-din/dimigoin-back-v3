@@ -59,12 +59,6 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
-  if (nowTime < 1150) return 'beforeLunch';
-  if (nowTime > 1400 && nowTime < 1830) return 'beforeDinner';
-  if (nowTime > 2000) return 'afterDinner';
-
-  if (student.mealStatus !== 'empty') return 'certified';
-
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 
   type nowType = 'lunch' | 'dinner';
