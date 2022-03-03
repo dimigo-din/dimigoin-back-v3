@@ -45,6 +45,8 @@ export default createService({
         name: Joi.string().required(),
         type: Joi.string().required(),
         location: Joi.string().required(),
+        building: Joi.string().required(),
+        floor: Joi.number().required(),
         nick: Joi.string().required(),
       },
       handler: controllers.createPlace,
