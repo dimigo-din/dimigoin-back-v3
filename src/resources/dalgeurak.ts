@@ -23,21 +23,41 @@ interface Istudent {
   class: number;
   serial: number;
 }
-export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType> => {
-  let mealStatus: MealTardyStatusType;
-
-  const nowTime = getNowTime();
-
+export const getUserMealTime = async (student: Istudent): Promise<number> => {
   const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
   if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  const nowTime = getNowTime();
+
+  const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
+
+  type nowType = 'lunch' | 'dinner';
+  let now: nowType;
+
+  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
+  else if (nowTime >= 1830) now = 'dinner';
+
+  const gradeIdx = student.grade - 1;
+  const classIdx = mealSequences[now][gradeIdx].indexOf(student.class);
+  return getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx]); // 본인 반의 밥시간
+};
+export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType> => {
+  let mealStatus: MealTardyStatusType;
+
+  const nowTime = getNowTime();
 
   if (nowTime < 1150) return 'beforeLunch';
   if (nowTime > 1400 && nowTime < 1830) return 'beforeDinner';
   if (nowTime > 2000) return 'afterDinner';
 
   if (student.mealStatus !== 'empty') return 'certified';
+
+  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
+  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 

@@ -28,6 +28,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/nowSequence',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getNowSequence,
+    },
+    {
+      method: 'get',
       path: '/me',
       needAuth: true,
       needPermission: false,
@@ -101,8 +108,8 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        lunch: Joi.array().length(3).items(Joi.array().length(6).items(Joi.number().valid(...ClassValues))).required(),
-        dinner: Joi.array().length(3).items(Joi.array().length(6).items(Joi.number().valid(...ClassValues))).required(),
+        lunch: Joi.array().length(2).items(Joi.array().length(6).items(Joi.number().valid(...ClassValues))).required(),
+        dinner: Joi.array().length(2).items(Joi.array().length(6).items(Joi.number().valid(...ClassValues))).required(),
       },
       handler: controllers.editMealSequences,
     },
@@ -112,8 +119,8 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        lunch: Joi.array().length(3).items(Joi.array().length(6).items(Joi.number())).required(),
-        dinner: Joi.array().length(3).items(Joi.array().length(6).items(Joi.number())).required(),
+        lunch: Joi.array().length(2).items(Joi.array().length(6).items(Joi.number())).required(),
+        dinner: Joi.array().length(2).items(Joi.array().length(6).items(Joi.number())).required(),
       },
       handler: controllers.editMealTimes,
     },
@@ -145,6 +152,13 @@ export default createService({
       needAuth: true,
       needPermission: true,
       handler: controllers.reloadUsersMealStatus,
+    },
+    {
+      method: 'get',
+      path: '/key',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getKey,
     },
   ],
 });
