@@ -146,7 +146,7 @@ export const getUserInfo = async (req: Request, res: Response) => {
     studentId: student._id,
     randomValue: String(Math.random()),
   }, config.dalgeurakKey, {
-    expiresIn: '30s',
+    expiresIn: '33s',
   });
 
   res.json({
