@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import Jwt from 'jsonwebtoken';
 import { HttpException } from '../../exceptions';
 import config from '../../config';
 import {
@@ -14,8 +15,8 @@ import {
   MealTardyStatusType,
   MealTimeType,
 } from '../../types';
-import { getNowTime, getNowTimeString } from '../../resources/date';
-import { checkTardy, getUserMealTime } from '../../resources/dalgeurak';
+import { getExtraTime, getNowTime, getNowTimeString } from '../../resources/date';
+import { checkTardy } from '../../resources/dalgeurak';
 
 const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -38,8 +39,29 @@ const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   }
 };
 
+interface IQRkey {
+  studentId: string;
+  randomValue: string;
+}
+
+const getQRToken = async (key: string): Promise<IQRkey> => {
+  try {
+    const decoded = await Jwt.verify(key, config.dalgeurakKey) as IQRkey;
+    return decoded;
+  } catch (error) {
+    if (error.name === 'TokenExpiredError') {
+      throw new HttpException(401, '토큰이 만료되었습니다.');
+    } else if (['jwt malformed', 'invalid signature'].includes(error.message)) {
+      throw new HttpException(401, '토큰이 변조되었습니다.');
+    } else throw new HttpException(401, '토큰에 문제가 있습니다.');
+  }
+};
+
 export const checkEntrance = async (req: Request, res: Response) => {
-  const student = await UserModel.findById(req.user._id);
+  const { key } = req.body;
+  const decoded = await getQRToken(key);
+  const student = await UserModel.findById(decoded.studentId);
+  if (!student) throw new HttpException(404, '학생 정보를 읽을 수가 없습니다.');
 
   const mealStatus = await checkTardy(student);
   mealStatusFilter(mealStatus);
@@ -112,6 +134,7 @@ export const getNowSequence = async (req: Request, res: Response) => {
 
   res.json({
     nowSequence: mealSequences[now][gradeIdx][classIdx],
+    grade: gradeIdx + 1,
   });
 };
 
@@ -119,12 +142,17 @@ export const getUserInfo = async (req: Request, res: Response) => {
   const student = await UserModel.findById(req.user._id);
   const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
   const mealStatus = await checkTardy(student);
-  const extraTime = await getUserMealTime(student);
+  const QRkey = await Jwt.sign({
+    studentId: student._id,
+    randomValue: String(Math.random()),
+  }, config.dalgeurakKey, {
+    expiresIn: '33s',
+  });
 
   res.json({
     mealStatus,
     exception: exception ? exception.exceptionType : 'normal',
-    mealTime: extraTime,
+    QRkey,
   });
 };
 
@@ -188,6 +216,20 @@ export const getMealTimes = async (req: Request, res: Response) => {
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
   res.json({ mealTimes });
+};
+export const getMealExtraTimes = async (req: Request, res: Response) => {
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
+
+  const ExtraLunch = mealTimes.lunch.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
+  const ExtraDinner = mealTimes.dinner.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
+
+  res.json({
+    ExtraLunch,
+    ExtraDinner,
+  });
 };
 
 export const editMealSequences = async (req: Request, res: Response) => {
@@ -253,9 +295,4 @@ export const editGradeMealTimes = async (req: Request, res: Response) => {
 export const reloadUsersMealStatus = async (req: Request, res: Response) => {
   await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
   res.json({ success: true });
-};
-
-export const getKey = async (req: Request, res: Response) => {
-  const { dalgeurakKey } = config;
-  res.json({ key: dalgeurakKey });
 };

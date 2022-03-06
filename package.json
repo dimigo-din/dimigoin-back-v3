@@ -51,6 +51,7 @@
   },
   "dependencies": {
     "@dimigo/dimibob-parser": "1.1.5",
+    "@types/node-rsa": "^1.1.1",
     "axios": "^0.21.1",
     "bl": "^2.2.1",
     "cors": "^2.8.5",
