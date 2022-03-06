@@ -11,8 +11,10 @@ export default createService({
       method: 'post',
       path: '/',
       needAuth: true,
-      needPermission: false,
-      studentOnly: true,
+      needPermission: true,
+      validateSchema: {
+        key: Joi.string().required(),
+      },
       handler: controllers.checkEntrance,
     },
     {
@@ -103,6 +105,13 @@ export default createService({
       handler: controllers.getMealTimes,
     },
     {
+      method: 'get',
+      path: '/extraTime',
+      needAuth: false,
+      needPermission: false,
+      handler: controllers.getMealExtraTimes,
+    },
+    {
       method: 'patch',
       path: '/sequence',
       needAuth: true,
@@ -152,13 +161,6 @@ export default createService({
       needAuth: true,
       needPermission: true,
       handler: controllers.reloadUsersMealStatus,
-    },
-    {
-      method: 'get',
-      path: '/key',
-      needAuth: true,
-      needPermission: true,
-      handler: controllers.getKey,
     },
   ],
 });
