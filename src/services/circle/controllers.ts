@@ -17,7 +17,7 @@ export const getAllCircles = async (req: Request, res: Response) => {
 
     const mappedCircles = circles.map((circle) => ({
       ...circle.toObject(),
-      description: null,
+      notion: null,
     }));
     res.json({ circles: mappedCircles });
   }
