@@ -100,3 +100,58 @@ export const setTemporaryPassword = async (req: Request, res: Response) => {
   } else throw new HttpException(401, '인증코드가 일치하지 않습니다.');
   res.json({ message: '디미고인 계정에 임시비밀번호를 설정했습니다.' });
 };
+
+export const getCodes = async (req: Request, res: Response) => {
+  interface studentIF {
+    serial: number;
+    grade: number;
+    class: number;
+    number: number;
+    name: string;
+    code: string;
+  }
+  interface teacherIF {
+    position: string;
+    role: string;
+    code: string;
+    name: string;
+  }
+  const codes = await TemporaryPasswordModel.find({});
+  const TInfo: Array<teacherIF> = [];
+  const SInfo: Array<studentIF> = [];
+  const DInfo: Array<teacherIF> = [];
+  await Promise.all(
+    codes.map(async (info) => {
+      const user = await UserModel.findById(info.user);
+      if (user.userType === 'S') {
+        SInfo.push({
+          serial: user.serial,
+          grade: user.grade,
+          class: user.class,
+          number: user.number,
+          name: user.name,
+          code: info.code,
+        });
+      } else if (user.userType === 'T') {
+        TInfo.push({
+          position: user.position,
+          role: user.role,
+          name: user.name,
+          code: info.code,
+        });
+      } else if (user.userType === 'D') {
+        DInfo.push({
+          position: user.position,
+          role: user.role,
+          name: user.name,
+          code: info.code,
+        });
+      }
+    }),
+  );
+  res.json({
+    TInfo,
+    SInfo,
+    DInfo,
+  });
+};
