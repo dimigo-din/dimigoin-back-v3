@@ -103,6 +103,7 @@ export const setTemporaryPassword = async (req: Request, res: Response) => {
 };
 
 export const grantCode = async (req: Request, res: Response) => {
+  await TemporaryPasswordModel.deleteMany({});
   const users = await UserModel.find({ userType: { $in: ['T', 'D'] } });
   const students = await UserModel.find({ userType: { $in: ['S'] }, serial: { $exists: true } });
 
@@ -125,7 +126,6 @@ export const grantCode = async (req: Request, res: Response) => {
 };
 
 export const getCodes = async (req:Request, res: Response) => {
-  await TemporaryPasswordModel.deleteMany({});
   interface studentIF {
     serial: number;
     grade: number;
