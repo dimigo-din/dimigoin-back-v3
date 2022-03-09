@@ -36,12 +36,5 @@ export default createService({
       },
       handler: controllers.setTemporaryPassword,
     },
-    {
-      method: 'get',
-      needAuth: false,
-      needPermission: true,
-      path: '/getCodes',
-      handler: controllers.getCodes,
-    },
   ],
 });
