@@ -24,5 +24,31 @@ export default createService({
       path: '/refresh',
       handler: controllers.refreshAccessToken,
     },
+    {
+      method: 'post',
+      needAuth: false,
+      needPermission: false,
+      path: '/setPwd',
+      validateSchema: {
+        id: Joi.string().required(),
+        code: Joi.string().required(),
+        password: Joi.string().required(),
+      },
+      handler: controllers.setTemporaryPassword,
+    },
+    {
+      method: 'get',
+      needAuth: false,
+      needPermission: true,
+      path: '/grantCode',
+      handler: controllers.grantCode,
+    },
+    {
+      method: 'get',
+      needAuth: false,
+      needPermission: true,
+      path: '/getCodes',
+      handler: controllers.getCodes,
+    },
   ],
 });

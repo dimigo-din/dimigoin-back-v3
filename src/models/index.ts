@@ -19,3 +19,4 @@ export * from './mentoring-application';
 export * from './dets';
 export * from './dets-application';
 export * from './user-latest-place';
+export * from './temporary-password';
