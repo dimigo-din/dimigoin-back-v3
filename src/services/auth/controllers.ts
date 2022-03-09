@@ -1,8 +1,9 @@
 import { Request, Response } from 'express';
+import crypto from 'crypto';
 import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
-import { UserModel, CircleModel } from '../../models';
-import { getIdentity } from '../../resources/dimi-api';
+import { UserModel, CircleModel, TemporaryPasswordModel } from '../../models';
+// import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
 
@@ -41,13 +42,21 @@ export const identifyUser = async (req: Request, res: Response) => {
   const account: Account = req.body;
 
   try {
-    const { id: idx } = await getIdentity(account);
-    const identity = await getEntireIdentity(idx);
+    const user = await UserModel.findOne({ username: account.username });
+    if (!user) throw new HttpException(404, '로그인에 실패했어요.');
+    const info = await TemporaryPasswordModel.findOne({ user: user._id });
+    if (!info) throw new HttpException(404, '로그인에 실패했어요.');
+    if (!info.status) throw new HttpException(401, '임시 비밀번호를 설정해주세요.');
 
-    res.json({
-      accessToken: await issueToken(identity, false),
-      refreshToken: await issueToken(identity, true),
-    });
+    const hashPassword = crypto.createHash('sha512').update(account.password + info.salt).digest('hex');
+    if (hashPassword === info.password) {
+      const identity = await getEntireIdentity(user.idx);
+      res.json({
+        accessToken: await issueToken(identity, false),
+        refreshToken: await issueToken(identity, true),
+      });
+    } else throw new HttpException(401, '로그인에 실패했어요.');
+    // const { id: idx } = await getIdentity(account);
   } catch (error) {
     if (error.name === 'HttpException') throw error;
     throw new HttpException(401, '인증에 실패했습니다.');
@@ -67,4 +76,27 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
     accessToken: await issueToken(identity, false),
     refreshToken: await issueToken(identity, true),
   });
+};
+
+export const setTemporaryPassword = async (req: Request, res: Response) => {
+  const { id, code, password } = req.body;
+  const user = await UserModel.findOne({ username: id });
+  if (!user) throw new HttpException(404, '유저 정보를 찾을 수 없습니다.');
+
+  const codeInfo = await TemporaryPasswordModel.findOne({ user: user._id });
+  if (!codeInfo) throw new HttpException(404, '학생 또는 선생님 계정이 아닙니다.');
+  if (codeInfo.status) throw new HttpException(401, '임시비밀번호는 한번만 설정할 수 있습니다.');
+  if (codeInfo.code === code) {
+    const passwordSalt = Math.random().toString(16).slice(2) + Math.random().toString(36).slice(2);
+    const hashPassword = crypto.createHash('sha512').update(password + passwordSalt).digest('hex');
+
+    Object.assign(codeInfo, {
+      status: true,
+      salt: passwordSalt,
+      password: hashPassword,
+      code: '',
+    });
+    await codeInfo.save();
+  } else throw new HttpException(401, '인증코드가 일치하지 않습니다.');
+  res.json({ message: '디미고인 계정에 임시비밀번호를 설정했습니다.' });
 };
