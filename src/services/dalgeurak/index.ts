@@ -162,5 +162,24 @@ export default createService({
       needPermission: true,
       handler: controllers.reloadUsersMealStatus,
     },
+    {
+      method: 'get',
+      path: '/checkinlog/:targetGrade/:targetClass/:targetNumber',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getCheckInLog,
+    },
+    {
+      method: 'post',
+      path: '/warning',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.string().required(),
+        type: Joi.array().required(),
+        reason: Joi.string().required(),
+      },
+      handler: controllers.setWarning,
+    },
   ],
 });

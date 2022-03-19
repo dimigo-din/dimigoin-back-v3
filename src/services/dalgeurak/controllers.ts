@@ -17,6 +17,7 @@ import {
 } from '../../types';
 import { getExtraTime, getNowTime, getNowTimeString } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
+import { WarningModel } from '../../models/dalgeurak/warning';
 
 const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -72,9 +73,11 @@ export const checkEntrance = async (req: Request, res: Response) => {
     date: getNowTimeString(),
     student: new ObjectId(student._id),
     status: mealStatus,
+    class: student.class,
+    grade: student.grade,
   }).save();
 
-  res.json({ mealStatus });
+  res.json({ mealStatus, name: student.name });
 };
 
 export const entranceProcess = async (req: Request, res: Response) => {
@@ -92,6 +95,8 @@ export const entranceProcess = async (req: Request, res: Response) => {
     date: getNowTimeString(),
     student: new ObjectId(student._id),
     status: mealStatus,
+    class: student.class,
+    grade: student.grade,
   }).save();
 
   res.json({ mealStatus });
@@ -295,4 +300,31 @@ export const editGradeMealTimes = async (req: Request, res: Response) => {
 export const reloadUsersMealStatus = async (req: Request, res: Response) => {
   await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
   res.json({ success: true });
+};
+
+export const getCheckInLog = async (req: Request, res: Response) => {
+  const { targetGrade, targetClass, targetNumber } = req.params;
+
+  const checkinlog = await CheckinLogModel.find({
+    ...(targetGrade !== 'all' && { grade: parseInt(targetGrade) }),
+    ...(targetClass !== 'all' && { class: parseInt(targetClass) }),
+    ...(targetNumber !== 'all' && { number: parseInt(targetNumber) }),
+  }).populate('student');
+
+  res.json({ checkinlog });
+};
+
+export const setWarning = async (req: Request, res: Response) => {
+  const { sid, type, reason } = req.body;
+
+  const date = getNowTimeString();
+
+  const warning = await new WarningModel({
+    student: new ObjectId(sid),
+    type,
+    reason,
+    date,
+  }).save();
+
+  res.json({ warning });
 };
