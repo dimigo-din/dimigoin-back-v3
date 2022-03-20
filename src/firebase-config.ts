@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 const env = dotenv.config();
 if (!env) throw new Error('No env file found');
 
-export default {
+export const dimigoinFbConfig = {
   type: process.env.FIREBASE_TYPE!,
   projectId: process.env.FIREBASE_PROJECT_ID!,
   privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID!,
@@ -16,4 +16,18 @@ export default {
   apiKey: process.env.FIREBASE_API_KEY!,
   authProviderX509CertUrl: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL!,
   clientX509CertUrl: process.env.FIREBASE_CLIENT_X509_CERT_URL!,
+};
+
+export const dalgeurakFbConfig = {
+  type: process.env.FIREBASE_TYPE!,
+  projectId: process.env.DALGEURAK_FIREBASE_PROJECT_ID!,
+  privateKeyId: process.env.DALGEURAK_FIREBASE_PRIVATE_KEY_ID!,
+  privateKey: process.env.DALGEURAK_FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n')!,
+  clientEmail: process.env.DALGEURAK_FIREBASE_CLIENT_EMAIL!,
+  clientId: process.env.DALGEURAK_FIREBASE_CLIENT_ID!,
+  authUri: process.env.FIREBASE_AUTH_URI!,
+  tokenUri: process.env.FIREBASE_TOKEN_URI!,
+  apiKey: process.env.DALGEURAK_FIREBASE_API_KEY!,
+  authProviderX509CertUrl: process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL!,
+  clientX509CertUrl: process.env.DALGEURAK_FIREBASE_CLIENT_X509_CERT_URL!,
 };

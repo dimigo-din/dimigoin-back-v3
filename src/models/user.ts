@@ -30,6 +30,7 @@ const userSchema = createSchema({
   number: Type.number(),
   serial: Type.number(),
   libraryId: Type.string({ select: false, trim: true }),
+  dalgeurakToken: Type.array({ select: false, default: [] }).of(Type.string()),
   mealStatus: Type.string({ enum: MealStatusValues }),
   // 교사 정보
   position: Type.string({ trim: true }),

@@ -12,8 +12,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        serial: Joi.number().required(),
-        name: Joi.string().required(),
+        sid: Joi.string().required(),
       },
       handler: controllers.addPermission,
     },
@@ -23,8 +22,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        serial: Joi.number().required(),
-        name: Joi.string().required(),
+        sid: Joi.string().required(),
       },
       handler: controllers.removePermission,
     },
@@ -34,8 +32,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        serial: Joi.number().required(),
-        name: Joi.string().required(),
+        sid: Joi.string().required(),
       },
       handler: controllers.mandate,
     },
