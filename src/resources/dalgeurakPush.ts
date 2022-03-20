@@ -2,9 +2,9 @@ import admin from 'firebase-admin';
 import { dalgeurakFbConfig } from '../firebase-config';
 import { UserModel } from '../models';
 
-admin.initializeApp({
+const dalgeurakFb = admin.initializeApp({
   credential: admin.credential.cert(dalgeurakFbConfig),
-});
+}, 'dalgeurak');
 
 export const DGLsendPushMessage = async (userFilter: object, title: string, body: string) => {
   const users = await UserModel.find(userFilter).select('dalgeurakToken');
@@ -19,7 +19,7 @@ export const DGLsendPushMessage = async (userFilter: object, title: string, body
 
   const results = [];
   for (const tokens of devidedUserTokens) {
-    const result = await admin.messaging().sendMulticast({
+    const result = await dalgeurakFb.messaging().sendMulticast({
       notification: message,
       tokens,
     });
