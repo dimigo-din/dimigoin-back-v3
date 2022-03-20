@@ -2,10 +2,10 @@ import admin from 'firebase-admin';
 import { dimigoinFbConfig } from '../firebase-config';
 import { UserModel } from '../models';
 
-admin.initializeApp({
+const dimigoinFb = admin.initializeApp({
   credential: admin.credential.cert(dimigoinFbConfig),
   databaseURL: dimigoinFbConfig.databaseURL,
-});
+}, 'dimigoin');
 
 export const sendPushMessage = async (userFilter: object, title: string, body: string) => {
   const users = await UserModel.find(userFilter).select('tokens');
@@ -20,7 +20,7 @@ export const sendPushMessage = async (userFilter: object, title: string, body: s
 
   const results = [];
   for (const tokens of devidedUserTokens) {
-    const result = await admin.messaging().sendMulticast({
+    const result = await dimigoinFb.messaging().sendMulticast({
       notification: message,
       tokens,
     });
