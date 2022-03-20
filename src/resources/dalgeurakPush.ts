@@ -1,16 +1,15 @@
 import admin from 'firebase-admin';
-import { dimigoinFbConfig } from '../firebase-config';
+import { dalgeurakFbConfig } from '../firebase-config';
 import { UserModel } from '../models';
 
 admin.initializeApp({
-  credential: admin.credential.cert(dimigoinFbConfig),
-  databaseURL: dimigoinFbConfig.databaseURL,
+  credential: admin.credential.cert(dalgeurakFbConfig),
 });
 
-export const sendPushMessage = async (userFilter: object, title: string, body: string) => {
-  const users = await UserModel.find(userFilter).select('tokens');
+export const DGLsendPushMessage = async (userFilter: object, title: string, body: string) => {
+  const users = await UserModel.find(userFilter).select('dalgeurakToken');
   const message = { title, body };
-  const userTokens = users.reduce((t, u) => [...t, ...(u.tokens)], []);
+  const userTokens = users.reduce((t, u) => [...t, ...(u.dalgeurakToken)], []);
 
   // Firebase에서 한 번 호출 시에 최대 500개의 토큰까지만 지원함
   const devidedUserTokens = Array.from(

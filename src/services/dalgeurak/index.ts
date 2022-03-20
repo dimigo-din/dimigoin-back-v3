@@ -1,7 +1,12 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
 import { createService } from '../index';
-import { ClassValues, MealTimeValues } from '../../types';
+import {
+  ClassValues,
+  MealTimeValues,
+  MealExceptionApplicationStatusValues,
+  MealExceptionValues,
+} from '../../types';
 
 export default createService({
   name: '달그락 서비스',
@@ -23,8 +28,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        serial: Joi.number().required(),
-        name: Joi.string().required(),
+        sid: Joi.string().required(),
       },
       handler: controllers.entranceProcess,
     },
@@ -64,12 +68,24 @@ export default createService({
       method: 'patch',
       path: '/exception/application',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
       validateSchema: {
-        permission: Joi.boolean().required(),
-        serial: Joi.number().required(),
+        permission: Joi.string().valid(...MealExceptionApplicationStatusValues).required(),
+        sid: Joi.string().required(),
       },
       handler: controllers.permissionMealException,
+    },
+    {
+      method: 'post',
+      path: '/exception/give',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        type: Joi.string().valid(...MealExceptionValues).required(),
+        sid: Joi.string().required(),
+        reason: Joi.string().required(),
+      },
+      handler: controllers.giveMealException,
     },
     {
       method: 'post',
@@ -156,13 +172,6 @@ export default createService({
       handler: controllers.editGradeMealTimes,
     },
     {
-      method: 'patch',
-      path: '/reload',
-      needAuth: true,
-      needPermission: true,
-      handler: controllers.reloadUsersMealStatus,
-    },
-    {
       method: 'get',
       path: '/checkinlog/:targetGrade/:targetClass/:targetNumber',
       needAuth: true,
@@ -180,6 +189,33 @@ export default createService({
         reason: Joi.string().required(),
       },
       handler: controllers.setWarning,
+    },
+    {
+      method: 'get',
+      path: '/token',
+      needAuth: true,
+      needPermission: false,
+      handler: controllers.getDeviceTokens,
+    },
+    {
+      method: 'post',
+      path: '/token',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        deviceToken: Joi.string().required(),
+      },
+      handler: controllers.registerDeviceToken,
+    },
+    {
+      method: 'delete',
+      path: '/token',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        deviceToken: Joi.string().required(),
+      },
+      handler: controllers.revokeDeviceToken,
     },
   ],
 });

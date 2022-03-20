@@ -18,6 +18,7 @@ import {
 import { getExtraTime, getNowTime, getNowTimeString } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
 import { WarningModel } from '../../models/dalgeurak/warning';
+import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
 
 const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -58,6 +59,7 @@ const getQRToken = async (key: string): Promise<IQRkey> => {
   }
 };
 
+// 입장
 export const checkEntrance = async (req: Request, res: Response) => {
   const { key } = req.body;
   const decoded = await getQRToken(key);
@@ -80,10 +82,11 @@ export const checkEntrance = async (req: Request, res: Response) => {
   res.json({ mealStatus, name: student.name });
 };
 
+// 디넌용 입장처리
 export const entranceProcess = async (req: Request, res: Response) => {
-  const { serial, name } = req.body;
+  const { sid } = req.body;
 
-  const student = await UserModel.findOne({ serial, name });
+  const student = await UserModel.findById(sid);
   if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
 
   const mealStatus = await checkTardy(student);
@@ -102,6 +105,7 @@ export const entranceProcess = async (req: Request, res: Response) => {
   res.json({ mealStatus });
 };
 
+// 현재 급식 받고 있는 반
 export const getNowSequence = async (req: Request, res: Response) => {
   const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
   if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
@@ -143,9 +147,10 @@ export const getNowSequence = async (req: Request, res: Response) => {
   });
 };
 
+// 내 정보
 export const getUserInfo = async (req: Request, res: Response) => {
   const student = await UserModel.findById(req.user._id);
-  const exception = await MealExceptionModel.findOne({ serial: req.user.serial });
+  const exception = await MealExceptionModel.findOne({ applier: req.user._id });
   const mealStatus = await checkTardy(student);
   const QRkey = await Jwt.sign({
     studentId: student._id,
@@ -161,66 +166,11 @@ export const getUserInfo = async (req: Request, res: Response) => {
   });
 };
 
+// 지연시간
 export const editExtraTime = async (req: Request, res: Response) => {
   const { extraMinute } = req.body;
   await MealOrderModel.findOneAndUpdate({ field: 'intervalTime' }, { extraMinute });
   res.json({ extraMinute });
-};
-
-export const getMealExceptions = async (req: Request, res: Response) => {
-  const users = await MealExceptionModel.find({ });
-
-  res.json({ users });
-};
-export const createMealExceptions = async (req: Request, res: Response) => {
-  const { type } = req.params;
-  const { reason } = req.body;
-  const { serial } = req.user;
-  if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
-
-  const exceptionStatus = await MealExceptionModel.findOne({ serial });
-  if (exceptionStatus) throw new HttpException(401, '이미 등록되어 있습니다.');
-
-  const exception = await new MealExceptionModel({
-    exceptionType: type,
-    serial,
-    reason,
-  }).save();
-
-  res.json({ exception });
-};
-export const cancelMealException = async (req: Request, res: Response) => {
-  const { serial } = req.user;
-  const exception = await MealExceptionModel.findOne({ serial });
-  if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
-
-  await exception.deleteOne();
-  res.json({ exception });
-};
-export const permissionMealException = async (req: Request, res: Response) => {
-  const { serial, permission } = req.body;
-
-  const exception = await MealExceptionModel.findOne({ serial });
-  if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
-
-  if (permission) Object.assign(exception, { applicationStatus: 'permitted' });
-  else Object.assign(exception, { applicationStatus: 'rejected' });
-
-  await exception.save();
-  res.json({ exception });
-};
-
-export const getMealSequences = async (req: Request, res: Response) => {
-  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
-  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
-
-  res.json({ mealSequences });
-};
-export const getMealTimes = async (req: Request, res: Response) => {
-  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
-  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
-
-  res.json({ mealTimes });
 };
 export const getMealExtraTimes = async (req: Request, res: Response) => {
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
@@ -234,7 +184,105 @@ export const getMealExtraTimes = async (req: Request, res: Response) => {
   res.json({
     ExtraLunch,
     ExtraDinner,
+    extraMinute,
   });
+};
+
+// 선/후밥
+export const getMealExceptions = async (req: Request, res: Response) => {
+  const users = await MealExceptionModel.find({ }).populate('applier');
+
+  res.json({ users });
+};
+export const createMealExceptions = async (req: Request, res: Response) => {
+  const { type } = req.params;
+  const { reason } = req.body;
+  const { _id } = req.user;
+  if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
+
+  const exceptionStatus = await MealExceptionModel.findOne({ applier: _id });
+  if (exceptionStatus) throw new HttpException(401, '이미 등록되어 있습니다.');
+
+  const exception = await new MealExceptionModel({
+    exceptionType: type,
+    applier: _id,
+    reason,
+  }).save();
+
+  res.json({ exception });
+};
+export const cancelMealException = async (req: Request, res: Response) => {
+  const { _id } = req.user;
+  const exception = await MealExceptionModel.findOne({ applier: _id });
+  if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
+
+  await exception.deleteOne();
+  res.json({ exception });
+};
+export const permissionMealException = async (req: Request, res: Response) => {
+  const user = await UserModel.findById(req.user._id);
+  if (!(user.userType === 'T' || user.userType === 'D')) throw new HttpException(401, '선생님만 이용할 수 있는 기능입니다.');
+
+  const { sid, permission } = req.body;
+
+  const exception = await MealExceptionModel.findOne({ applier: sid });
+  if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
+
+  Object.assign(exception, { applicationStatus: permission });
+
+  await DGLsendPushMessage(
+    { _id: sid },
+    `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청 알림`,
+    `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청이 ${
+      permission === 'permitted' ? '허가'
+        : permission === 'rejected' && '거부'
+    } 되었습니다.`,
+  );
+
+  await exception.save();
+  res.json({ exception });
+};
+export const giveMealException = async (req: Request, res: Response) => {
+  const teacher = await UserModel.findById(req.user._id);
+  if (!(teacher.userType === 'T' || teacher.userType === 'D')) throw new HttpException(401, '선생님만 이용할 수 있는 기능입니다.');
+
+  const { type, sid, reason } = req.body;
+
+  const exceptionStatus = await MealExceptionModel.findOne({ applier: sid });
+  if (exceptionStatus) {
+    Object.assign(exceptionStatus, { applicationStatus: 'permitted' });
+
+    await exceptionStatus.save();
+
+    await DGLsendPushMessage(
+      { _id: sid },
+      `${type === 'first' ? '선밥' : '후밥'} 안내`,
+      `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,
+    );
+    res.json({ exception: exceptionStatus });
+  } else {
+    const exception = await new MealExceptionModel({
+      exceptionType: type,
+      applier: sid,
+      reason,
+    }).save();
+
+    res.json({ exception });
+  }
+};
+
+// 급식 순서 & 시간
+export const getMealSequences = async (req: Request, res: Response) => {
+  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
+  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
+
+  res.json({ mealSequences });
+};
+export const getMealTimes = async (req: Request, res: Response) => {
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  res.json({ mealTimes });
 };
 
 export const editMealSequences = async (req: Request, res: Response) => {
@@ -297,11 +345,7 @@ export const editGradeMealTimes = async (req: Request, res: Response) => {
   res.json({ classTimes });
 };
 
-export const reloadUsersMealStatus = async (req: Request, res: Response) => {
-  await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
-  res.json({ success: true });
-};
-
+// 체크인 로그
 export const getCheckInLog = async (req: Request, res: Response) => {
   const { targetGrade, targetClass, targetNumber } = req.params;
 
@@ -314,6 +358,7 @@ export const getCheckInLog = async (req: Request, res: Response) => {
   res.json({ checkinlog });
 };
 
+// 경고
 export const setWarning = async (req: Request, res: Response) => {
   const { sid, type, reason } = req.body;
 
@@ -327,4 +372,28 @@ export const setWarning = async (req: Request, res: Response) => {
   }).save();
 
   res.json({ warning });
+};
+
+// FCM
+export const getDeviceTokens = async (req: Request, res: Response) => {
+  const user = await UserModel.findById(req.user._id).select('dalgeurakToken');
+  res.json({ registeredTokens: user.dalgeurakToken });
+};
+export const registerDeviceToken = async (req: Request, res: Response) => {
+  const { deviceToken } = req.body;
+  const user = await UserModel.findById(req.user._id).select('dalgeurakToken');
+  const tokenIndex = user.dalgeurakToken.indexOf(deviceToken);
+  if (tokenIndex > -1) throw new HttpException(409, '해당 디바이스 토큰이 이미 서버에 등록되어 있습니다.');
+  user.dalgeurakToken.push(deviceToken);
+  await user.save();
+  res.json({ registeredTokens: user.dalgeurakToken });
+};
+export const revokeDeviceToken = async (req: Request, res: Response) => {
+  const { deviceToken } = req.body;
+  const user = await UserModel.findById(req.user._id).select('dalgeurakToken');
+  const tokenIndex = user.dalgeurakToken.indexOf(deviceToken);
+  if (tokenIndex < 0) throw new HttpException(404, '해당 디바이스 토큰이 사용자 모델에 등록되어 있지 않습니다.');
+  user.dalgeurakToken.splice(tokenIndex, 1);
+  await user.save();
+  res.json({ registeredTokens: user.dalgeurakToken });
 };

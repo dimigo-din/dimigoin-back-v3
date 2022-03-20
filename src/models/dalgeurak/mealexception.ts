@@ -1,3 +1,4 @@
+import { ObjectId } from 'mongodb';
 import { Model, Document } from 'mongoose';
 import { createSchema, Type } from 'ts-mongoose';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
@@ -7,16 +8,17 @@ import {
   MealExceptionApplicationStatusValues,
   MealExceptionApplicationStatus,
 } from '../../types';
+import { userSchema } from '../user';
 
 interface IMealException extends Document {
-  serial: number;
+  applier: ObjectId;
   reason: string;
   exceptionType: MealExceptionType;
   applicationStatus: MealExceptionApplicationStatus;
 }
 
 const mealExceptionSchema = createSchema({
-  serial: Type.number({ required: true }),
+  applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
   reason: Type.string({ required: true }),
   exceptionType: Type.string({ required: true, enum: MealExceptionValues }),
   applicationStatus: Type.string({ required: true, enum: MealExceptionApplicationStatusValues, default: 'waiting' }),
