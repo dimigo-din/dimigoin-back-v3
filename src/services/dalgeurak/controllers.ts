@@ -126,13 +126,13 @@ export const getNowSequence = async (req: Request, res: Response) => {
   let gradeIdx: number;
   let classIdx: number;
   /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-  for (let i = 0; i < mealTimes[now].length; i++) {
+  for (let i = 0; i < mealTimes[now].length; i += 1) {
     if (nowTime >= mealTimes[now][i][5]) {
       gradeIdx = i;
       classIdx = 5;
       break;
     }
-    for (let j = 0; j < mealTimes[now][i].length - 1; j++) {
+    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
       if (nowTime >= mealTimes[now][i][j] && nowTime < mealTimes[now][i][j + 1]) {
         gradeIdx = i;
         classIdx = j;
@@ -170,6 +170,51 @@ export const getUserInfo = async (req: Request, res: Response) => {
 export const editExtraTime = async (req: Request, res: Response) => {
   const { extraMinute } = req.body;
   await MealOrderModel.findOneAndUpdate({ field: 'intervalTime' }, { extraMinute });
+
+  const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
+  if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  const nowTime = await getNowTime();
+
+  if (nowTime < 1150) throw new HttpException(401, '점심 시간 전 입니다.');
+  if (nowTime > 1400 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
+  if (nowTime > 2000) throw new HttpException(401, '저녁시간이 지났습니다.');
+
+  type nowType = 'lunch' | 'dinner';
+  let now: nowType;
+  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
+  else if (nowTime >= 1830) now = 'dinner';
+
+  let gradeIdx: number;
+  let classIdx: number;
+  for (let i = 0; i < mealTimes[now].length; i += 1) {
+    if (nowTime >= mealTimes[now][i][5]) {
+      gradeIdx = i;
+      classIdx = 5;
+      break;
+    }
+    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
+      if (nowTime >= mealTimes[now][i][j] && nowTime < mealTimes[now][i][j + 1]) {
+        gradeIdx = i;
+        classIdx = j;
+        break;
+      }
+    }
+  }
+
+  for (let i = gradeIdx; i >= 0; i -= 1) {
+    await DGLsendPushMessage(
+      {
+        grade: gradeIdx + 1,
+        class: { $in: i === gradeIdx ? mealSequences[now][i].splice(classIdx + 1, mealSequences[now][i].length - 1) : mealSequences[now][i] },
+      },
+      '급식 지연 알림',
+      `급식 시간이 ${extraMinute}분 지연되었습니다.`,
+    );
+  }
+
   res.json({ extraMinute });
 };
 export const getMealExtraTimes = async (req: Request, res: Response) => {
@@ -266,6 +311,12 @@ export const giveMealException = async (req: Request, res: Response) => {
       applier: sid,
       reason,
     }).save();
+
+    await DGLsendPushMessage(
+      { _id: sid },
+      `${type === 'first' ? '선밥' : '후밥'} 안내`,
+      `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,
+    );
 
     res.json({ exception });
   }
