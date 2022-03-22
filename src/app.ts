@@ -21,6 +21,8 @@ import {
 import { ConfigKeys } from './types';
 import { defaultPlaces, defaultConfigs } from './resources/default';
 import { setAfterschoolApplierCount } from './resources/redis';
+import { serverSocket } from './resources/socket';
+import logger from './resources/logger';
 
 class App {
   public app: express.Application;
@@ -33,6 +35,7 @@ class App {
     this.initializeErrorHandlers();
     this.initializeFileStorage();
     this.initializeRedisStore();
+    this.socketConnect();
     if (process.env.NODE_ENV === 'prod') {
       this.initializeCronJobs();
       this.initializeConfigs();
@@ -114,6 +117,12 @@ class App {
         }),
       );
     }
+  }
+
+  private async socketConnect() {
+    serverSocket.listen(config.socketPort, () => {
+      logger.info(`Socket Server Listening.. :${config.socketPort}`);
+    });
   }
 }
 

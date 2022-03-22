@@ -74,6 +74,7 @@
     "mongoose": "^5.9.4",
     "node-cron": "^2.0.3",
     "slack-node": "^0.1.8",
+    "socket.io": "4.1.2",
     "ts-mongoose": "^0.0.24",
     "typescript": "^3.9.7",
     "winston": "^3.3.3",
