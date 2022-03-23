@@ -121,7 +121,7 @@ class App {
 
   private async socketConnect() {
     serverSocket.listen(config.socketPort, () => {
-      logger.info(`Socket Server Listening.. :${config.socketPort}`);
+      logger.info(`Socket listening on port ${config.socketPort}`);
     });
   }
 }
