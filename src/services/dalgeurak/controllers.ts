@@ -223,12 +223,12 @@ export const getMealExtraTimes = async (req: Request, res: Response) => {
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 
-  const ExtraLunch = mealTimes.lunch.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
-  const ExtraDinner = mealTimes.dinner.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
+  const extraLunch = mealTimes.lunch.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
+  const extraDinner = mealTimes.dinner.map((grade: number[]) => grade.map((time: number) => getExtraTime(extraMinute, time)));
 
   res.json({
-    ExtraLunch,
-    ExtraDinner,
+    extraLunch,
+    extraDinner,
     extraMinute,
   });
 };
