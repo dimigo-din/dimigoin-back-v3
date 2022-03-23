@@ -3,13 +3,14 @@ import socketIO, { Socket } from 'socket.io';
 import express from 'express';
 
 const app = express();
-export const serverSocket = createServer(app);
+export const httpServer = createServer(app);
+const io = new socketIO.Server(httpServer);
 
-const io = new socketIO.Server(serverSocket, {
-  cors: {
-    credentials: true,
-  },
-});
+// const io = new socketIO.Server(serverSocket, {
+//   cors: {
+//     credentials: true,
+//   },
+// });
 
 io.of('/dalgeurak').on('connection', (socket: Socket) => {
   let currentRoom: string | null = null;
