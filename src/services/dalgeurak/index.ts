@@ -217,5 +217,16 @@ export default createService({
       },
       handler: controllers.revokeDeviceToken,
     },
+    {
+      method: 'post',
+      path: '/alert',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        title: Joi.string().required(),
+        message: Joi.string().required(),
+      },
+      handler: controllers.alertTest,
+    },
   ],
 });

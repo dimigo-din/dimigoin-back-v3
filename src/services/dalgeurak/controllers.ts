@@ -448,3 +448,14 @@ export const revokeDeviceToken = async (req: Request, res: Response) => {
   await user.save();
   res.json({ registeredTokens: user.dalgeurakToken });
 };
+
+export const alertTest = async (req: Request, res: Response) => {
+  const { title, message } = req.body;
+  await DGLsendPushMessage(
+    { _id: req.user._id },
+    title,
+    message,
+  );
+
+  res.json({ title, message });
+};
