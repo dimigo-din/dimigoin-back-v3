@@ -12,16 +12,12 @@ const io = new socketIO.Server(serverSocket, {
 });
 
 io.of('/dalgeurak').on('connection', (socket: Socket) => {
-  let currentRoom: string | null = null;
   console.log('connected');
 
-  socket.on('mealStatus', (data) => {
+  socket.on('mealStatusJoinRoom', (data) => {
     socket.join('mealStatus');
-    currentRoom = 'mealStatus';
   });
   socket.on('mealStatusTest', (data) => {
-    console.log(data);
-    console.log(currentRoom);
     socket.emit('event', { ...data, success: true });
   });
 });

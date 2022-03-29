@@ -19,6 +19,7 @@ import { getExtraTime, getNowTime, getNowTimeString } from '../../resources/date
 import { checkTardy } from '../../resources/dalgeurak';
 import { WarningModel } from '../../models/dalgeurak/warning';
 import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
+import io from '../../resources/socket';
 
 const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -80,29 +81,10 @@ export const checkEntrance = async (req: Request, res: Response) => {
   }).save();
 
   res.json({ mealStatus, name: student.name });
-};
-
-// 디넌용 입장처리
-export const entranceProcess = async (req: Request, res: Response) => {
-  const { sid } = req.body;
-
-  const student = await UserModel.findById(sid);
-  if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
-
-  const mealStatus = await checkTardy(student);
-  mealStatusFilter(mealStatus);
-
-  Object.assign(student, { mealStatus });
-  await student.save();
-  await new CheckinLogModel({
-    date: getNowTimeString(),
-    student: new ObjectId(student._id),
-    status: mealStatus,
-    class: student.class,
-    grade: student.grade,
-  }).save();
-
-  res.json({ mealStatus });
+  io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
+    _id: req.user._id,
+    mealStatus,
+  });
 };
 
 // 현재 급식 받고 있는 반
@@ -286,6 +268,12 @@ export const permissionMealException = async (req: Request, res: Response) => {
 
   await exception.save();
   res.json({ exception });
+  if (permission === 'permitted') {
+    io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
+      _id: sid,
+      mealStatus: 'certified',
+    });
+  }
 };
 export const giveMealException = async (req: Request, res: Response) => {
   const teacher = await UserModel.findById(req.user._id);
@@ -320,6 +308,10 @@ export const giveMealException = async (req: Request, res: Response) => {
 
     res.json({ exception });
   }
+  io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
+    _id: sid,
+    mealStatus: 'certified',
+  });
 };
 
 // 급식 순서 & 시간
@@ -449,6 +441,50 @@ export const revokeDeviceToken = async (req: Request, res: Response) => {
   res.json({ registeredTokens: user.dalgeurakToken });
 };
 
+// 디넌용
+// 입장처리
+export const entranceProcess = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  const student = await UserModel.findById(sid);
+  if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
+
+  const mealStatus = await checkTardy(student);
+  mealStatusFilter(mealStatus);
+
+  Object.assign(student, { mealStatus });
+  await student.save();
+  await new CheckinLogModel({
+    date: getNowTimeString(),
+    student: new ObjectId(student._id),
+    status: mealStatus,
+    class: student.class,
+    grade: student.grade,
+  }).save();
+
+  res.json({ mealStatus });
+  io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
+    _id: student._id,
+    mealStatus,
+  });
+};
+
+// 급식 상태 모두 불러오기
+export const getMealStatuses = async (req: Request, res: Response) => {
+  const students = await UserModel.find({ grade: { $in: [1, 2] } });
+
+  interface mealStatusIF {
+    [key: string]: string;
+  }
+  const mealStatuses: mealStatusIF = {};
+  students.forEach((student) => {
+    mealStatuses[student._id] = student.mealStatus;
+  });
+
+  res.json({ mealStatuses });
+};
+
+// 테스트 코드
 export const alertTest = async (req: Request, res: Response) => {
   const { title, message } = req.body;
   await DGLsendPushMessage(

@@ -23,16 +23,6 @@ export default createService({
       handler: controllers.checkEntrance,
     },
     {
-      method: 'post',
-      path: '/entrance',
-      needAuth: true,
-      needPermission: true,
-      validateSchema: {
-        sid: Joi.string().required(),
-      },
-      handler: controllers.entranceProcess,
-    },
-    {
       method: 'get',
       path: '/nowSequence',
       needAuth: true,
@@ -216,6 +206,24 @@ export default createService({
         deviceToken: Joi.string().required(),
       },
       handler: controllers.revokeDeviceToken,
+    },
+    // 디넌용
+    {
+      method: 'post',
+      path: '/entrance',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.string().required(),
+      },
+      handler: controllers.entranceProcess,
+    },
+    {
+      method: 'get',
+      path: '/mealstatus',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getMealStatuses,
     },
     {
       method: 'post',
