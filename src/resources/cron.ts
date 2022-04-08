@@ -16,6 +16,9 @@ import {
   resetExtraTimes,
   resetStudentsMealStatus,
 } from './dalgeurak';
+import {
+  updateMeal,
+} from './meal';
 
 const cronJobs = [
   {
@@ -43,6 +46,13 @@ const cronJobs = [
       await resetExtraTimes();
     },
     runOnSetup: false,
+  },
+  {
+    name: '매주 급식표 업데이트',
+    schedule: '0 0 * * 1',
+    action: async () => {
+      await updateMeal();
+    },
   },
   {
     name: '인강실 신청자 푸시 알림 (1타임)',
