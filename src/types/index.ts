@@ -113,3 +113,5 @@ export const MealTimeValues = ['lunch', 'dinner'] as const;
 export type MealTimeType = typeof MealTimeValues[number];
 
 export type ClassType = [number, number, number, number, number, number];
+
+export const WarningValues = ['tardy', 'abuse', 'useHallway', 'ignoreSequence', 'etc'] as const;

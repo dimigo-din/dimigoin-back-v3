@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { updateMeal } from '../../resources/meal';
 import { HttpException } from '../../exceptions';
 import { MealModel } from '../../models';
 import {
@@ -78,4 +79,9 @@ export const createWeeklyMeal = async (req: Request, res: Response) => {
     }).save());
   })]);
   res.status(200).json({ meal: _meals });
+};
+
+export const updateMealInfo = async (req: Request, res: Response) => {
+  await updateMeal();
+  res.json({ sccess: true });
 };
