@@ -53,3 +53,18 @@ export const mandate = async (req: Request, res: Response) => {
 
   res.json({ student });
 };
+
+export const getAllStudents = async (req: Request, res: Response) => {
+  const students = await UserModel.find({
+    userType: 'S',
+    serial: { $ne: null },
+  }).sort('serial')
+    .select('name')
+    .select('serial')
+    .select('class')
+    .select('grade')
+    .select('number')
+    .select('permissions');
+
+  res.json({ students });
+};
