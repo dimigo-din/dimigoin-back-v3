@@ -36,12 +36,5 @@ export default createService({
       },
       handler: controllers.mandate,
     },
-    {
-      method: 'get',
-      path: '/student',
-      needAuth: true,
-      needPermission: true,
-      handler: controllers.getAllStudents,
-    },
   ],
 });

@@ -469,6 +469,22 @@ export const entranceProcess = async (req: Request, res: Response) => {
   });
 };
 
+// 권한포함 학생정보 불러오기
+export const getAllStudents = async (req: Request, res: Response) => {
+  const students = await UserModel.find({
+    userType: 'S',
+    serial: { $ne: null },
+  }).sort('serial')
+    .select('name')
+    .select('serial')
+    .select('class')
+    .select('grade')
+    .select('number')
+    .select('permissions');
+
+  res.json({ students });
+};
+
 // 급식 상태 모두 불러오기
 export const getMealStatuses = async (req: Request, res: Response) => {
   const students = await UserModel.find({ grade: { $in: [1, 2] } });
