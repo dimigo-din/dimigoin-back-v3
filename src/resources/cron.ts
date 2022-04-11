@@ -53,6 +53,7 @@ const cronJobs = [
     action: async () => {
       await updateMeal();
     },
+    runOnSetup: false,
   },
   {
     name: '인강실 신청자 푸시 알림 (1타임)',

@@ -226,6 +226,13 @@ export default createService({
       handler: controllers.getMealStatuses,
     },
     {
+      method: 'get',
+      path: '/student',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getAllStudents,
+    },
+    {
       method: 'post',
       path: '/alert',
       needAuth: true,
