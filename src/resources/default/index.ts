@@ -151,4 +151,7 @@ export const defaultConfigs = {
     start: new Date('2021-03-10T07:00:00.000Z'),
     end: new Date('2021-03-10T08:00:00.000Z'),
   },
+  // 월간 선밥권 사용가능한 횟수
+  [ConfigKeys.monthlyFirstMealTicketCount]: 2,
+  [ConfigKeys.firstMealMaxApplicationPerMeal]: 20,
 };

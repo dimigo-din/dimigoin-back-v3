@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
 import { UserModel, CircleModel, TemporaryPasswordModel } from '../../models';
-// import { getIdentity } from '../../resources/dimi-api';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
 

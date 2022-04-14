@@ -12,6 +12,8 @@ export enum ConfigKeys {
   isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
   mealTimes = 'MEAL_TIMES',
   afterschoolApplyPeriod = 'AFTERSCHOOL_APPLY_PERIOD',
+  monthlyFirstMealTicketCount = 'MONTHLY_FIRST_MEAL_TICKET_COUNT',
+  firstMealMaxApplicationPerMeal = 'FIRST_MEAL_MAX_APPLICATION_PER_MEAL',
 }
 
 export enum CirclePeriod {
@@ -101,10 +103,13 @@ export type MealExceptionType = typeof MealExceptionValues[number];
 export const MealExceptionApplicationStatusValues = ['waiting', 'permitted', 'rejected'] as const;
 export type MealExceptionApplicationStatus = typeof MealExceptionApplicationStatusValues[number];
 
+export const MealExceptionTimeValues = ['lunch', 'dinner'] as const;
+export type MealExceptionTimeType = typeof MealExceptionTimeValues[number];
+
 export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
 export type MealStatusType = typeof MealStatusValues[number];
 
-export const MealOrderValues = ['sequences', 'times', 'intervalTime'] as const;
+export const MealOrderValues = ['sequences', 'times', 'intervalTime', 'waitingLine'] as const;
 
 export const MealTardyStatusValues = ['onTime', 'tardy', 'empty', 'beforeLunch', 'beforeDinner', 'afterDinner', 'certified', 'early', 'rejected', 'waiting'] as const;
 export type MealTardyStatusType = typeof MealTardyStatusValues[number];
@@ -115,3 +120,5 @@ export type MealTimeType = typeof MealTimeValues[number];
 export type ClassType = [number, number, number, number, number, number];
 
 export const WarningValues = ['tardy', 'abuse', 'useHallway', 'ignoreSequence', 'etc'] as const;
+
+export const WaitingLineValues = ['corridor', 'outside'] as const;

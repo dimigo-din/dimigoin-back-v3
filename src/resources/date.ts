@@ -36,6 +36,16 @@ export const getWeekEndString = (date?: string) => {
   return moment().endOf('isoWeek').format(format);
 };
 
+export const getMonthStartString = (date?: string) => {
+  if (date) return moment(date).startOf('month').format(format);
+  return moment().startOf('month').format(format);
+};
+
+export const getMonthEndString = (date?: string) => {
+  if (date) return moment(date).endOf('month').format(format);
+  return moment().endOf('month').format(format);
+};
+
 export const getDateFromDay = (weekStart: string, day: Day) => {
   weekStart = getWeekStartString(weekStart);
   const dayIndex = DayValues.findIndex((v) => v === day);
