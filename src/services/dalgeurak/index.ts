@@ -6,7 +6,9 @@ import {
   MealTimeValues,
   MealExceptionApplicationStatusValues,
   MealExceptionValues,
+  MealExceptionTimeValues,
 } from '../../types';
+import { checkApplicationTime } from '../../middlewares/check-application-time';
 
 export default createService({
   name: '달그락 서비스',
@@ -79,12 +81,26 @@ export default createService({
     },
     {
       method: 'post',
+      path: '/exception/ticket',
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
+      validateSchema: {
+        time: Joi.string().valid(...MealExceptionTimeValues).required(),
+      },
+      middlewares: [checkApplicationTime],
+      handler: controllers.useFirstMealTicket,
+    },
+    {
+      method: 'post',
       path: '/exception/:type',
       needAuth: true,
       needPermission: false,
       studentOnly: true,
       validateSchema: {
         reason: Joi.string().required(),
+        time: Joi.string().valid(...MealExceptionTimeValues).required(),
+        date: Joi.string().required(),
       },
       handler: controllers.createMealExceptions,
     },
@@ -224,6 +240,13 @@ export default createService({
       needAuth: true,
       needPermission: true,
       handler: controllers.getMealStatuses,
+    },
+    {
+      method: 'put',
+      path: '/waitingLine',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.updateWaitingLine,
     },
     {
       method: 'get',

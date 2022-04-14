@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
+import { ObjectID, ObjectId } from 'mongodb';
 import Jwt from 'jsonwebtoken';
 import { HttpException } from '../../exceptions';
 import config from '../../config';
@@ -11,15 +11,24 @@ import {
 import { UserModel } from '../../models';
 import {
   ClassType,
+  ConfigKeys,
   MealExceptionValues,
   MealTardyStatusType,
   MealTimeType,
 } from '../../types';
-import { getExtraTime, getNowTime, getNowTimeString } from '../../resources/date';
-import { checkTardy } from '../../resources/dalgeurak';
+import {
+  getExtraTime,
+  getMonthEndString,
+  getMonthStartString,
+  getNowTimeString,
+  getTodayDateString,
+  isValidDate,
+} from '../../resources/date';
+import { checkTardy, getOrder } from '../../resources/dalgeurak';
 import { WarningModel } from '../../models/dalgeurak/warning';
 import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
 import io from '../../resources/socket';
+import { getConfig } from '../../resources/config';
 
 const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -46,6 +55,17 @@ interface IQRkey {
   studentId: string;
   randomValue: string;
 }
+
+const getMonthlyUsedTicket = async (applier: ObjectID) => await MealExceptionModel.countDocuments({
+  applier,
+  date: {
+    $gte: getMonthStartString(),
+    $lte: getMonthEndString(),
+  },
+});
+const getTodayUsedTickets = async () => await MealExceptionModel.countDocuments({
+  date: getTodayDateString(),
+});
 
 const getQRToken = async (key: string): Promise<IQRkey> => {
   try {
@@ -91,37 +111,8 @@ export const checkEntrance = async (req: Request, res: Response) => {
 export const getNowSequence = async (req: Request, res: Response) => {
   const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
   if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
-  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
-  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
-  const nowTime = await getNowTime();
-
-  if (nowTime < 1150) throw new HttpException(401, '점심 시간 전 입니다.');
-  if (nowTime > 1400 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
-  if (nowTime > 2000) throw new HttpException(401, '저녁시간이 지났습니다.');
-
-  type nowType = 'lunch' | 'dinner';
-  let now: nowType;
-  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
-  else if (nowTime >= 1830) now = 'dinner';
-
-  let gradeIdx: number;
-  let classIdx: number;
-  /* eslint no-plusplus: ["error", { "allowForLoopAfterthoughts": true }] */
-  for (let i = 0; i < mealTimes[now].length; i += 1) {
-    if (nowTime >= mealTimes[now][i][5]) {
-      gradeIdx = i;
-      classIdx = 5;
-      break;
-    }
-    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
-      if (nowTime >= mealTimes[now][i][j] && nowTime < mealTimes[now][i][j + 1]) {
-        gradeIdx = i;
-        classIdx = j;
-        break;
-      }
-    }
-  }
+  const { gradeIdx, classIdx, now } = await getOrder();
 
   res.json({
     nowSequence: mealSequences[now][gradeIdx][classIdx],
@@ -155,36 +146,8 @@ export const editExtraTime = async (req: Request, res: Response) => {
 
   const mealSequences = await MealOrderModel.findOne({ field: 'sequences' });
   if (!mealSequences) throw new HttpException(404, '급식 순서 데이터를 찾을 수 없습니다.');
-  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
-  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
-  const nowTime = await getNowTime();
-
-  if (nowTime < 1150) throw new HttpException(401, '점심 시간 전 입니다.');
-  if (nowTime > 1400 && nowTime < 1830) throw new HttpException(401, '저녁 시간 전 입니다.');
-  if (nowTime > 2000) throw new HttpException(401, '저녁시간이 지났습니다.');
-
-  type nowType = 'lunch' | 'dinner';
-  let now: nowType;
-  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
-  else if (nowTime >= 1830) now = 'dinner';
-
-  let gradeIdx: number;
-  let classIdx: number;
-  for (let i = 0; i < mealTimes[now].length; i += 1) {
-    if (nowTime >= mealTimes[now][i][5]) {
-      gradeIdx = i;
-      classIdx = 5;
-      break;
-    }
-    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
-      if (nowTime >= mealTimes[now][i][j] && nowTime < mealTimes[now][i][j + 1]) {
-        gradeIdx = i;
-        classIdx = j;
-        break;
-      }
-    }
-  }
+  const { gradeIdx, classIdx, now } = await getOrder();
 
   for (let i = gradeIdx; i >= 0; i -= 1) {
     await DGLsendPushMessage(
@@ -223,20 +186,56 @@ export const getMealExceptions = async (req: Request, res: Response) => {
 };
 export const createMealExceptions = async (req: Request, res: Response) => {
   const { type } = req.params;
-  const { reason } = req.body;
-  const { _id } = req.user;
+  const { reason, date, time } = req.body;
+  const { _id: applier } = req.user;
   if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
+  if (!isValidDate(date)) throw new HttpException(401, '날짜는 YYYY-MM-DD 형식이어야 합니다.');
 
-  const exceptionStatus = await MealExceptionModel.findOne({ applier: _id });
+  const exceptionStatus = await MealExceptionModel.findOne({ applier });
   if (exceptionStatus) throw new HttpException(401, '이미 등록되어 있습니다.');
 
   const exception = await new MealExceptionModel({
     exceptionType: type,
-    applier: _id,
+    applier,
     reason,
+    time,
+    date: getTodayDateString(),
   }).save();
 
   res.json({ exception });
+};
+// 선밥권
+export const useFirstMealTicket = async (req: Request, res: Response) => {
+  const { _id: applier } = req.user;
+  const { time } = req.body;
+
+  const maxApplicationCount = await getConfig(ConfigKeys.firstMealMaxApplicationPerMeal);
+  const todayUsedTickets = await getTodayUsedTickets();
+
+  const monthlyTicketCount = await getConfig(ConfigKeys.monthlyFirstMealTicketCount);
+  const monthlyUsedTicket = await getMonthlyUsedTicket(applier);
+
+  if (todayUsedTickets >= maxApplicationCount) throw new HttpException(401, '신청 인원을 초과했습니다.');
+  if (monthlyUsedTicket >= monthlyTicketCount) throw new HttpException(401, '이번 달 선밥권 티켓을 모두 사용했습니다.');
+
+  const todayUsedTicket = await MealExceptionModel.findOne({
+    applier,
+    date: getTodayDateString(),
+  });
+
+  if (todayUsedTicket.time === time) throw new HttpException(401, '이미 해당 급식에 선밥권을 사용했습니다.');
+
+  await new MealExceptionModel({
+    applier,
+    exceptionType: 'first',
+    reason: '선밥권',
+    applicationStatus: 'permitted',
+    ticket: true,
+    time,
+    date: getTodayDateString(),
+  }).save();
+
+  res.json({ ticket: monthlyTicketCount - (monthlyUsedTicket + 1) });
 };
 export const cancelMealException = async (req: Request, res: Response) => {
   const { _id } = req.user;
@@ -467,6 +466,17 @@ export const entranceProcess = async (req: Request, res: Response) => {
     _id: student._id,
     mealStatus,
   });
+};
+
+// 대기줄 변경
+export const updateWaitingLine = async (req: Request, res: Response) => {
+  const { position } = req.body;
+  await MealOrderModel.updateOne(
+    { field: 'waitingLine' },
+    { position },
+  );
+
+  res.json({ position });
 };
 
 // 권한포함 학생정보 불러오기

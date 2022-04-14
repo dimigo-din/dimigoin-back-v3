@@ -4,17 +4,17 @@ import {
   MealExceptionModel,
   MealOrderModel,
 } from '../models/dalgeurak';
-import { MealTardyStatusType } from '../types';
+import { MealExceptionTimeType, MealTardyStatusType } from '../types';
 import { getExtraTime, getNowTime } from './date';
 
 export const resetStudentsMealStatus = async () => {
   await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
 };
-export const resetMealExceptions = async () => {
-  await MealExceptionModel.deleteMany({});
-};
 export const resetExtraTimes = async () => {
   await MealOrderModel.findOneAndUpdate({ field: 'intervalTime' }, { extraMinute: 0 });
+};
+export const resetFMTicket = async () => {
+  await UserModel.updateMany({ userType: 'S' }, { fmticket: 2 });
 };
 
 interface Istudent {
@@ -41,8 +41,7 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 
-  type nowType = 'lunch' | 'dinner';
-  let now: nowType;
+  let now: MealExceptionTimeType;
 
   if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
   else if (nowTime >= 1830) now = 'dinner';
@@ -60,10 +59,10 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
   const exception = await MealExceptionModel.findOne({ serial: student.serial });
   if (nowTime < extraTime) {
     if (exception) {
-      if (exception.applicationStatus === 'permitted') {
+      if (exception.applicationStatus === 'permitted' && exception.time === now) {
         if (exception.exceptionType === 'first') mealStatus = 'onTime'; // 선밥
         else mealStatus = 'early';
-      } else mealStatus = exception.applicationStatus as noPermission; // 선후밥 신청 거부/대기 중
+      } else mealStatus = exception.applicationStatus as noPermission; // 선후밥 신청 거부/대기 중0
     } else mealStatus = 'early';
   } else if (nowTime >= extraTime && nowTime < nextExtraTime) mealStatus = 'onTime';
   else if (nowTime >= nextExtraTime) {
@@ -76,4 +75,35 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
   }
 
   return mealStatus;
+};
+
+export const getOrder = async () => {
+  const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+  if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
+
+  const nowTime = await getNowTime();
+
+  type nowType = 'lunch' | 'dinner';
+  let now: nowType;
+  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
+  else if (nowTime >= 1830) now = 'dinner';
+
+  let gradeIdx: number;
+  let classIdx: number;
+  for (let i = 0; i < mealTimes[now].length; i += 1) {
+    if (nowTime >= mealTimes[now][i][5]) {
+      gradeIdx = i;
+      classIdx = 5;
+      break;
+    }
+    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
+      if (nowTime >= mealTimes[now][i][j] && nowTime < mealTimes[now][i][j + 1]) {
+        gradeIdx = i;
+        classIdx = j;
+        break;
+      }
+    }
+  }
+
+  return { gradeIdx, classIdx, now };
 };
