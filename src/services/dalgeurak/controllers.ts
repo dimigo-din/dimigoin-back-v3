@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { ObjectID, ObjectId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import Jwt from 'jsonwebtoken';
 import { HttpException } from '../../exceptions';
 import config from '../../config';
@@ -56,7 +56,7 @@ interface IQRkey {
   randomValue: string;
 }
 
-const getMonthlyUsedTicket = async (applier: ObjectID) => await MealExceptionModel.countDocuments({
+const getMonthlyUsedTicket = async (applier: ObjectId) => await MealExceptionModel.countDocuments({
   applier,
   date: {
     $gte: getMonthStartString(),

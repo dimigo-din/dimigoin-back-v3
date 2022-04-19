@@ -12,8 +12,6 @@ const io = new socketIO.Server(serverSocket, {
 });
 
 io.of('/dalgeurak').on('connection', (socket: Socket) => {
-  console.log('connected');
-
   socket.on('mealStatusJoinRoom', (data) => {
     socket.join('mealStatus');
   });
