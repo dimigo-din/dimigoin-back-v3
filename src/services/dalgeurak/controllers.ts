@@ -246,9 +246,6 @@ export const cancelMealException = async (req: Request, res: Response) => {
   res.json({ exception });
 };
 export const permissionMealException = async (req: Request, res: Response) => {
-  const user = await UserModel.findById(req.user._id);
-  if (!(user.userType === 'T' || user.userType === 'D')) throw new HttpException(401, '선생님만 이용할 수 있는 기능입니다.');
-
   const { sid, permission } = req.body;
 
   const exception = await MealExceptionModel.findOne({ applier: sid });
@@ -275,10 +272,9 @@ export const permissionMealException = async (req: Request, res: Response) => {
   }
 };
 export const giveMealException = async (req: Request, res: Response) => {
-  const teacher = await UserModel.findById(req.user._id);
-  if (!(teacher.userType === 'T' || teacher.userType === 'D')) throw new HttpException(401, '선생님만 이용할 수 있는 기능입니다.');
-
   const { type, sid, reason } = req.body;
+
+  const teacher = await UserModel.findById(req.user._id);
 
   const exceptionStatus = await MealExceptionModel.findOne({ applier: sid });
   if (exceptionStatus) {
