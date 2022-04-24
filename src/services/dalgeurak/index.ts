@@ -65,6 +65,7 @@ export default createService({
         permission: Joi.string().valid(...MealExceptionApplicationStatusValues).required(),
         sid: Joi.string().required(),
       },
+      teacherOnly: true,
       handler: controllers.permissionMealException,
     },
     {
@@ -77,6 +78,7 @@ export default createService({
         sid: Joi.string().required(),
         reason: Joi.string().required(),
       },
+      teacherOnly: true,
       handler: controllers.giveMealException,
     },
     {

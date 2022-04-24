@@ -25,6 +25,21 @@ const checkPermission = (service: ServiceName, route: Route) =>
       throw new HttpException(403, '학생만 접근 가능한 라우트입니다.');
     }
 
+    // 선생님만 접근 가능한 라우트
+    if ('DT'.includes(req.user.userType) && route.teacherOnly) {
+      throw new HttpException(403, '교사만 접근 가능한 라우트입니다.');
+    }
+
+    // 학과 선생님만 접근 가능한 라우트
+    if (req.user.userType !== 'T' && route.departmentTOnly) {
+      throw new HttpException(403, '학과 선생님만 접근 가능한 라우트입니다.');
+    }
+
+    // 사감 선생님만 접근 가능한 라우트
+    if (req.user.userType !== 'D' && route.dormitoryTOnly) {
+      throw new HttpException(403, '사감 선생님만 접근 가능한 라우트입니다.');
+    }
+
     // 관리자 권한이 필요한 라우트에 접근하는데 권한이 없는 경우
     const userPermissions = req.user.permissions;
     if (route.needPermission && !userPermissions.includes(service)) {
