@@ -85,10 +85,9 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
   const gradeIdx = student.grade - 1;
   const classIdx = mealSequences[now][gradeIdx].indexOf(student.class);
   const extraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx]); // 본인 반의 밥시간
-  let nextExtraTime; // 다음 반의 밥시간
-
-  if (classIdx === 5) nextExtraTime = getExtraTime(extraMinute + 3, mealTimes[now][gradeIdx][classIdx]); // 순서가 마지막일 때 반 시간에서 3분 추가
-  else nextExtraTime = getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx + 1]); // 다음 반 밥시간
+  const nextExtraTime = classIdx === 5
+    ? getExtraTime(extraMinute + 3, mealTimes[now][gradeIdx][classIdx]) //  // 순서가 마지막일 때 반 시간에서 3분 추가
+    : getExtraTime(extraMinute, mealTimes[now][gradeIdx][classIdx + 1]); // 다음 반의 밥시간
 
   type noPermission = 'rejected' | 'waiting';
 
