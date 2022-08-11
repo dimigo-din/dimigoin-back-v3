@@ -3,9 +3,22 @@ import { HttpException } from '../exceptions';
 import {
   MealExceptionModel,
   MealOrderModel,
+  ConvenienceFoodModel,
 } from '../models/dalgeurak';
-import { MealExceptionTimeType, MealTardyStatusType } from '../types';
-import { getExtraTime, getNowTime } from './date';
+import {
+  MealTimeType,
+  MealTardyStatusType,
+  ConvenienceTimeValues,
+  ConvenienceFoodValues,
+  ConvenienceFoodType,
+} from '../types';
+import {
+  getConvAppliEndString,
+  getExtraTime,
+  getNowTime,
+  getWeekdayEndString,
+  getWeekStartString,
+} from './date';
 
 export const resetStudentsMealStatus = async () => {
   await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
@@ -15,6 +28,29 @@ export const resetExtraTimes = async () => {
 };
 export const resetFMTicket = async () => {
   await UserModel.updateMany({ userType: 'S' }, { fmticket: 2 });
+};
+
+export const setConvenienceFood = async () => {
+  const foods: ConvenienceFoodType[][] = [[...ConvenienceFoodValues], ['salad', 'misu']];
+  const foodname = {
+    sandwich: '샌드위치',
+    salad: '샐러드',
+    misu: '선색',
+  };
+  ConvenienceTimeValues.map(async (time, idx) =>
+    foods[idx].map(async (food) =>
+      await ConvenienceFoodModel.create({
+        time,
+        food,
+        name: foodname[food],
+        limit: 50,
+        remain: 50,
+        duration: {
+          start: getWeekStartString(),
+          end: getWeekdayEndString(),
+          applicationend: getConvAppliEndString(),
+        },
+      })));
 };
 
 interface Istudent {
@@ -41,7 +77,7 @@ export const checkTardy = async (student: Istudent): Promise<MealTardyStatusType
 
   const { extraMinute } = await MealOrderModel.findOne({ field: 'intervalTime' });
 
-  let now: MealExceptionTimeType;
+  let now: MealTimeType;
 
   if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
   else if (nowTime >= 1830) now = 'dinner';

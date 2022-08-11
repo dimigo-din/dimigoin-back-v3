@@ -15,6 +15,7 @@ import {
   resetExtraTimes,
   resetStudentsMealStatus,
   resetFMTicket,
+  setConvenienceFood,
 } from './dalgeurak';
 import {
   updateMeal,
@@ -51,6 +52,7 @@ const cronJobs = [
     schedule: '0 0 * * 1',
     action: async () => {
       await updateMeal();
+      await setConvenienceFood();
     },
     runOnSetup: false,
   },

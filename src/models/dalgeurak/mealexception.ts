@@ -7,8 +7,8 @@ import {
   MealExceptionType,
   MealExceptionApplicationStatusValues,
   MealExceptionApplicationStatus,
-  MealExceptionTimeValues,
-  MealExceptionTimeType,
+  MealTimeValues,
+  MealTimeType,
 } from '../../types';
 import { userSchema } from '../user';
 
@@ -19,7 +19,7 @@ interface IMealException extends Document {
   applicationStatus: MealExceptionApplicationStatus;
   ticket: boolean;
   date: string;
-  time: MealExceptionTimeType;
+  time: MealTimeType;
 }
 
 const mealExceptionSchema = createSchema({
@@ -29,7 +29,7 @@ const mealExceptionSchema = createSchema({
   applicationStatus: Type.string({ required: true, enum: MealExceptionApplicationStatusValues, default: 'waiting' }),
   ticket: Type.boolean({ required: true, default: false }),
   date: Type.string({ required: true }),
-  time: Type.string({ required: true, enum: MealExceptionTimeValues }),
+  time: Type.string({ required: true, enum: MealTimeValues }),
 }, { versionKey: false, timestamps: true });
 
 const MealExceptionModel: Model<IMealException> = dalgeurakDB.model('mealexception', mealExceptionSchema);

@@ -35,6 +35,8 @@ export const getWeekEndString = (date?: string) => {
   if (date) return moment(date).endOf('isoWeek').format(format);
   return moment().endOf('isoWeek').format(format);
 };
+export const getWeekdayEndString = () => moment().endOf('isoWeek').add(-2, 'd').format(format);
+export const getConvAppliEndString = () => moment().startOf('isoWeek').add(1, 'd').format(format);
 
 export const getMonthStartString = (date?: string) => {
   if (date) return moment(date).startOf('month').format(format);

@@ -6,7 +6,6 @@ import {
   MealTimeValues,
   MealExceptionApplicationStatusValues,
   MealExceptionValues,
-  MealExceptionTimeValues,
 } from '../../types';
 import { checkApplicationTime } from '../../middlewares/check-application-time';
 
@@ -88,7 +87,7 @@ export default createService({
       needPermission: false,
       studentOnly: true,
       validateSchema: {
-        time: Joi.string().valid(...MealExceptionTimeValues).required(),
+        time: Joi.string().valid(...MealTimeValues).required(),
       },
       middlewares: [checkApplicationTime],
       handler: controllers.useFirstMealTicket,
@@ -101,7 +100,7 @@ export default createService({
       studentOnly: true,
       validateSchema: {
         reason: Joi.string().required(),
-        time: Joi.string().valid(...MealExceptionTimeValues).required(),
+        time: Joi.string().valid(...MealTimeValues).required(),
         date: Joi.string().required(),
       },
       handler: controllers.createMealExceptions,
@@ -224,6 +223,13 @@ export default createService({
         deviceToken: Joi.string().required(),
       },
       handler: controllers.revokeDeviceToken,
+    },
+    {
+      method: 'get',
+      path: '/convenience/set',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.createConvenience,
     },
     // 디넌용
     {

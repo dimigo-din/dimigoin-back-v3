@@ -103,9 +103,6 @@ export type MealExceptionType = typeof MealExceptionValues[number];
 export const MealExceptionApplicationStatusValues = ['waiting', 'permitted', 'rejected'] as const;
 export type MealExceptionApplicationStatus = typeof MealExceptionApplicationStatusValues[number];
 
-export const MealExceptionTimeValues = ['lunch', 'dinner'] as const;
-export type MealExceptionTimeType = typeof MealExceptionTimeValues[number];
-
 export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
 export type MealStatusType = typeof MealStatusValues[number];
 
@@ -122,3 +119,9 @@ export type ClassType = [number, number, number, number, number, number];
 export const WarningValues = ['tardy', 'abuse', 'useHallway', 'ignoreSequence', 'etc'] as const;
 
 export const WaitingLineValues = ['corridor', 'outside'] as const;
+
+export const ConvenienceTimeValues = ['breakfast', 'dinner'] as const;
+export type ConvenienceTimeType = typeof ConvenienceTimeValues[number];
+
+export const ConvenienceFoodValues = ['sandwich', 'salad', 'misu'] as const;
+export type ConvenienceFoodType = typeof ConvenienceFoodValues[number];

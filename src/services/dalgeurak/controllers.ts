@@ -7,6 +7,7 @@ import {
   CheckinLogModel,
   MealExceptionModel,
   MealOrderModel,
+  WarningModel,
 } from '../../models/dalgeurak';
 import { UserModel } from '../../models';
 import {
@@ -24,8 +25,7 @@ import {
   getTodayDateString,
   isValidDate,
 } from '../../resources/date';
-import { checkTardy, getOrder } from '../../resources/dalgeurak';
-import { WarningModel } from '../../models/dalgeurak/warning';
+import { checkTardy, getOrder, setConvenienceFood } from '../../resources/dalgeurak';
 import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
 import io from '../../resources/socket';
 import { getConfig } from '../../resources/config';
@@ -434,6 +434,12 @@ export const revokeDeviceToken = async (req: Request, res: Response) => {
   user.dalgeurakToken.splice(tokenIndex, 1);
   await user.save();
   res.json({ registeredTokens: user.dalgeurakToken });
+};
+
+// 간편식
+export const createConvenience = async (req: Request, res: Response) => {
+  await setConvenienceFood();
+  res.json({});
 };
 
 // 디넌용
