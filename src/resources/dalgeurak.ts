@@ -38,7 +38,7 @@ export const setConvenienceFood = async () => {
   const foodname = {
     sandwich: '샌드위치',
     salad: '샐러드',
-    misu: '선색',
+    misu: '선식',
   };
   ConvenienceTimeValues.map(async (time, idx) =>
     foods[idx].map(async (food) =>
