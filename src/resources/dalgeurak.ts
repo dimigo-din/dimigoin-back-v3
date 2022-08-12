@@ -4,6 +4,7 @@ import {
   MealExceptionModel,
   MealOrderModel,
   ConvenienceFoodModel,
+  ConvenienceCheckinModel,
 } from '../models/dalgeurak';
 import {
   MealTimeType,
@@ -39,18 +40,28 @@ export const setConvenienceFood = async () => {
   };
   ConvenienceTimeValues.map(async (time, idx) =>
     foods[idx].map(async (food) =>
-      await ConvenienceFoodModel.create({
+      await new ConvenienceFoodModel({
         time,
         food,
         name: foodname[food],
         limit: 50,
         remain: 50,
+        applications: [],
         duration: {
           start: getWeekStartString(),
           end: getWeekdayEndString(),
           applicationend: getConvAppliEndString(),
         },
-      })));
+      }).save()));
+
+  await new ConvenienceCheckinModel({
+    duration: {
+      start: getWeekStartString(),
+      end: getWeekdayEndString(),
+    },
+    breakfast: [],
+    dinner: [],
+  }).save();
 };
 
 interface Istudent {

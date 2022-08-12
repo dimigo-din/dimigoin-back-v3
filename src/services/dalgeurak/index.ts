@@ -259,7 +259,7 @@ export default createService({
     },
     {
       method: 'post',
-      path: '/convenience/application',
+      path: '/convenience/checkin',
       needAuth: true,
       needPermission: false,
       validateSchema: {
