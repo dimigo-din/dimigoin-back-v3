@@ -239,6 +239,34 @@ export default createService({
       needPermission: true,
       handler: convenienceControllers.createConvenience,
     },
+    {
+      method: 'get',
+      path: '/convenience',
+      needAuth: true,
+      needPermission: false,
+      handler: convenienceControllers.getConvenience,
+    },
+    {
+      method: 'post',
+      path: '/convenience',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        time: Joi.string().required(),
+        food: Joi.string().required(),
+      },
+      handler: convenienceControllers.convenienceAppli,
+    },
+    {
+      method: 'post',
+      path: '/convenience/application',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        food: Joi.string().required(),
+      },
+      handler: convenienceControllers.checkIn,
+    },
     // 디넌용
     {
       method: 'post',

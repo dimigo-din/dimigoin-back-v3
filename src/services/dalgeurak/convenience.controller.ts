@@ -16,6 +16,15 @@ export const createConvenience = async (req: Request, res: Response) => {
   res.json({});
 };
 
+export const getConvenience = async (req: Request, res: Response) => {
+  const convenience = await ConvenienceFoodModel.find({
+    'duration.start': getWeekStartString(),
+  });
+  if (!convenience) throw new HttpException(501, '간편식이 없습니다.');
+
+  res.json({ convenience });
+};
+
 // 체크인
 export const checkIn = async (req: Request, res: Response) => {
   const { food } = req.body;
@@ -49,11 +58,11 @@ export const checkIn = async (req: Request, res: Response) => {
   });
   if (checkInCheck) throw new HttpException(401, '이미 체크인 하였습니다.');
 
-  await ConvenienceApplicationModel.create({
+  await new ConvenienceApplicationModel({
     student: req.user._id,
     food: convenience._id,
     date: getTodayDateString(),
-  });
+  }).save();
 
   res.json({
     result: 'success',
@@ -105,11 +114,15 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   });
   if (application) throw new HttpException(401, '이미 신청하였습니다.');
 
-  await ConvenienceApplicationModel.create({
+  await new ConvenienceApplicationModel({
     student: req.user._id,
     date: getTodayDateString(),
     food: convenience._id,
+  }).save();
+  Object.assign(convenience, {
+    remain: convenience.remain - 1,
   });
+  await convenience.save();
 
   res.json({
     result: 'success',
