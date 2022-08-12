@@ -72,7 +72,7 @@ export const getMinutesValue = ({ hour, minute }: {
   hour: number, minute: number
 }) => hour * 60 + minute;
 
-export const getCOnvTime = (): ConvenienceTimeType | null => {
+export const getConvTime = (): ConvenienceTimeType | null => {
   const now = getNowTime();
 
   if (now >= 715 && now <= 800) return 'breakfast';
