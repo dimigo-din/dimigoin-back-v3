@@ -99,6 +99,18 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   const application = convenience.applications.map((e) => e.student);
   if (application.includes(new ObjectId(req.user._id))) throw new HttpException(401, '이미 신청하였습니다.');
 
+  const allConvApplilcationCheck = await ConvenienceFoodModel.find({
+    applications: {
+      $elemMatch: {
+        student: new ObjectId(req.user._id),
+      },
+    },
+    'duration.start': getWeekStartString(),
+  });
+  if (allConvApplilcationCheck) { allConvApplilcationCheck.forEach((e) => {
+    if (e.time === time) throw new HttpException(401, '이미 신청하였습니다.');
+  }); }
+
   // 월요일 학년 별 17명 이상 신청 막기
   const startWeek = getWeekStartString();
   const students = convenience.applications
@@ -126,7 +138,10 @@ export const convenienceAppli = async (req: Request, res: Response) => {
     remain: convenience.remain - 1,
     applications: [
       ...convenience.applications,
-      new ObjectId(req.user._id),
+      {
+        date: getTodayDateString(),
+        student: new ObjectId(req.user._id),
+      },
     ],
   });
   await convenience.save();
