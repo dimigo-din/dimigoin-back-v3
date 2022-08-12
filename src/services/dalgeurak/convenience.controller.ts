@@ -52,7 +52,7 @@ export const checkIn = async (req: Request, res: Response) => {
 
   // 신청 여부 체크
   const application = convenience.applications.map((e) => e.student);
-  if (!application.includes(new ObjectId(req.user._id))) throw new HttpException(401, '신청하지 않았습니다.');
+  if (!application.includes(req.user._id)) throw new HttpException(401, '신청하지 않았습니다.');
 
   // 체크인 확인했는지 체크
   const checkInCheck = await ConvenienceCheckinModel.findOne({
@@ -60,7 +60,7 @@ export const checkIn = async (req: Request, res: Response) => {
   });
   if (!checkInCheck) throw new HttpException(501, '이번 주 체크인이 설정되어 있지 않습니다.');
   checkInCheck[nowTime].forEach((e) => {
-    if (e.date === getTodayDateString() && e.student === new ObjectId(req.user._id)) {
+    if (e.date === getTodayDateString() && e.student === req.user._id) {
       throw new HttpException(401, '이미 체크인 하였습니다.');
     }
   });
@@ -97,7 +97,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
 
   // 신청 했는지 체크
   const application = convenience.applications.map((e) => e.student);
-  if (application.includes(new ObjectId(req.user._id))) throw new HttpException(401, '이미 신청하였습니다.');
+  if (application.includes(req.user._id)) throw new HttpException(401, '이미 신청하였습니다.');
 
   const allConvApplilcationCheck = await ConvenienceFoodModel.find({
     applications: {

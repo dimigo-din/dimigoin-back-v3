@@ -5,6 +5,7 @@ import {
   MealOrderModel,
   ConvenienceFoodModel,
   ConvenienceCheckinModel,
+  ConvenienceDepriveModel,
 } from '../models/dalgeurak';
 import {
   MealTimeType,
@@ -16,6 +17,7 @@ import {
 import {
   getConvAppliEndString,
   getExtraTime,
+  getLastWeek,
   getNowTime,
   getWeekdayEndString,
   getWeekStartString,
@@ -62,6 +64,43 @@ export const setConvenienceFood = async () => {
     breakfast: [],
     dinner: [],
   }).save();
+};
+
+export const convenienceDepriveCheck = async () => {
+  await ConvenienceDepriveModel.deleteMany({ clear: true }); // 한 번 신청 시도했을 때 신청기회 제공
+
+  const checkin = await ConvenienceCheckinModel.findOne({ // 저번주 체크인 기록
+    'duration.start': getLastWeek(getWeekStartString()),
+  });
+  const breakfastFoods = await ConvenienceFoodModel.find({ // 저저번주 신청 기록
+    time: 'breakfast',
+    'duration.start': getLastWeek(getLastWeek(getWeekStartString())),
+  });
+  const dinnerFoods = await ConvenienceFoodModel.find({
+    time: 'dinner',
+    'duration.start': getLastWeek(getLastWeek(getWeekStartString())),
+  });
+
+  const breakfastCheckin = checkin.breakfast.map((e) => e.student);
+  breakfastFoods.forEach((food) => {
+    food.applications.map((e) => e.student).forEach(async (student) => {
+      if (breakfastCheckin.filter((s) => s === student).length <= 3) // 일주일에 간편식 식사수가 3회 이하일 때 (평일 공휴일 고려하지 않음.)
+      { await new ConvenienceDepriveModel({
+        student,
+        clear: false,
+      }); }
+    });
+  });
+
+  const dinnerCheckin = checkin.dinner.map((e) => e.student);
+  dinnerFoods.forEach((food) => {
+    food.applications.map((e) => e.student).forEach(async (student) => {
+      if (dinnerCheckin.filter((s) => s === student).length <= 3) { await new ConvenienceDepriveModel({
+        student,
+        clear: false,
+      }); }
+    });
+  });
 };
 
 interface Istudent {

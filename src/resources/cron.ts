@@ -16,6 +16,7 @@ import {
   resetStudentsMealStatus,
   resetFMTicket,
   setConvenienceFood,
+  convenienceDepriveCheck,
 } from './dalgeurak';
 import {
   updateMeal,
@@ -48,11 +49,12 @@ const cronJobs = [
     runOnSetup: false,
   },
   {
-    name: '매주 급식표 업데이트',
+    name: '매주 달그락 세팅',
     schedule: '0 0 * * 1',
     action: async () => {
       await updateMeal();
       await setConvenienceFood();
+      await convenienceDepriveCheck();
     },
     runOnSetup: false,
   },
