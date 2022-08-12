@@ -52,7 +52,6 @@ export const createMealExceptions = async (req: Request, res: Response) => {
 };
 
 // 선후밥
-// 선후밥
 export const useFirstMealTicket = async (req: Request, res: Response) => {
   const { _id: applier } = req.user;
   const { time } = req.body;

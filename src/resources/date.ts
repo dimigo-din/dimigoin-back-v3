@@ -5,6 +5,7 @@ import {
   Time,
   Day,
   DayValues,
+  ConvenienceTimeType,
 } from '../types';
 
 const timezone = 'Asia/Seoul';
@@ -35,8 +36,10 @@ export const getWeekEndString = (date?: string) => {
   if (date) return moment(date).endOf('isoWeek').format(format);
   return moment().endOf('isoWeek').format(format);
 };
-export const getWeekdayEndString = () => moment().endOf('isoWeek').add(-2, 'd').format(format);
-export const getConvAppliEndString = () => moment().startOf('isoWeek').add(1, 'd').format(format);
+export const getWeekdayEndString = () => moment().clone().endOf('isoWeek').add(-2, 'd')
+  .format(format);
+export const getConvAppliEndString = () => moment().clone().startOf('isoWeek').add(1, 'd')
+  .format(format);
 
 export const getMonthStartString = (date?: string) => {
   if (date) return moment(date).startOf('month').format(format);
@@ -55,6 +58,8 @@ export const getDateFromDay = (weekStart: string, day: Day) => {
   return date.format(format);
 };
 
+export const getLastWeek = (date: string) => moment(date).clone().add(-7, 'd').format(format);
+
 export const isValidDate = (string: string): Boolean =>
   moment(string, format, true).isValid();
 
@@ -66,6 +71,14 @@ export const getTomorrowDateString = (date?: string) => {
 export const getMinutesValue = ({ hour, minute }: {
   hour: number, minute: number
 }) => hour * 60 + minute;
+
+export const getCOnvTime = (): ConvenienceTimeType | null => {
+  const now = getNowTime();
+
+  if (now >= 715 && now <= 800) return 'breakfast';
+  if (now >= 1835 && now <= 1950) return 'dinner';
+  return null;
+};
 
 // @Need-Refactor
 export const getTime = (date: Date): Time | null => {

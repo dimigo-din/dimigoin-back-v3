@@ -15,9 +15,9 @@ export interface ConvenienceFood extends Document {
   food: ConvenienceFoodType;
   name: string;
   duration: {
-    start: Date;
-    end: Date;
-    applicationend: Date;
+    start: string;
+    end: string;
+    applicationend: string;
   }
 }
 
@@ -28,9 +28,9 @@ const convenienceFoodSchema = createSchema({
   food: Type.string({ required: true, enum: [...ConvenienceFoodValues] }),
   name: Type.string({ required: true }),
   duration: Type.object({ required: true }).of({
-    start: Type.date({ required: true }),
-    end: Type.date({ required: true }),
-    applicationend: Type.date({ required: true }),
+    start: Type.string({ required: true }),
+    end: Type.string({ required: true }),
+    applicationend: Type.string({ required: true }),
   }),
 }, { versionKey: false, timestamps: false });
 
