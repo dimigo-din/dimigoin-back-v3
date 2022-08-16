@@ -27,7 +27,7 @@ export default createService({
       method: 'post',
       path: '/',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
       validateSchema: {
         name: Joi.string().required(),
         description: Joi.string().required(),
