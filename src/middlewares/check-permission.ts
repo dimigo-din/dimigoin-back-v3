@@ -26,7 +26,7 @@ const checkPermission = (service: ServiceName, route: Route) =>
     }
 
     // 선생님만 접근 가능한 라우트
-    if ('DT'.includes(req.user.userType) && route.teacherOnly) {
+    if (!'DT'.includes(req.user.userType) && route.teacherOnly) {
       throw new HttpException(403, '교사만 접근 가능한 라우트입니다.');
     }
 
