@@ -15,7 +15,7 @@ import * as timeControllers from './time.controller';
 import * as fcmControllers from './fcm.controller';
 import * as dinnenControllers from './dinnen.controller';
 import * as convenienceControllers from './convenience.controller';
-import warningController from './warning.controller';
+import * as warningController from './warning.controller';
 
 export default createService({
   name: '달그락 서비스',
@@ -203,7 +203,21 @@ export default createService({
         type: Joi.array().required(),
         reason: Joi.string().required(),
       },
-      handler: warningController,
+      handler: warningController.createWarning,
+    },
+    {
+      method: 'get',
+      path: '/warning',
+      needAuth: true,
+      needPermission: false,
+      handler: warningController.getWarning,
+    },
+    {
+      method: 'get',
+      path: '/warning/:sid',
+      needAuth: true,
+      needPermission: true,
+      handler: warningController.getStudentWarning,
     },
     {
       method: 'get',
