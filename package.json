@@ -54,7 +54,7 @@
     "@types/cheerio": "^0.22.31",
     "@types/node-rsa": "^1.1.1",
     "@types/socket.io": "^3.0.2",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "bl": "^2.2.1",
     "cheerio": "^1.0.0-rc.10",
     "cors": "^2.8.5",
