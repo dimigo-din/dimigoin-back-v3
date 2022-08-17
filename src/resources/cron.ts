@@ -12,10 +12,15 @@ import {
   attachTeacherInfo,
 } from './dimi-api';
 import {
-  resetMealExceptions,
   resetExtraTimes,
   resetStudentsMealStatus,
+  resetFMTicket,
+  setConvenienceFood,
+  convenienceDepriveCheck,
 } from './dalgeurak';
+import {
+  updateMeal,
+} from './meal';
 
 const cronJobs = [
   {
@@ -39,8 +44,25 @@ const cronJobs = [
     schedule: '0 14,20 * * *',
     action: async () => {
       await resetStudentsMealStatus();
-      await resetMealExceptions();
       await resetExtraTimes();
+    },
+    runOnSetup: false,
+  },
+  {
+    name: '매주 달그락 세팅',
+    schedule: '0 0 * * 1',
+    action: async () => {
+      await updateMeal();
+      await setConvenienceFood();
+      await convenienceDepriveCheck();
+    },
+    runOnSetup: false,
+  },
+  {
+    name: '매달 선밥권 초기화',
+    schedule: '0 0 * */1 *',
+    action: async () => {
+      await resetFMTicket();
     },
     runOnSetup: false,
   },

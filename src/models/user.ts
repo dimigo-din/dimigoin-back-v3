@@ -32,6 +32,7 @@ const userSchema = createSchema({
   libraryId: Type.string({ select: false, trim: true }),
   dalgeurakToken: Type.array({ select: false, default: [] }).of(Type.string()),
   mealStatus: Type.string({ enum: MealStatusValues }),
+  fmticket: Type.number(),
   // 교사 정보
   position: Type.string({ trim: true }),
   role: Type.string({ trim: true }),

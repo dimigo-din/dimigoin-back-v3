@@ -21,6 +21,9 @@ export interface Route {
   needAuth: boolean; // 인증이 필요한지
   needPermission: boolean; // 관리자 권한이 필요한지
   studentOnly?: boolean; // 학생만 접근할 수 있는 라우트인지 (신청 관련)
+  teacherOnly?: boolean; // 선생님만 접근할 수 있는 라우트 (신청 허가)
+  departmentTOnly?: boolean; // 학과 선생님만 접근할 수 있는 라우트
+  dormitoryTOnly?: boolean; // 사감 선생님만 접근할 수 있는 라우트
 }
 
 // 임포트 된 서비스 (서비스 디렉토리 명 추가)

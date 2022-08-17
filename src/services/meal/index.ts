@@ -71,5 +71,12 @@ export default createService({
       },
       handler: controllers.editMealByDate,
     },
+    {
+      method: 'patch',
+      path: '/mealInfo',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.updateMealInfo,
+    },
   ],
 });
