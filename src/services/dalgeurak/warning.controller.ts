@@ -25,3 +25,15 @@ export const getWarning = async (req: Request, res: Response) => {
 
   res.json({ warning });
 };
+
+export const getStudentWarning = async (req: Request, res: Response) => {
+  const { sid } = req.params;
+
+  console.log(sid);
+
+  const warning = await WarningModel.findOne({
+    student: new ObjectId(sid),
+  });
+
+  res.json({ warning });
+};

@@ -214,6 +214,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/warning/:sid',
+      needAuth: true,
+      needPermission: true,
+      handler: warningController.getStudentWarning,
+    },
+    {
+      method: 'get',
       path: '/token',
       needAuth: true,
       needPermission: false,
