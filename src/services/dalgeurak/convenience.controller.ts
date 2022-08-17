@@ -37,22 +37,23 @@ export const getConvenience = async (req: Request, res: Response) => {
 
 // 체크인
 export const checkIn = async (req: Request, res: Response) => {
-  const { food } = req.body;
-
   // 조식/석식 시간 체크
   const nowTime = getConvTime();
   if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
 
-  const convenience = await ConvenienceFoodModel.findOne({
-    food,
+  const conveniences = await ConvenienceFoodModel.find({
     time: nowTime,
     'duration.start': getLastWeek(getWeekStartString()),
   });
-  if (!convenience) throw new HttpException(501, '체크인하려는 간편식이 존재하지 않습니다.');
+  if (!conveniences) throw new HttpException(501, '체크인하려는 간편식이 존재하지 않습니다.');
 
   // 신청 여부 체크
-  const application = convenience.applications.map((e) => e.student);
-  if (!application.includes(req.user._id)) throw new HttpException(401, '신청하지 않았습니다.');
+  let applicationStatus = false;
+  conveniences.forEach((convenience) => {
+    const application = convenience.applications.map((e) => e.student);
+    if (application.includes(req.user._id)) applicationStatus = true;
+  });
+  if (!applicationStatus) throw new HttpException(401, '신청하지 않았습니다.');
 
   // 체크인 확인했는지 체크
   const checkInCheck = await ConvenienceCheckinModel.findOne({
@@ -76,7 +77,6 @@ export const checkIn = async (req: Request, res: Response) => {
   res.json({
     result: 'success',
     time: nowTime,
-    food,
   });
 };
 

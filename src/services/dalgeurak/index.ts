@@ -262,9 +262,6 @@ export default createService({
       path: '/convenience/checkin',
       needAuth: true,
       needPermission: false,
-      validateSchema: {
-        food: Joi.string().required(),
-      },
       handler: convenienceControllers.checkIn,
     },
     // 디넌용
