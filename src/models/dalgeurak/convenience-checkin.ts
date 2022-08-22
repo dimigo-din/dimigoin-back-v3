@@ -30,7 +30,7 @@ const convenienceCheckinSchema = createSchema({
   }),
   breakfast: Type.array({ default: [] }).of(checkinObj),
   dinner: Type.array({ default: [] }).of(checkinObj),
-}, { versionKey: false, timestamps: false });
+}, { versionKey: false, timestamps: true });
 
 const ConvenienceCheckinModel: Model<ConvenienceCheckin> = dalgeurakDB.model('convenienceacheckin', convenienceCheckinSchema);
 

@@ -12,7 +12,7 @@ export interface ConvenienceDeprive extends Document {
 const convenienceDepriveSchema = createSchema({
   student: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
   clear: Type.boolean({ default: false }),
-}, { versionKey: false, timestamps: false });
+}, { versionKey: false, timestamps: true });
 
 const ConvenienceDepriveModel: Model<ConvenienceDeprive> = dalgeurakDB.model('convenienceadeprive', convenienceDepriveSchema);
 
