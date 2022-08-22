@@ -19,7 +19,7 @@ export const createWarning = async (req: Request, res: Response) => {
 };
 
 export const getWarning = async (req: Request, res: Response) => {
-  const warning = await WarningModel.findOne({
+  const warning = await WarningModel.find({
     student: new ObjectId(req.user._id),
   });
 
@@ -29,9 +29,7 @@ export const getWarning = async (req: Request, res: Response) => {
 export const getStudentWarning = async (req: Request, res: Response) => {
   const { sid } = req.params;
 
-  console.log(sid);
-
-  const warning = await WarningModel.findOne({
+  const warning = await WarningModel.find({
     student: new ObjectId(sid),
   });
 

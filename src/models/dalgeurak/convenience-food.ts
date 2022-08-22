@@ -41,7 +41,7 @@ const convenienceFoodSchema = createSchema({
     end: Type.string({ required: true }),
     applicationend: Type.string({ required: true }),
   }),
-}, { versionKey: false, timestamps: false });
+}, { versionKey: false, timestamps: true });
 
 const ConvenienceFoodModel: Model<ConvenienceFood> = dalgeurakDB.model('conveniencefood', convenienceFoodSchema);
 
