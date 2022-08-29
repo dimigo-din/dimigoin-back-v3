@@ -30,6 +30,16 @@ const cronJobs = [
     runOnSetup: true,
   },
   {
+    name: '달그락 세팅',
+    schedule: '0 0 * * 1',
+    action: async () => {
+      await updateMeal();
+      await setConvenienceFood();
+      await convenienceDepriveCheck();
+    },
+    runOnSetup: false,
+  },
+  {
     name: '사용자 정보 및 학적 갱신',
     schedule: '0 0 * * 1',
     action: async () => {
@@ -45,16 +55,6 @@ const cronJobs = [
     action: async () => {
       await resetStudentsMealStatus();
       await resetExtraTimes();
-    },
-    runOnSetup: false,
-  },
-  {
-    name: '매주 달그락 세팅',
-    schedule: '0 0 * * 1',
-    action: async () => {
-      await updateMeal();
-      await setConvenienceFood();
-      await convenienceDepriveCheck();
     },
     runOnSetup: false,
   },
