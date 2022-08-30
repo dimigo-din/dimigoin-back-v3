@@ -60,7 +60,7 @@ const cronJobs = [
   },
   {
     name: '매달 선밥권 초기화',
-    schedule: '0 0 * */1 *',
+    schedule: '0 0 1 * *',
     action: async () => {
       await resetFMTicket();
     },
