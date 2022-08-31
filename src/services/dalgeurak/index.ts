@@ -307,6 +307,10 @@ export default createService({
       needAuth: true,
       needPermission: false,
       teacherOnly: true,
+      validateSchema: {
+        id: Joi.string().required(),
+        approve: Joi.boolean().required(),
+      },
       handler: cancelController.applicationMealCancel,
     },
     // 디넌용
