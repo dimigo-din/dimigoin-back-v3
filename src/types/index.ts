@@ -127,8 +127,8 @@ export type MealExceptionApplicationStatus =
   typeof MealExceptionApplicationStatusValues[number];
 
 export const MealCancelApplicationStatusValues = [
-  'waiting1', // 담임 신청 대기
-  'waiting2', // 급식실 신청 대기
+  'teacherWaiting', // 담임 신청 대기
+  'aramarkWaiting', // 급식실 신청 대기
   'approve',
   'reject',
 ] as const;

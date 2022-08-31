@@ -24,7 +24,7 @@ interface IMealCancel extends Document {
 const mealCancelSchema = createSchema({
   applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
   reason: Type.string({ required: true }),
-  applicationStatus: Type.string({ required: true, enum: MealCancelApplicationStatusValues, default: 'waiting1' }),
+  applicationStatus: Type.string({ required: true, enum: MealCancelApplicationStatusValues, default: 'teacherWaiting' }),
   duration: Type.object({ required: true }).of({
     start: Type.string({ required: true }),
     end: Type.string({ required: true }),

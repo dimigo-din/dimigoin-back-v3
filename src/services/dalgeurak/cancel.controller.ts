@@ -48,7 +48,7 @@ export const getMealCancel = async (req: Request, res: Response) => {
 
   if (user.username === aramark) {
     const students = await MealCancelModel.find({
-      applicationStatus: 'waiting2',
+      applicationStatus: 'aramarkWaiting',
     });
 
     res.json({ students });
@@ -57,7 +57,7 @@ export const getMealCancel = async (req: Request, res: Response) => {
     if (!gc) throw new HttpException(401, '권한이 없습니다.');
 
     const applications = await MealCancelModel.find({
-      applicationStatus: 'waiting1',
+      applicationStatus: 'teacherWaiting',
     }).populate(popUser('applier'));
 
     const students = applications.filter((e) =>
@@ -93,7 +93,7 @@ export const applicationMealCancel = async (req: Request, res: Response) => {
     if (student.grade !== gc.grade && student.class !== gc.class) throw new HttpException(401, '권한이 없습니다.');
 
     Object.assign(application, {
-      applicationStatus: approve ? 'waiting2' : 'reject',
+      applicationStatus: approve ? 'aramarkWaiting' : 'reject',
     });
     await application.save();
 
