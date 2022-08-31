@@ -43,19 +43,27 @@ export enum PlaceType {
   gym = 'GYM',
   laundry = 'LAUNDRY',
   absent = 'ABSENT',
-  etc = 'ETC'
+  etc = 'ETC',
 }
 export enum PlaceBuildingType {
   main = 'MAIN',
   newbuilding = 'NEWBUILDING',
   hakbong = 'HAKBONG',
   ujeong = 'UJEONG',
-  etc = 'ETC'
+  etc = 'ETC',
 }
 
 export type HTTPMethod = 'get' | 'post' | 'put' | 'patch' | 'delete';
 
-export const DayValues = ['mon', 'tue', 'wed', 'thr', 'fri', 'sat', 'sun'] as const;
+export const DayValues = [
+  'mon',
+  'tue',
+  'wed',
+  'thr',
+  'fri',
+  'sat',
+  'sun',
+] as const;
 export type Day = typeof DayValues[number];
 
 export const GenderValues = ['M', 'F'] as const;
@@ -70,7 +78,14 @@ export type Grade = typeof GradeValues[number];
 export const ClassValues = [1, 2, 3, 4, 5, 6] as const;
 export type Class = typeof ClassValues[number];
 
-export const CircleApplicationStatusValues = ['applied', 'document-fail', 'document-pass', 'interview-fail', 'interview-pass', 'final'] as const;
+export const CircleApplicationStatusValues = [
+  'applied',
+  'document-fail',
+  'document-pass',
+  'interview-fail',
+  'interview-pass',
+  'final',
+] as const;
 // 지원 완료 | 서류 탈락 | 서류 합격 | 면접 탈락 | 면접 합격 | 최종 선택
 export type CircleApplicationStatus =
   typeof CircleApplicationStatusValues[number];
@@ -94,29 +109,68 @@ export type Time = typeof TimeValues[number];
 export const TokenTypeValues = ['REFRESH', 'ACCESS'];
 export type TokenType = typeof TokenTypeValues[number];
 
-export type Middleware =
-  (req: Request, res: Response, next: NextFunction) => Promise<void>;
+export type Middleware = (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => Promise<void>;
 
 export const MealExceptionValues = ['first', 'last'];
 export type MealExceptionType = typeof MealExceptionValues[number];
 
-export const MealExceptionApplicationStatusValues = ['waiting', 'permitted', 'rejected'] as const;
-export type MealExceptionApplicationStatus = typeof MealExceptionApplicationStatusValues[number];
+export const MealExceptionApplicationStatusValues = [
+  'waiting',
+  'approve',
+  'reject',
+] as const;
+export type MealExceptionApplicationStatus =
+  typeof MealExceptionApplicationStatusValues[number];
+
+export const MealCancelApplicationStatusValues = [
+  'waiting1', // 담임 신청 대기
+  'waiting2', // 급식실 신청 대기
+  'approve',
+  'reject',
+] as const;
+export type MealCancelApplicationStatus =
+  typeof MealCancelApplicationStatusValues[number];
 
 export const MealStatusValues = ['onTime', 'tardy', 'empty'] as const;
 export type MealStatusType = typeof MealStatusValues[number];
 
-export const MealOrderValues = ['sequences', 'times', 'intervalTime', 'waitingLine'] as const;
+export const MealOrderValues = [
+  'sequences',
+  'times',
+  'intervalTime',
+  'waitingLine',
+] as const;
 
-export const MealTardyStatusValues = ['onTime', 'tardy', 'empty', 'beforeLunch', 'beforeDinner', 'afterDinner', 'certified', 'early', 'rejected', 'waiting'] as const;
+export const MealTardyStatusValues = [
+  'onTime',
+  'tardy',
+  'empty',
+  'beforeLunch',
+  'beforeDinner',
+  'afterDinner',
+  'certified',
+  'early',
+  'rejected',
+  'waiting',
+] as const;
 export type MealTardyStatusType = typeof MealTardyStatusValues[number];
 
-export const MealTimeValues = ['lunch', 'dinner'] as const;
+export const MealTimeValues = ['breakfast', 'lunch', 'dinner'] as const;
 export type MealTimeType = typeof MealTimeValues[number];
 
 export type ClassType = [number, number, number, number, number, number];
 
-export const WarningValues = ['tardy', 'abuse', 'useHallway', 'ignoreSequence', 'etc'] as const;
+export const WarningValues = [
+  'tardy',
+  'abuse',
+  'useHallway',
+  'ignoreSequence',
+  'etc',
+] as const;
 
 export const WaitingLineValues = ['corridor', 'outside'] as const;
 
@@ -125,3 +179,5 @@ export type ConvenienceTimeType = typeof ConvenienceTimeValues[number];
 
 export const ConvenienceFoodValues = ['sandwich', 'salad', 'misu'] as const;
 export type ConvenienceFoodType = typeof ConvenienceFoodValues[number];
+
+export const aramark = 'aramark';

@@ -100,3 +100,18 @@ export const attachTeacherInfo = async () => {
     }),
   );
 };
+
+export const teacherRoleParse = (role: string) => {
+  try {
+    const sRole = role.split(' ');
+    if (sRole[sRole.length - 1] === '담임') {
+      return {
+        grade: parseInt(sRole[0][0]),
+        class: parseInt(sRole[1][0]),
+      };
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
+};

@@ -16,6 +16,7 @@ import * as fcmControllers from './fcm.controller';
 import * as dinnenControllers from './dinnen.controller';
 import * as convenienceControllers from './convenience.controller';
 import * as warningController from './warning.controller';
+import * as cancelController from './cancel.controller';
 
 export default createService({
   name: '달그락 서비스',
@@ -277,6 +278,36 @@ export default createService({
       needAuth: true,
       needPermission: false,
       handler: convenienceControllers.checkIn,
+    },
+    {
+      method: 'post',
+      path: '/cancel',
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
+      validateSchema: {
+        reason: Joi.string().required(),
+        startDate: Joi.string().required(),
+        endDate: Joi.string().required(),
+        time: Joi.array().items(Joi.string()).required(),
+      },
+      handler: cancelController.createMealCancel,
+    },
+    {
+      method: 'get',
+      path: '/cancel',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      handler: cancelController.getMealCancel,
+    },
+    {
+      method: 'patch',
+      path: '/cancel',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      handler: cancelController.applicationMealCancel,
     },
     // 디넌용
     {
