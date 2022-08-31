@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { popUser } from '../../resources/dalgeurak';
 import {
   getMonthEndString,
   getMonthStartString,
@@ -10,7 +11,7 @@ import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { MealExceptionModel } from '../../models/dalgeurak';
 import { ConfigKeys, MealExceptionValues } from '../../types';
-import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
+import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { UserModel } from '../../models';
 import { getConfig } from '../../resources/config';
 
@@ -26,7 +27,7 @@ const getTodayUsedTickets = async () => await MealExceptionModel.countDocuments(
 });
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const users = await MealExceptionModel.find({ }).populate('applier');
+  const users = await MealExceptionModel.find({ }).populate(popUser('applier'));
 
   res.json({ users });
 };
@@ -76,7 +77,7 @@ export const useFirstMealTicket = async (req: Request, res: Response) => {
     applier,
     exceptionType: 'first',
     reason: '선밥권',
-    applicationStatus: 'permitted',
+    applicationStatus: 'approve',
     ticket: true,
     time,
     date: getTodayDateString(),
@@ -100,23 +101,17 @@ export const permissionMealException = async (req: Request, res: Response) => {
 
   Object.assign(exception, { applicationStatus: permission });
 
-  await DGLsendPushMessage(
+  await DGRsendPushMessage(
     { _id: sid },
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청 알림`,
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청이 ${
-      permission === 'permitted' ? '허가'
-        : permission === 'rejected' && '거부'
+      permission === 'approve' ? '승인'
+        : permission === 'reject' && '반려'
     } 되었습니다.`,
   );
 
   await exception.save();
   res.json({ exception });
-  if (permission === 'permitted') {
-    io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
-      _id: sid,
-      mealStatus: 'certified',
-    });
-  }
 };
 export const giveMealException = async (req: Request, res: Response) => {
   const { type, sid, reason } = req.body;
@@ -125,11 +120,11 @@ export const giveMealException = async (req: Request, res: Response) => {
 
   const exceptionStatus = await MealExceptionModel.findOne({ applier: sid });
   if (exceptionStatus) {
-    Object.assign(exceptionStatus, { applicationStatus: 'permitted' });
+    Object.assign(exceptionStatus, { applicationStatus: 'approve' });
 
     await exceptionStatus.save();
 
-    await DGLsendPushMessage(
+    await DGRsendPushMessage(
       { _id: sid },
       `${type === 'first' ? '선밥' : '후밥'} 안내`,
       `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,
@@ -142,7 +137,7 @@ export const giveMealException = async (req: Request, res: Response) => {
       reason,
     }).save();
 
-    await DGLsendPushMessage(
+    await DGRsendPushMessage(
       { _id: sid },
       `${type === 'first' ? '선밥' : '후밥'} 안내`,
       `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,

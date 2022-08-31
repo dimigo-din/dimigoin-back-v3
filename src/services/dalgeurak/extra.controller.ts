@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { getOrder } from '../../resources/dalgeurak';
 import { HttpException } from '../../exceptions';
 import { MealOrderModel } from '../../models/dalgeurak';
-import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
+import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getExtraTime } from '../../resources/date';
 
 export const editExtraTime = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ export const editExtraTime = async (req: Request, res: Response) => {
   const { gradeIdx, classIdx, now } = await getOrder();
 
   for (let i = gradeIdx; i >= 0; i -= 1) {
-    await DGLsendPushMessage(
+    await DGRsendPushMessage(
       {
         grade: gradeIdx + 1,
         class: { $in: i === gradeIdx ? mealSequences[now][i].splice(classIdx + 1, mealSequences[now][i].length - 1) : mealSequences[now][i] },

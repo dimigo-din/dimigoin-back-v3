@@ -7,7 +7,7 @@ import { mealStatusFilter } from './controllers';
 import { CheckinLogModel, MealOrderModel } from '../../models/dalgeurak';
 import { getNowTimeString } from '../../resources/date';
 import io from '../../resources/socket';
-import { DGLsendPushMessage } from '../../resources/dalgeurakPush';
+import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 
 export const entranceProcess = async (req: Request, res: Response) => {
   const { sid } = req.body;
@@ -80,7 +80,7 @@ export const getMealStatuses = async (req: Request, res: Response) => {
 // 테스트 코드
 export const alertTest = async (req: Request, res: Response) => {
   const { title, message } = req.body;
-  await DGLsendPushMessage(
+  await DGRsendPushMessage(
     { _id: req.user._id },
     title,
     message,

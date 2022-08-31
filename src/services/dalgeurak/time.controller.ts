@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { getOrder } from '../../resources/dalgeurak';
 import { HttpException } from '../../exceptions';
 import { MealOrderModel } from '../../models/dalgeurak';
-import { ClassType, MealTimeType } from '../../types';
+import { ClassType } from '../../types';
 
 // 급식 시간 & 순서
 
@@ -40,7 +40,7 @@ export const editMealTimes = async (req: Request, res: Response) => {
 
 export const editGradeMealSequences = async (req: Request, res: Response) => {
   interface GradeMealSequences {
-    time: MealTimeType;
+    time: 'lunch' | 'dinner';
     sequences: ClassType;
   }
 
@@ -60,7 +60,7 @@ export const editGradeMealSequences = async (req: Request, res: Response) => {
 };
 export const editGradeMealTimes = async (req: Request, res: Response) => {
   interface GradeMealTimes {
-    time: MealTimeType;
+    time: 'lunch' | 'dinner';
     classTimes: ClassType;
   }
 
