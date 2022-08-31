@@ -86,6 +86,12 @@ export const applicationMealCancel = async (req: Request, res: Response) => {
 
     res.json({ data: application });
   } else if (req.user.userType === 'T') {
+    const gc = teacherRoleParse(req.user.role);
+    if (!gc) throw new HttpException(401, '권한이 없습니다.');
+
+    const student = await UserModel.findById(application.applier);
+    if (student.grade !== gc.grade && student.class !== gc.class) throw new HttpException(401, '권한이 없습니다.');
+
     Object.assign(application, {
       applicationStatus: approve ? 'waiting2' : 'reject',
     });
@@ -97,8 +103,6 @@ export const applicationMealCancel = async (req: Request, res: Response) => {
       `급식 취소 신청이 1차 ${approve ? '승인' : '반려'}되었습니다.${approve ? '\n2차 승인 대기 중입니다.' : ''}`,
     );
     if (approve) {
-      const student = await UserModel.findById(application.applier);
-
       await DGRsendPushMessage(
         { username: aramark },
         '급식 취소 신청 (급식실)',
