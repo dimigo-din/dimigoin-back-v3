@@ -5,6 +5,7 @@ import { Account } from '../../interfaces/dimi-api';
 import { UserModel, CircleModel, TemporaryPasswordModel } from '../../models';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
 import { User } from '../../interfaces';
+// import { getIdentity } from '../../resources/dimi-api';
 
 const getExtraPermissions = async (userIdx: number) => {
   const user = await UserModel.findOne({ idx: userIdx });
@@ -38,6 +39,22 @@ const getEntireIdentity = async (userIdx: number) => {
 };
 
 export const identifyUser = async (req: Request, res: Response) => {
+  // const account: Account = req.body;
+
+  // try {
+  //   const { id: idx } = await getIdentity(account);
+  //   const identity = await getEntireIdentity(idx);
+
+  //   res.json({
+  //     accessToken: await issueToken(identity, false),
+  //     refreshToken: await issueToken(identity, true),
+  //   });
+  // } catch (error) {
+  //   if (error.name === 'HttpException') throw error;
+  //   throw new HttpException(401, '인증에 실패했습니다.');
+  // }
+
+  // temporary login code
   const account: Account = req.body;
 
   try {

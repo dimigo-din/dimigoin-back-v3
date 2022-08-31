@@ -15,6 +15,8 @@ import {
   resetExtraTimes,
   resetStudentsMealStatus,
   resetFMTicket,
+  setConvenienceFood,
+  convenienceDepriveCheck,
 } from './dalgeurak';
 import {
   updateMeal,
@@ -26,6 +28,16 @@ const cronJobs = [
     schedule: '0 */2 * * *',
     action: async () => await refreshWeeklyTimetable(),
     runOnSetup: true,
+  },
+  {
+    name: '달그락 세팅',
+    schedule: '0 0 * * 1',
+    action: async () => {
+      await updateMeal();
+      await setConvenienceFood();
+      await convenienceDepriveCheck();
+    },
+    runOnSetup: false,
   },
   {
     name: '사용자 정보 및 학적 갱신',
@@ -47,16 +59,8 @@ const cronJobs = [
     runOnSetup: false,
   },
   {
-    name: '매주 급식표 업데이트',
-    schedule: '0 0 * * 1',
-    action: async () => {
-      await updateMeal();
-    },
-    runOnSetup: false,
-  },
-  {
     name: '매달 선밥권 초기화',
-    schedule: '0 0 * */1 *',
+    schedule: '0 0 1 * *',
     action: async () => {
       await resetFMTicket();
     },

@@ -6,7 +6,7 @@ const dalgeurakFb = admin.initializeApp({
   credential: admin.credential.cert(dalgeurakFbConfig),
 }, 'dalgeurak');
 
-export const DGLsendPushMessage = async (userFilter: object, title: string, body: string) => {
+export const DGRsendPushMessage = async (userFilter: object, title: string, body: string) => {
   const users = await UserModel.find(userFilter).select('dalgeurakToken');
   const message = { title, body };
   const userTokens = users.reduce((t, u) => [...t, ...(u.dalgeurakToken)], []);

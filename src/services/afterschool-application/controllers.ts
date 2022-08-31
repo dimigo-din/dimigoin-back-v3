@@ -65,24 +65,24 @@ export const applyAfterschool = async (req: Request, res: Response) => {
 };
 
 export const cancelApplication = async (req: Request, res: Response) => {
-  throw new HttpException(400, '추가모집 기간에는 방과후를 취소할 수 없습니다.');
-//   const { _id: applier } = req.user;
-//   const afterschoolApplication = await AfterschoolApplicationModel.findOne({
-//     afterschool: req.params.afterschoolId,
-//     applier,
-//   });
-//   if (!afterschoolApplication) {
-//     throw new HttpException(404, '해당 강좌를 신청한 이력이 없습니다.');
-//   }
-//   const afterschool = await AfterschoolModel.findById(
-//     afterschoolApplication.afterschool,
-//   );
-//   await afterschoolApplication.remove();
-//   await mutateAfterschoolApplierCount(
-//     afterschool._id,
-//     -1,
-//   );
-//   res.json({ afterschoolApplication });
+  // throw new HttpException(400, '추가모집 기간에는 방과후를 취소할 수 없습니다.');
+  const { _id: applier } = req.user;
+  const afterschoolApplication = await AfterschoolApplicationModel.findOne({
+    afterschool: req.params.afterschoolId,
+    applier,
+  });
+  if (!afterschoolApplication) {
+    throw new HttpException(404, '해당 강좌를 신청한 이력이 없습니다.');
+  }
+  const afterschool = await AfterschoolModel.findById(
+    afterschoolApplication.afterschool,
+  );
+  await afterschoolApplication.remove();
+  await mutateAfterschoolApplierCount(
+    afterschool._id,
+    -1,
+  );
+  res.json({ afterschoolApplication });
 };
 
 export const exportAfterschoolApplications = async (req: Request, res: Response) => {

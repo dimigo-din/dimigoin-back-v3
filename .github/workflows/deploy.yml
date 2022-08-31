@@ -66,4 +66,4 @@ jobs:
         script: |
           docker pull dimigoin/dimigoin-server:latest
           docker rm -f dimigoin-server-prod
-          docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env -v /dimigoin-files:/usr/src/app/exported-files -p 5000:5000 -p 4999:4999 -d dimigoin/dimigoin-server
+          docker run --name dimigoin-server-prod --env-file /etc/dimigoin-server.env --network tmp_default -v /dimigoin-files:/usr/src/app/exported-files -p 5000:5000 -p 4999:4999 -d dimigoin/dimigoin-server
