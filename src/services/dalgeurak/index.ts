@@ -316,7 +316,7 @@ export default createService({
     },
     {
       method: 'patch',
-      path: '/stayMeal',
+      path: '/stayMealPrice',
       needAuth: true,
       needPermission: false,
       teacherOnly: true,
@@ -327,7 +327,7 @@ export default createService({
     },
     {
       method: 'get',
-      path: '/stayMeal',
+      path: '/stayMealPrice',
       needAuth: false,
       needPermission: false,
       handler: configController.getStayMealPrice,
