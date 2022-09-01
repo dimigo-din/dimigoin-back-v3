@@ -18,6 +18,7 @@ export enum ConfigKeys {
 export enum MealConfigKeys {
   waitingLine = 'WAITING_LINE',
   intervalTime = 'INTERVAL_TIME',
+  stayMealPrice = 'STAY_MEAL_PRICE',
 }
 
 export enum CirclePeriod {
