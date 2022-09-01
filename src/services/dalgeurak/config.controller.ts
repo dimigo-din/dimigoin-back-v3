@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getMealConfig } from '../../resources/dalgeurak';
 import { HttpException } from '../../exceptions';
 import { MealConfigModel } from '../../models/dalgeurak';
 import { aramark, MealConfigKeys } from '../../types';
@@ -23,6 +24,11 @@ export const updateStayMealPrice = async (req: Request, res: Response) => {
     { key: MealConfigKeys.stayMealPrice },
     { value: price },
   );
+
+  res.json({ price });
+};
+export const getStayMealPrice = async (req: Request, res: Response) => {
+  const price = await getMealConfig(MealConfigKeys.stayMealPrice);
 
   res.json({ price });
 };

@@ -326,6 +326,13 @@ export default createService({
       handler: configController.updateStayMealPrice,
     },
     {
+      method: 'get',
+      path: '/stayMeal',
+      needAuth: false,
+      needPermission: false,
+      handler: configController.getStayMealPrice,
+    },
+    {
       method: 'post',
       path: '/config',
       needAuth: true,
