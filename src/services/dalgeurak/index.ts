@@ -17,6 +17,7 @@ import * as dinnenControllers from './dinnen.controller';
 import * as convenienceControllers from './convenience.controller';
 import * as warningController from './warning.controller';
 import * as cancelController from './cancel.controller';
+import * as configController from './config.controller';
 
 export default createService({
   name: '달그락 서비스',
@@ -312,6 +313,17 @@ export default createService({
         approve: Joi.boolean().required(),
       },
       handler: cancelController.applicationMealCancel,
+    },
+    {
+      method: 'post',
+      path: '/config',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        key: Joi.string().required(),
+        value: Joi.any().required(),
+      },
+      handler: configController.createMealConfig,
     },
     // 디넌용
     {

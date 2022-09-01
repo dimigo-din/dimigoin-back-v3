@@ -3,6 +3,7 @@ import { HttpException } from '../exceptions';
 import {
   MealExceptionModel,
   MealOrderModel,
+  MealConfigModel,
   ConvenienceFoodModel,
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
@@ -12,6 +13,7 @@ import {
   ConvenienceTimeValues,
   ConvenienceFoodValues,
   ConvenienceFoodType,
+  MealConfigKeys,
 } from '../types';
 import {
   getConvAppliEndString,
@@ -22,13 +24,16 @@ import {
   getWeekStartString,
 } from './date';
 
+export const getMealConfig = async (key: string) =>
+  (await MealConfigModel.findOne({ key })).value;
+
 export const resetStudentsMealStatus = async () => {
   await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
 };
 export const resetExtraTimes = async () => {
-  await MealOrderModel.findOneAndUpdate(
-    { field: 'intervalTime' },
-    { extraMinute: 0 },
+  await MealConfigModel.findOneAndUpdate(
+    { key: MealConfigKeys.intervalTime },
+    { value: 0 },
   );
 };
 export const resetFMTicket = async () => {
@@ -144,9 +149,7 @@ export const checkTardy = async (
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
-  const { extraMinute } = await MealOrderModel.findOne({
-    field: 'intervalTime',
-  });
+  const extraMinute = await getMealConfig(MealConfigKeys.intervalTime);
 
   let now: 'lunch' | 'dinner';
 

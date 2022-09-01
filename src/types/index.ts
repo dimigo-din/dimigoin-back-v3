@@ -15,6 +15,10 @@ export enum ConfigKeys {
   monthlyFirstMealTicketCount = 'MONTHLY_FIRST_MEAL_TICKET_COUNT',
   firstMealMaxApplicationPerMeal = 'FIRST_MEAL_MAX_APPLICATION_PER_MEAL',
 }
+export enum MealConfigKeys {
+  waitingLine = 'WAITING_LINE',
+  intervalTime = 'INTERVAL_TIME',
+}
 
 export enum CirclePeriod {
   submitting = 'SUBMITTING',
@@ -141,8 +145,6 @@ export type MealStatusType = typeof MealStatusValues[number];
 export const MealOrderValues = [
   'sequences',
   'times',
-  'intervalTime',
-  'waitingLine',
 ] as const;
 
 export const MealTardyStatusValues = [
@@ -171,8 +173,6 @@ export const WarningValues = [
   'ignoreSequence',
   'etc',
 ] as const;
-
-export const WaitingLineValues = ['corridor', 'outside'] as const;
 
 export const ConvenienceTimeValues = ['breakfast', 'dinner'] as const;
 export type ConvenienceTimeType = typeof ConvenienceTimeValues[number];
