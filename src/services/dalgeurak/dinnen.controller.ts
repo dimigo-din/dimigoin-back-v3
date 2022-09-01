@@ -4,10 +4,11 @@ import { HttpException } from '../../exceptions';
 import { UserModel } from '../../models';
 import { checkTardy } from '../../resources/dalgeurak';
 import { mealStatusFilter } from './controllers';
-import { CheckinLogModel, MealOrderModel } from '../../models/dalgeurak';
+import { CheckinLogModel, MealConfigModel } from '../../models/dalgeurak';
 import { getNowTimeString } from '../../resources/date';
 import io from '../../resources/socket';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
+import { MealConfigKeys } from '../../types';
 
 export const entranceProcess = async (req: Request, res: Response) => {
   const { sid } = req.body;
@@ -38,9 +39,9 @@ export const entranceProcess = async (req: Request, res: Response) => {
 // 대기줄 변경
 export const updateWaitingLine = async (req: Request, res: Response) => {
   const { position } = req.body;
-  await MealOrderModel.updateOne(
-    { field: 'waitingLine' },
-    { position },
+  await MealConfigModel.updateOne(
+    { key: MealConfigKeys.waitingLine },
+    { value: position },
   );
 
   res.json({ position });
