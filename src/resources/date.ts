@@ -32,6 +32,8 @@ export const getWeekStartString = (date?: string) => {
   return moment().startOf('isoWeek').format(format);
 };
 
+export const getWeekCalcul = (add: number) => moment().clone().startOf('isoWeek').add(add, 'day');
+
 export const getWeekEndString = (date?: string) => {
   if (date) return moment(date).endOf('isoWeek').format(format);
   return moment().endOf('isoWeek').format(format);

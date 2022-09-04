@@ -1,13 +1,13 @@
 import axios from 'axios';
 import cheerio from 'cheerio';
-import moment from 'moment';
 import { MealModel } from '../models';
 import { mealsIF } from '../interfaces';
+import { getWeekCalcul } from './date';
 
 const mealApi = 'https://www.dimigo.hs.kr/index.php?mid=school_cafeteria';
 
 const getTargetDay = (add: number) => {
-  const targetDate = moment().clone().startOf('isoWeek').add(add, 'day');
+  const targetDate = getWeekCalcul(add);
   const targetDay = targetDate.format('M-D').split('-');
 
   return {
