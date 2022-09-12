@@ -144,10 +144,12 @@ export const createStudentMealCancel = async (req: Request, res: Response) => {
       },
     }).save();
 
+    const std = await UserModel.findById(student);
+
     await DGRsendPushMessage(
       { _id: student },
       '급식 취소 신청',
-      `${teacher.name} 선생님께서 본인의 급식 취소 신청을 하였습니다.\n2차(급식실) 승인 대기 중입니다.`,
+      `${teacher.name} 선생님께서 ${std.name}님의 급식 취소 신청을 하였습니다.\n2차(급식실) 승인 대기 중입니다.`,
     );
   }
 
