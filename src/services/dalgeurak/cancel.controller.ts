@@ -100,16 +100,62 @@ export const applicationMealCancel = async (req: Request, res: Response) => {
     await DGRsendPushMessage(
       { _id: application.applier },
       '급식 취소 신청 안내',
-      `급식 취소 신청이 1차 ${approve ? '승인' : '반려'}되었습니다.${approve ? '\n2차 승인 대기 중입니다.' : ''}`,
+      `급식 취소 신청이 1차(담임선생님) ${approve ? '승인' : '반려'}되었습니다.${approve ? '\n2차(급식실) 승인 대기 중입니다.' : ''}`,
     );
     if (approve) {
       await DGRsendPushMessage(
         { username: aramark },
         '급식 취소 신청 (급식실)',
-        `${student.grade}학년 ${student.class}반 ${student.name}학생의 급식 취소 신청이 1차 승인되었습니다.\n급식실의 최송 승인 대기 중입니다.`,
+        `${student.grade}학년 ${student.class}반 ${student.name}학생의 급식 취소 신청이 1차(담임선생님) 승인되었습니다.\n급식실의 최종 승인 대기 중입니다.`,
       );
     }
 
     res.json({ data: application });
   } else throw new HttpException(401, '권한이 부족합니다.');
+};
+
+export const createStudentMealCancel = async (req: Request, res: Response) => {
+  const {
+    id, reason, startDate, endDate, time,
+  } = req.body;
+  const { _id: applier } = req.user;
+
+  const teacher = await UserModel.findById(applier);
+
+  if (!isValidDate(startDate) && !isValidDate(endDate)) { throw new HttpException(401, '날짜 형태가 올바르지 않습니다.'); }
+
+  // eslint-disable-next-line prefer-const
+  for (let student of id) {
+    const applicationCheck = await MealCancelModel.findOne({
+      'duration.start': startDate,
+      'duration.end': endDate,
+      applier: student,
+    });
+    // eslint-disable-next-line no-continue
+    if (applicationCheck) continue;
+
+    await new MealCancelModel({
+      applier: student,
+      reason,
+      time,
+      duration: {
+        start: startDate,
+        end: endDate,
+      },
+    }).save();
+
+    await DGRsendPushMessage(
+      { _id: student },
+      '급식 취소 신청',
+      `${teacher.name} 선생님께서 본인의 급식 취소 신청을 하였습니다.\n2차(급식실) 승인 대기 중입니다.`,
+    );
+  }
+
+  await DGRsendPushMessage(
+    { username: aramark },
+    '급식 취소 신청 (급식실)',
+    `${teacher.name} 선생님께서 총 ${id.length}명의 학생을 급식 취소 신청하였습니다.\n급식실의 최종 승인 대기 중입니다.`,
+  );
+
+  res.json({ id });
 };
