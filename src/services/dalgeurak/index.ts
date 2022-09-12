@@ -315,6 +315,21 @@ export default createService({
       handler: cancelController.applicationMealCancel,
     },
     {
+      method: 'post',
+      path: '/cancel/students',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      validateSchema: {
+        id: Joi.array().items(Joi.string()).required(),
+        reason: Joi.string().required(),
+        startDate: Joi.string().required(),
+        endDate: Joi.string().required(),
+        time: Joi.array().items(Joi.string()).required(),
+      },
+      handler: cancelController.createStudentMealCancel,
+    },
+    {
       method: 'patch',
       path: '/stayMealPrice',
       needAuth: true,
