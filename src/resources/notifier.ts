@@ -50,6 +50,7 @@ export const notifyMealMenu = async (targetGrades: Grade[], time: MealTime) => {
   const meal = await MealModel.findOne({ date: today });
   if (!meal) return;
   if (!(time as string in meal)) return;
+  if (meal[time].length === 0) return;
   if (meal[time].toString() === '급식 정보가 없습니다.') return;
   await sendPushMessage(
     { grade: { $in: targetGrades } },
