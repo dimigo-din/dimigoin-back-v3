@@ -36,6 +36,12 @@ export const updateMeal = async () => {
   for (let i = 0; i < 7; i += 1) {
     const { month, day, date } = getTargetDay(i);
 
+    const mealCheck = await MealModel.findOne({
+      date,
+    });
+    // eslint-disable-next-line no-continue
+    if (mealCheck) continue;
+
     try {
       const { data } = await axios.get(mealApi, {
         params: {
