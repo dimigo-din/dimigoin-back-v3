@@ -97,7 +97,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       { permissions: 'dalgeurak', userType: 'S' },
       '선밥 신청 알림',
       `${group
-        ? `${representative.name} 학생 외 총 ${appliers.length}명이 선밥 신청하였습니다.`
+        ? `${representative.name} 학생 포함 총 ${appliers.length}명이 선밥 신청하였습니다.`
         : `${representative.name} 학생이 선밥 신청하였습니다.`
       }\n디넌의 승인 대기 중입니다.`,
     );
