@@ -36,9 +36,6 @@ export const resetExtraTimes = async () => {
     { value: 0 },
   );
 };
-export const resetFMTicket = async () => {
-  await UserModel.updateMany({ userType: 'S' }, { fmticket: 2 });
-};
 
 export const setConvenienceFood = async () => {
   const foods: ConvenienceFoodType[][] = [

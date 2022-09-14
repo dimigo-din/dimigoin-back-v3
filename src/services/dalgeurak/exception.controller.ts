@@ -133,14 +133,14 @@ export const useFirstMealTicket = async (req: Request, res: Response) => {
 
   res.json({ ticket: monthlyTicketCount - (monthlyUsedTicket + 1) });
 };
-export const cancelMealException = async (req: Request, res: Response) => {
-  const { _id } = req.user;
-  const exception = await MealExceptionModel.findOne({ applier: _id });
-  if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
+// export const cancelMealException = async (req: Request, res: Response) => {
+//   const { _id } = req.user;
+//   const exception = await MealExceptionModel.findOne({ applier: _id });
+//   if (!exception) throw new HttpException(404, '선/후밥 신청 데이터를 찾을 수 없습니다.');
 
-  await exception.deleteOne();
-  res.json({ exception });
-};
+//   await exception.deleteOne();
+//   res.json({ exception });
+// };
 export const permissionMealException = async (req: Request, res: Response) => {
   const { sid, permission } = req.body;
 

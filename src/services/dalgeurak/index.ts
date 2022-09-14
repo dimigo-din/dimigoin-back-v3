@@ -116,14 +116,14 @@ export default createService({
       teacherOnly: true,
       handler: exceptionControllers.permissionMealException,
     },
-    {
-      method: 'delete',
-      path: '/exception',
-      needAuth: true,
-      needPermission: false,
-      studentOnly: true,
-      handler: exceptionControllers.cancelMealException,
-    },
+    // {
+    //   method: 'delete',
+    //   path: '/exception',
+    //   needAuth: true,
+    //   needPermission: false,
+    //   studentOnly: true,
+    //   handler: exceptionControllers.cancelMealException,
+    // },
     {
       method: 'get',
       path: '/nowSequence',
