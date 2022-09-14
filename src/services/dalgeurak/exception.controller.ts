@@ -117,12 +117,12 @@ export const createMealExceptions = async (req: Request, res: Response) => {
 // };
 export const permissionMealException = async (req: Request, res: Response) => {
   const {
-    sid,
+    id: _id,
     permission,
     reason = '',
   } = req.body;
 
-  const exception = await MealExceptionModel.findOne({ applier: sid });
+  const exception = await MealExceptionModel.findOne({ _id });
   if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
 
   Object.assign(exception, {
@@ -132,7 +132,7 @@ export const permissionMealException = async (req: Request, res: Response) => {
   await exception.save();
 
   await DGRsendPushMessage(
-    { _id: sid },
+    { _id: exception.applier },
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청 알림`,
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청이 ${
       permission === 'approve' ? '승인'

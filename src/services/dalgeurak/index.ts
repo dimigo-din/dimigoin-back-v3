@@ -99,7 +99,7 @@ export default createService({
       needPermission: true,
       validateSchema: {
         permission: Joi.string().valid(...MealExceptionApplicationStatusValues).required(),
-        sid: Joi.string().required(),
+        id: Joi.string().required(),
         reason: Joi.string(),
       },
       handler: exceptionControllers.permissionMealException,
