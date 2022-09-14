@@ -4,7 +4,6 @@ import {
   ClassValues,
   MealTimeValues,
   MealExceptionApplicationStatusValues,
-  MealExceptionValues,
 } from '../../types';
 
 import * as controllers from './controllers';
@@ -64,19 +63,19 @@ export default createService({
       needPermission: true,
       handler: exceptionControllers.getMealExceptions,
     },
-    {
-      method: 'post',
-      path: '/exception/give',
-      needAuth: true,
-      needPermission: false,
-      validateSchema: {
-        type: Joi.string().valid(...MealExceptionValues).required(),
-        sid: Joi.string().required(),
-        reason: Joi.string().required(),
-      },
-      teacherOnly: true,
-      handler: exceptionControllers.giveMealException,
-    },
+    // {
+    //   method: 'post',
+    //   path: '/exception/give',
+    //   needAuth: true,
+    //   needPermission: false,
+    //   validateSchema: {
+    //     type: Joi.string().valid(...MealExceptionValues).required(),
+    //     sid: Joi.string().required(),
+    //     reason: Joi.string().required(),
+    //   },
+    //   teacherOnly: true,
+    //   handler: exceptionControllers.giveMealException,
+    // },
     {
       method: 'post',
       path: '/exception/:type',
