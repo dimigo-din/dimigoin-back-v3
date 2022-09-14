@@ -97,6 +97,7 @@ export default createService({
       needPermission: false,
       studentOnly: true,
       validateSchema: {
+        sid: Joi.array().items(Joi.string()).required(),
         reason: Joi.string().required(),
         time: Joi.string().valid(...MealTimeValues).required(),
         date: Joi.string().required(),

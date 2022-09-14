@@ -1,4 +1,5 @@
 import { ConfigModel } from '../models/config';
+import { MealConfigModel } from '../models/dalgeurak';
 
 export const getConfig = async (key: string) =>
   (await ConfigModel.findByKey(key)).value;
@@ -18,3 +19,6 @@ export const getEntireConfigs = async () => {
   );
   return reduedConfigs;
 };
+
+export const getMealConfig = async (key: string) =>
+  (await MealConfigModel.findOne({ key })).value;

@@ -37,7 +37,7 @@ export const createMealCancel = async (req: Request, res: Response) => {
   await DGRsendPushMessage(
     { role: `${req.user.grade}학년 ${req.user.class}반 담임` },
     '급식 취소 신청 (담임)',
-    `${req.user.name} 학생이 급식 취소를 신청하였습니다.`,
+    `${req.user.name} 학생이 급식 취소를 신청하였습니다.\n담임 선생님의 1차 승인 대기 중입니다.`,
   );
 
   res.json({ data });

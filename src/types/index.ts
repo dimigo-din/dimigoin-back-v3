@@ -13,12 +13,13 @@ export enum ConfigKeys {
   mealTimes = 'MEAL_TIMES',
   afterschoolApplyPeriod = 'AFTERSCHOOL_APPLY_PERIOD',
   monthlyFirstMealTicketCount = 'MONTHLY_FIRST_MEAL_TICKET_COUNT',
-  firstMealMaxApplicationPerMeal = 'FIRST_MEAL_MAX_APPLICATION_PER_MEAL',
 }
 export enum MealConfigKeys {
   waitingLine = 'WAITING_LINE',
   intervalTime = 'INTERVAL_TIME',
   stayMealPrice = 'STAY_MEAL_PRICE',
+  firstMealMaxApplicationPerMeal = 'FIRST_MEAL_MAX_APPLICATION_PER_MEAL',
+  lastMealMaxApplicationPerMeal = 'LAST_MEAL_MAX_APPLICATION_PER_MEAL',
 }
 
 export enum CirclePeriod {
@@ -164,6 +165,9 @@ export type MealTardyStatusType = typeof MealTardyStatusValues[number];
 
 export const MealTimeValues = ['breakfast', 'lunch', 'dinner'] as const;
 export type MealTimeType = typeof MealTimeValues[number];
+
+export const MealExceptionTimeValues = ['lunch', 'dinner'] as const;
+export type MealExceptionTimeType = typeof MealExceptionTimeValues[number];
 
 export type ClassType = [number, number, number, number, number, number];
 
