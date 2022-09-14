@@ -16,7 +16,7 @@ import { UserModel } from '../../models';
 import { getMealConfig } from '../../resources/config';
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const users = await MealExceptionModel.find({ }).populate(popUser('applier'));
+  const users = await MealExceptionModel.find({ }).populate(popUser('applier')).populate(popUser('appliers'));
 
   res.json({ users });
 };
