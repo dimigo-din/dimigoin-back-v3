@@ -6,7 +6,6 @@ import {
   MealExceptionApplicationStatusValues,
   MealExceptionValues,
 } from '../../types';
-import { checkApplicationTime } from '../../middlewares/check-application-time';
 
 import * as controllers from './controllers';
 import * as extraControllers from './extra.controller';
@@ -77,18 +76,6 @@ export default createService({
       },
       teacherOnly: true,
       handler: exceptionControllers.giveMealException,
-    },
-    {
-      method: 'post',
-      path: '/exception/ticket',
-      needAuth: true,
-      needPermission: false,
-      studentOnly: true,
-      validateSchema: {
-        time: Joi.string().valid(...MealTimeValues).required(),
-      },
-      middlewares: [checkApplicationTime],
-      handler: exceptionControllers.useFirstMealTicket,
     },
     {
       method: 'post',

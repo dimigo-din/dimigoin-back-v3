@@ -3,31 +3,17 @@ import { ObjectId } from 'mongodb';
 import { popUser } from '../../resources/dalgeurak';
 import {
   getDayCode,
-  getMonthEndString,
-  getMonthStartString,
   getNextWeekDay,
-  getTodayDateString,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { MealExceptionModel } from '../../models/dalgeurak';
 import {
-  ConfigKeys, MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
+  MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { UserModel } from '../../models';
-import { getConfig, getMealConfig } from '../../resources/config';
-
-const getMonthlyUsedTicket = async (applier: ObjectId) => await MealExceptionModel.countDocuments({
-  applier,
-  date: {
-    $gte: getMonthStartString(),
-    $lte: getMonthEndString(),
-  },
-});
-const getTodayUsedTickets = async () => await MealExceptionModel.countDocuments({
-  date: getTodayDateString(),
-});
+import { getMealConfig } from '../../resources/config';
 
 export const getMealExceptions = async (req: Request, res: Response) => {
   const users = await MealExceptionModel.find({ }).populate(popUser('applier'));
@@ -101,38 +87,6 @@ export const createMealExceptions = async (req: Request, res: Response) => {
 };
 
 // 선후밥
-export const useFirstMealTicket = async (req: Request, res: Response) => {
-  const { _id: applier } = req.user;
-  const { time } = req.body;
-
-  const maxApplicationCount = await getMealConfig(MealConfigKeys.firstMealMaxApplicationPerMeal);
-  const todayUsedTickets = await getTodayUsedTickets();
-
-  const monthlyTicketCount = await getConfig(ConfigKeys.monthlyFirstMealTicketCount);
-  const monthlyUsedTicket = await getMonthlyUsedTicket(applier);
-
-  if (todayUsedTickets >= maxApplicationCount) throw new HttpException(401, '신청 인원을 초과했습니다.');
-  if (monthlyUsedTicket >= monthlyTicketCount) throw new HttpException(401, '이번 달 선밥권 티켓을 모두 사용했습니다.');
-
-  const todayUsedTicket = await MealExceptionModel.findOne({
-    applier,
-    date: getTodayDateString(),
-  });
-
-  if (todayUsedTicket.time === time) throw new HttpException(401, '이미 해당 급식에 선밥권을 사용했습니다.');
-
-  await new MealExceptionModel({
-    applier,
-    exceptionType: 'first',
-    reason: '선밥권',
-    applicationStatus: 'approve',
-    ticket: true,
-    time,
-    date: getTodayDateString(),
-  }).save();
-
-  res.json({ ticket: monthlyTicketCount - (monthlyUsedTicket + 1) });
-};
 // export const cancelMealException = async (req: Request, res: Response) => {
 //   const { _id } = req.user;
 //   const exception = await MealExceptionModel.findOne({ applier: _id });

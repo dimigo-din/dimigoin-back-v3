@@ -17,7 +17,6 @@ interface IMealException extends Document {
   reason: string;
   exceptionType: MealExceptionType;
   applicationStatus: MealExceptionApplicationStatus;
-  ticket: boolean;
   date: string;
   time: MealTimeType;
 }
@@ -27,7 +26,6 @@ const mealExceptionSchema = createSchema({
   reason: Type.string({ required: true }),
   exceptionType: Type.string({ required: true, enum: MealExceptionValues }),
   applicationStatus: Type.string({ required: true, enum: MealExceptionApplicationStatusValues, default: 'waiting' }),
-  ticket: Type.boolean({ required: true, default: false }),
   date: Type.string({ required: true }),
   time: Type.string({ required: true, enum: MealTimeValues }),
 }, { versionKey: false, timestamps: true });
