@@ -84,7 +84,8 @@ export default createService({
       needPermission: false,
       studentOnly: true,
       validateSchema: {
-        sid: Joi.array().items(Joi.string()).required(),
+        group: Joi.boolean().required(),
+        appliers: Joi.array().items(Joi.string()),
         reason: Joi.string().required(),
         time: Joi.string().valid(...MealTimeValues).required(),
         date: Joi.string().required(),
@@ -95,12 +96,12 @@ export default createService({
       method: 'patch',
       path: '/exception/application',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       validateSchema: {
         permission: Joi.string().valid(...MealExceptionApplicationStatusValues).required(),
         sid: Joi.string().required(),
+        reason: Joi.string(),
       },
-      teacherOnly: true,
       handler: exceptionControllers.permissionMealException,
     },
     // {

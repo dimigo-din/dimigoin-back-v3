@@ -23,30 +23,46 @@ export const getMealExceptions = async (req: Request, res: Response) => {
 export const createMealExceptions = async (req: Request, res: Response) => {
   const { type } = req.params;
   const {
-    sid, reason, date, time,
+    appliers = [],
+    group,
+    reason,
+    date,
+    time,
   } = req.body;
   const { _id: applier } = req.user;
 
-  if (sid.length < 5) throw new HttpException(401, '최소 신청자 수는 다섯 명부터입니다.');
+  if (appliers.length < 5 && group) throw new HttpException(401, '최소 신청자 수는 다섯 명부터입니다.');
   if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
   if (!MealExceptionTimeValues.includes(time)) throw new HttpException(401, 'time 형태가 올바르지 않습니다.');
 
   const today = getDayCode();
   if (today === 'fri' || today === 'sat' || today === 'sun') throw new HttpException(401, '신청할 수 없는 요일입니다.');
 
-  const exceptionStatus = await MealExceptionModel.find({
-    _id: {
-      $in: sid.map((s: string) => new ObjectId(s)),
-    },
-    applicationStatus: {
-      $ne: 'reject',
-    },
-  });
-  if (exceptionStatus.length > 0) throw new HttpException(401, '이미 신청되어 있는 학생이 있습니다.');
-
   const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
   if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
   const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
+
+  const exceptionStatus = await MealExceptionModel.findOne({
+    $or: [
+      { applier },
+      {
+        appliers: {
+          $in: appliers.map((s: string) => new ObjectId(s)),
+        },
+      },
+    ],
+    applicationStatus: {
+      $ne: 'reject',
+    },
+    time,
+    date: appliDate,
+  });
+  if (exceptionStatus) {
+    throw new HttpException(
+      401,
+      group ? '이미 신청되어 있는 학생이 있습니다.' : '이미 신청하였습니다.',
+    );
+  }
 
   const firstMealMaxNum = await getMealConfig(MealConfigKeys.firstMealMaxApplicationPerMeal);
   const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
@@ -56,30 +72,34 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     date: appliDate,
     time,
   });
-  if (exceptionMealCount + sid.length >= (type === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
+  if (group && exceptionMealCount + appliers.length >= (type === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
     throw new HttpException(401, `${
-      (exceptionMealCount + sid.length) - (type === 'first' ? firstMealMaxNum : lastMealMaxNum)
+      (exceptionMealCount + appliers.length) - (type === 'first' ? firstMealMaxNum : lastMealMaxNum)
     }명 초과하였습니다.`);
+  } else if (!group && exceptionMealCount >= (type === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
+    throw new HttpException(401, '신청인원수를 초과하였습니다.');
   }
 
-  sid.forEach(async (student: string) => {
-    await new MealExceptionModel({
-      exceptionType: type,
-      applier: student,
-      reason,
-      time,
-      date: appliDate,
-      applicationStatus: type === 'last' ? 'approve' : 'waiting',
-    });
+  await new MealExceptionModel({
+    exceptionType: type,
+    applier,
+    appliers,
+    reason,
+    time,
+    date: appliDate,
+    applicationStatus: type === 'last' ? 'approve' : 'waiting',
   });
 
   const representative = await UserModel.findById(applier);
 
   if (type === 'first') {
     await DGRsendPushMessage(
-      { role: `${representative.grade}학년 ${representative.class}반 담임` },
+      { permissions: 'dalgeurak', userType: 'S' },
       '선밥 신청 알림',
-      `${representative.name} 학생 외 총 ${sid.length}명이 선밥 신청하였습니다.\n담임 선생님의 승인 대기 중입니다.`,
+      `${group
+        ? `${representative.name} 학생 외 총 ${appliers.length}명이 선밥 신청하였습니다.`
+        : `${representative.name} 학생이 선밥 신청하였습니다.`
+      }\n디넌의 승인 대기 중입니다.`,
     );
   }
 
@@ -96,12 +116,20 @@ export const createMealExceptions = async (req: Request, res: Response) => {
 //   res.json({ exception });
 // };
 export const permissionMealException = async (req: Request, res: Response) => {
-  const { sid, permission } = req.body;
+  const {
+    sid,
+    permission,
+    reason = '',
+  } = req.body;
 
   const exception = await MealExceptionModel.findOne({ applier: sid });
   if (!exception) throw new HttpException(404, '신청 데이터를 찾을 수 없습니다.');
 
-  Object.assign(exception, { applicationStatus: permission });
+  Object.assign(exception, {
+    applicationStatus: permission,
+    ...() => (permission === 'reject' ? { rejectReason: reason } : {}),
+  });
+  await exception.save();
 
   await DGRsendPushMessage(
     { _id: sid },
@@ -112,7 +140,6 @@ export const permissionMealException = async (req: Request, res: Response) => {
     } 되었습니다.`,
   );
 
-  await exception.save();
   res.json({ exception });
 };
 export const giveMealException = async (req: Request, res: Response) => {

@@ -12,7 +12,6 @@ export enum ConfigKeys {
   isMovingClassSystem = 'IS_MOVING_CLASS_SYSTEM',
   mealTimes = 'MEAL_TIMES',
   afterschoolApplyPeriod = 'AFTERSCHOOL_APPLY_PERIOD',
-  monthlyFirstMealTicketCount = 'MONTHLY_FIRST_MEAL_TICKET_COUNT',
 }
 export enum MealConfigKeys {
   waitingLine = 'WAITING_LINE',
