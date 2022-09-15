@@ -11,7 +11,7 @@ import {
 const timezone = 'Asia/Seoul';
 moment.tz.setDefault(timezone);
 
-const format = 'YYYY-MM-DD';
+export const format = 'YYYY-MM-DD';
 
 export const getTodayDateString = () => moment().format(format);
 export const getNowTimeString = () => moment().format('YYYY-MM-DD HH:mm');

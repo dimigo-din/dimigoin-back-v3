@@ -19,6 +19,7 @@ export enum MealConfigKeys {
   stayMealPrice = 'STAY_MEAL_PRICE',
   firstMealMaxApplicationPerMeal = 'FIRST_MEAL_MAX_APPLICATION_PER_MEAL',
   lastMealMaxApplicationPerMeal = 'LAST_MEAL_MAX_APPLICATION_PER_MEAL',
+  mealExceptionApplicationCount = 'MEAL_EXCEPTION_APPLICATION_COUNT',
 }
 
 export enum CirclePeriod {

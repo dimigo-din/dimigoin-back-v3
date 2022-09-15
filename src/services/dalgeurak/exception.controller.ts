@@ -2,8 +2,10 @@ import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
 import { popUser } from '../../resources/dalgeurak';
 import {
+  format,
   getDayCode,
   getNextWeekDay,
+  getWeekCalcul,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
@@ -30,6 +32,29 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     time,
   } = req.body;
   const { _id: applier } = req.user;
+
+  const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
+
+  const applications = await MealExceptionModel.find({
+    date: {
+      $gte: getWeekCalcul(7).format(format),
+      $lte: getWeekCalcul(11).format(format),
+    },
+    $or: [
+      { applier },
+      {
+        appliers: {
+          $in: appliers.map((s: string) => new ObjectId(s)),
+        },
+      },
+    ],
+  });
+  if (applications >= applicationCount) {
+    throw new HttpException(
+      401,
+      `${applicationCount}회 이상 신청${group ? '한 학생이 있습니다.' : '할 수 없습니다.'}`,
+    );
+  }
 
   if (appliers.length < 5 && group) throw new HttpException(401, '최소 신청자 수는 다섯 명부터입니다.');
   if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
