@@ -52,7 +52,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   if (applications >= applicationCount) {
     throw new HttpException(
       401,
-      `${applicationCount}회 이상 신청${group ? '한 학생이 있습니다.' : '할 수 없습니다.'}`,
+      `${applicationCount}회 이상 신청${group ? '한 학생이 있어 선/후밥을 신청할 수 없습니다.' : '할 수 없습니다.'}`,
     );
   }
 
