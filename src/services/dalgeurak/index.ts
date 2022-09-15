@@ -4,9 +4,7 @@ import {
   ClassValues,
   MealTimeValues,
   MealExceptionApplicationStatusValues,
-  MealExceptionValues,
 } from '../../types';
-import { checkApplicationTime } from '../../middlewares/check-application-time';
 
 import * as controllers from './controllers';
 import * as extraControllers from './extra.controller';
@@ -65,31 +63,19 @@ export default createService({
       needPermission: true,
       handler: exceptionControllers.getMealExceptions,
     },
-    {
-      method: 'post',
-      path: '/exception/give',
-      needAuth: true,
-      needPermission: false,
-      validateSchema: {
-        type: Joi.string().valid(...MealExceptionValues).required(),
-        sid: Joi.string().required(),
-        reason: Joi.string().required(),
-      },
-      teacherOnly: true,
-      handler: exceptionControllers.giveMealException,
-    },
-    {
-      method: 'post',
-      path: '/exception/ticket',
-      needAuth: true,
-      needPermission: false,
-      studentOnly: true,
-      validateSchema: {
-        time: Joi.string().valid(...MealTimeValues).required(),
-      },
-      middlewares: [checkApplicationTime],
-      handler: exceptionControllers.useFirstMealTicket,
-    },
+    // {
+    //   method: 'post',
+    //   path: '/exception/give',
+    //   needAuth: true,
+    //   needPermission: false,
+    //   validateSchema: {
+    //     type: Joi.string().valid(...MealExceptionValues).required(),
+    //     sid: Joi.string().required(),
+    //     reason: Joi.string().required(),
+    //   },
+    //   teacherOnly: true,
+    //   handler: exceptionControllers.giveMealException,
+    // },
     {
       method: 'post',
       path: '/exception/:type',
@@ -97,6 +83,8 @@ export default createService({
       needPermission: false,
       studentOnly: true,
       validateSchema: {
+        group: Joi.boolean().required(),
+        appliers: Joi.array().items(Joi.string()),
         reason: Joi.string().required(),
         time: Joi.string().valid(...MealTimeValues).required(),
         date: Joi.string().required(),
@@ -107,22 +95,22 @@ export default createService({
       method: 'patch',
       path: '/exception/application',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       validateSchema: {
         permission: Joi.string().valid(...MealExceptionApplicationStatusValues).required(),
-        sid: Joi.string().required(),
+        id: Joi.string().required(),
+        reason: Joi.string(),
       },
-      teacherOnly: true,
       handler: exceptionControllers.permissionMealException,
     },
-    {
-      method: 'delete',
-      path: '/exception',
-      needAuth: true,
-      needPermission: false,
-      studentOnly: true,
-      handler: exceptionControllers.cancelMealException,
-    },
+    // {
+    //   method: 'delete',
+    //   path: '/exception',
+    //   needAuth: true,
+    //   needPermission: false,
+    //   studentOnly: true,
+    //   handler: exceptionControllers.cancelMealException,
+    // },
     {
       method: 'get',
       path: '/nowSequence',

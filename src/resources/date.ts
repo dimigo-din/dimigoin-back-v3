@@ -11,7 +11,7 @@ import {
 const timezone = 'Asia/Seoul';
 moment.tz.setDefault(timezone);
 
-const format = 'YYYY-MM-DD';
+export const format = 'YYYY-MM-DD';
 
 export const getTodayDateString = () => moment().format(format);
 export const getNowTimeString = () => moment().format('YYYY-MM-DD HH:mm');
@@ -31,6 +31,8 @@ export const getWeekStartString = (date?: string) => {
   if (date) return moment(date).startOf('isoWeek').format(format);
   return moment().startOf('isoWeek').format(format);
 };
+
+export const getNextWeekDay = (day: number) => moment().day(day).format(format);
 
 export const getWeekCalcul = (add: number) => moment().clone().startOf('isoWeek').add(add, 'day');
 
