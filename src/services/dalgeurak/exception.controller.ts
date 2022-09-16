@@ -35,7 +35,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
 
   const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
-  const applications = await MealExceptionModel.find({
+  const applications = await MealExceptionModel.count({
     date: {
       $gte: getWeekCalcul(7).format(format),
       $lte: getWeekCalcul(11).format(format),
@@ -113,7 +113,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     time,
     date: appliDate,
     applicationStatus: type === 'last' ? 'approve' : 'waiting',
-  });
+  }).save();
 
   const representative = await UserModel.findById(applier);
 
