@@ -103,6 +103,16 @@ export default createService({
       },
       handler: exceptionControllers.permissionMealException,
     },
+    {
+      method: 'post',
+      path: '/exception/enter',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.string().required(),
+      },
+      handler: exceptionControllers.enterException,
+    },
     // {
     //   method: 'delete',
     //   path: '/exception',

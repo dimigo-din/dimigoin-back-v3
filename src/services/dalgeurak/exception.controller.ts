@@ -1,10 +1,11 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { popUser } from '../../resources/dalgeurak';
+import { getNowMealTime, popUser } from '../../resources/dalgeurak';
 import {
   format,
   getDayCode,
   getNextWeekDay,
+  getTodayDateString,
   getWeekCalcul,
 } from '../../resources/date';
 import io from '../../resources/socket';
@@ -44,7 +45,11 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       { applier },
       {
         appliers: {
-          $in: appliers.map((s: string) => new ObjectId(s)),
+          $elemMatch: {
+            student: {
+              $in: appliers.map((s: string) => new ObjectId(s)),
+            },
+          },
         },
       },
     ],
@@ -72,7 +77,11 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       { applier },
       {
         appliers: {
-          $in: appliers.map((s: string) => new ObjectId(s)),
+          $elemMatch: {
+            student: {
+              $in: appliers.map((s: string) => new ObjectId(s)),
+            },
+          },
         },
       },
     ],
@@ -108,7 +117,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   await new MealExceptionModel({
     exceptionType: type,
     applier,
-    appliers,
+    appliers: appliers.map((e: string) => ({ sid: e, entered: false })),
     reason,
     time,
     date: appliDate,
@@ -203,4 +212,49 @@ export const giveMealException = async (req: Request, res: Response) => {
     _id: sid,
     mealStatus: 'certified',
   });
+};
+
+export const enterException = async (req: Request, res: Response) => {
+  const { sid: applier } = req.body;
+
+  const today = getTodayDateString();
+  const now = getNowMealTime();
+
+  const exception = await MealExceptionModel.findOne({
+    $or: [
+      { applier },
+      {
+        appliers: {
+          $elemMatch: {
+            student: applier,
+          },
+        },
+      },
+    ],
+    date: today,
+    time: now,
+  });
+
+  if (exception.group) {
+    await MealExceptionModel.updateOne(
+      { _id: exception._id },
+      {
+        appliers: exception.appliers.map((e) => {
+          if (e.sid === applier) {
+            return {
+              sid: applier,
+              entered: true,
+            };
+          } return { ...e };
+        }),
+      },
+    );
+  } else {
+    await MealExceptionModel.updateOne(
+      { _id: exception._id },
+      { entered: true },
+    );
+  }
+
+  res.json({ exception });
 };
