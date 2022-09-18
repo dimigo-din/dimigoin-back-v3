@@ -13,11 +13,13 @@ import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { MealExceptionModel } from '../../models/dalgeurak';
 import {
-  MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
+  MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { UserModel } from '../../models';
 import { getMealConfig } from '../../resources/config';
+
+const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
 export const getMealExceptions = async (req: Request, res: Response) => {
   const users = await MealExceptionModel.find({ }).populate(popUser('applier')).populate(popUser('appliers'));
@@ -72,7 +74,6 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   const today = getDayCode();
   if (today === 'fri' || today === 'sat' || today === 'sun') throw new HttpException(401, '신청할 수 없는 요일입니다.');
 
-  const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
   if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
   const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
 
@@ -121,7 +122,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   await new MealExceptionModel({
     exceptionType: type,
     applier,
-    appliers: appliers.map((e: string) => ({ sid: e, entered: false })),
+    appliers: appliers.map((e: string) => ({ student: e, entered: false })),
     reason,
     time,
     date: appliDate,
@@ -244,9 +245,9 @@ export const enterException = async (req: Request, res: Response) => {
       { _id: exception._id },
       {
         appliers: exception.appliers.map((e) => {
-          if (e.sid === applier) {
+          if (e.student === applier) {
             return {
-              sid: applier,
+              student: applier,
               entered: true,
             };
           } return { ...e };
@@ -261,4 +262,19 @@ export const enterException = async (req: Request, res: Response) => {
   }
 
   res.json({ exception });
+};
+
+export const getExceptionRemain = async (req: Request, res: Response) => {
+  const { date, time } = req.params;
+
+  if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
+  const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
+
+  const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
+  const exception = await MealExceptionModel.count({
+    date: appliDate,
+    time: time as MealExceptionTimeType,
+  });
+
+  res.json({ remain: lastMealMaxNum - exception });
 };

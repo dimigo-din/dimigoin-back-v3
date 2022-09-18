@@ -113,6 +113,13 @@ export default createService({
       },
       handler: exceptionControllers.enterException,
     },
+    {
+      method: 'get',
+      path: '/exception/:date/:time',
+      needAuth: true,
+      needPermission: false,
+      handler: exceptionControllers.getExceptionRemain,
+    },
     // {
     //   method: 'delete',
     //   path: '/exception',
