@@ -26,6 +26,7 @@ interface IMealException extends Document {
   time: MealTimeType;
   rejectReason?: string;
   entered?: boolean;
+  phone: string;
 }
 
 const mealExceptionSchema = createSchema({
@@ -42,6 +43,7 @@ const mealExceptionSchema = createSchema({
   time: Type.string({ required: true, enum: MealTimeValues }),
   rejectReason: Type.string(),
   entered: Type.boolean({ default: false }),
+  phone: Type.string({ required: true }),
 }, { versionKey: false, timestamps: true });
 
 const MealExceptionModel: Model<IMealException> = dalgeurakDB.model('mealexception', mealExceptionSchema);

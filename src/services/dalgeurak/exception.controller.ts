@@ -5,6 +5,7 @@ import {
   format,
   getDayCode,
   getNextWeekDay,
+  getNowTime,
   getTodayDateString,
   getWeekCalcul,
 } from '../../resources/date';
@@ -33,6 +34,9 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     time,
   } = req.body;
   const { _id: applier } = req.user;
+
+  const nowTime = getNowTime();
+  if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
 
   const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
