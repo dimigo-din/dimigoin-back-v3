@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
 import {
-  AfterschoolTimeValues, ClassValues, DayValues, GradeValues,
+  AfterschoolTimeValues, NightTimeValues, ClassValues, DayValues, GradeValues,
 } from '../../types';
 import { createService } from '../index';
 
@@ -38,7 +38,7 @@ export default createService({
         key: Joi.string().optional(),
         teacher: Joi.string().required(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).required(),
-        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).required(),
+        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues, ...NightTimeValues)).required(),
         capacity: Joi.number().required(),
         place: Joi.string().required(),
       },
@@ -66,7 +66,7 @@ export default createService({
         key: Joi.string().optional(),
         teacher: Joi.string().optional(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).optional(),
-        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).optional(),
+        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues, ...NightTimeValues)).optional(),
         capacity: Joi.number().optional(),
         place: Joi.string().optional(),
       },
