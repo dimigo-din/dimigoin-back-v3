@@ -114,3 +114,17 @@ export const getCheckInLog = async (req: Request, res: Response) => {
 
   res.json({ checkinlog });
 };
+
+export const getStudentInfo = async (req: Request, res: Response) => {
+  const { student } = req.query;
+
+  const user = await UserModel.findOne({ _id: student })
+    .select('grade')
+    .select('class')
+    .select('serial')
+    .select('name');
+
+  res.json({
+    user,
+  });
+};

@@ -130,6 +130,13 @@ export default createService({
     // },
     {
       method: 'get',
+      path: '/user',
+      needAuth: true,
+      needPermission: true,
+      handler: controllers.getStudentInfo,
+    },
+    {
+      method: 'get',
       path: '/nowSequence',
       needAuth: true,
       needPermission: false,
