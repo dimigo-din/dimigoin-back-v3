@@ -78,6 +78,16 @@ export default createService({
     // },
     {
       method: 'post',
+      path: '/exception/enter',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.string().required(),
+      },
+      handler: exceptionControllers.enterException,
+    },
+    {
+      method: 'post',
       path: '/exception/:type',
       needAuth: true,
       needPermission: false,
@@ -102,16 +112,6 @@ export default createService({
         reason: Joi.string(),
       },
       handler: exceptionControllers.permissionMealException,
-    },
-    {
-      method: 'post',
-      path: '/exception/enter',
-      needAuth: true,
-      needPermission: true,
-      validateSchema: {
-        sid: Joi.string().required(),
-      },
-      handler: exceptionControllers.enterException,
     },
     {
       method: 'get',

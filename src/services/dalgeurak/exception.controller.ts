@@ -125,6 +125,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     appliers: appliers.map((e: string) => ({ student: e, entered: false })),
     reason,
     time,
+    group,
     date: appliDate,
     applicationStatus: type === 'last' ? 'approve' : 'waiting',
   }).save();
@@ -224,6 +225,7 @@ export const enterException = async (req: Request, res: Response) => {
 
   const today = getTodayDateString();
   const now = getNowMealTime();
+  if (!now) throw new HttpException(401, '점심/저녁시간이 아닙니다.');
 
   const exception = await MealExceptionModel.findOne({
     $or: [
@@ -239,18 +241,19 @@ export const enterException = async (req: Request, res: Response) => {
     date: today,
     time: now,
   });
+  if (!exception) throw new HttpException(401, '현재 시간에 선/후밥 신청한 학생이 없습니다.');
 
   if (exception.group) {
     await MealExceptionModel.updateOne(
       { _id: exception._id },
       {
         appliers: exception.appliers.map((e) => {
-          if (e.student === applier) {
+          if (String(e.student) === applier) {
             return {
               student: applier,
               entered: true,
             };
-          } return { ...e };
+          } return e;
         }),
       },
     );
