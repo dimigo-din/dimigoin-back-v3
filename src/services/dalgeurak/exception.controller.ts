@@ -1,21 +1,25 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { popUser } from '../../resources/dalgeurak';
+import { getNowMealTime, popUser } from '../../resources/dalgeurak';
 import {
   format,
   getDayCode,
   getNextWeekDay,
+  getNowTime,
+  getTodayDateString,
   getWeekCalcul,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { MealExceptionModel } from '../../models/dalgeurak';
 import {
-  MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
+  MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { UserModel } from '../../models';
 import { getMealConfig } from '../../resources/config';
+
+const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
 export const getMealExceptions = async (req: Request, res: Response) => {
   const users = await MealExceptionModel.find({ }).populate(popUser('applier')).populate(popUser('appliers'));
@@ -33,6 +37,9 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   } = req.body;
   const { _id: applier } = req.user;
 
+  const nowTime = getNowTime();
+  if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
+
   const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
   const applications = await MealExceptionModel.count({
@@ -44,7 +51,11 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       { applier },
       {
         appliers: {
-          $in: appliers.map((s: string) => new ObjectId(s)),
+          $elemMatch: {
+            student: {
+              $in: appliers.map((s: string) => new ObjectId(s)),
+            },
+          },
         },
       },
     ],
@@ -63,7 +74,6 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   const today = getDayCode();
   if (today === 'fri' || today === 'sat' || today === 'sun') throw new HttpException(401, '신청할 수 없는 요일입니다.');
 
-  const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
   if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
   const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
 
@@ -72,7 +82,11 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       { applier },
       {
         appliers: {
-          $in: appliers.map((s: string) => new ObjectId(s)),
+          $elemMatch: {
+            student: {
+              $in: appliers.map((s: string) => new ObjectId(s)),
+            },
+          },
         },
       },
     ],
@@ -108,9 +122,10 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   await new MealExceptionModel({
     exceptionType: type,
     applier,
-    appliers,
+    appliers: appliers.map((e: string) => ({ student: e, entered: false })),
     reason,
     time,
+    group,
     date: appliDate,
     applicationStatus: type === 'last' ? 'approve' : 'waiting',
   }).save();
@@ -203,4 +218,66 @@ export const giveMealException = async (req: Request, res: Response) => {
     _id: sid,
     mealStatus: 'certified',
   });
+};
+
+export const enterException = async (req: Request, res: Response) => {
+  const { sid: applier } = req.body;
+
+  const today = getTodayDateString();
+  const now = getNowMealTime();
+  if (!now) throw new HttpException(401, '점심/저녁시간이 아닙니다.');
+
+  const exception = await MealExceptionModel.findOne({
+    $or: [
+      { applier },
+      {
+        appliers: {
+          $elemMatch: {
+            student: applier,
+          },
+        },
+      },
+    ],
+    date: today,
+    time: now,
+  });
+  if (!exception) throw new HttpException(401, '현재 시간에 선/후밥 신청한 학생이 없습니다.');
+
+  if (exception.group) {
+    await MealExceptionModel.updateOne(
+      { _id: exception._id },
+      {
+        appliers: exception.appliers.map((e) => {
+          if (String(e.student) === applier) {
+            return {
+              student: applier,
+              entered: true,
+            };
+          } return e;
+        }),
+      },
+    );
+  } else {
+    await MealExceptionModel.updateOne(
+      { _id: exception._id },
+      { entered: true },
+    );
+  }
+
+  res.json({ exception });
+};
+
+export const getExceptionRemain = async (req: Request, res: Response) => {
+  const { date, time } = req.params;
+
+  if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
+  const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
+
+  const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
+  const exception = await MealExceptionModel.count({
+    date: appliDate,
+    time: time as MealExceptionTimeType,
+  });
+
+  res.json({ remain: lastMealMaxNum - exception });
 };

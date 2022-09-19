@@ -37,6 +37,12 @@ export const resetExtraTimes = async () => {
   );
 };
 
+export const getNowMealTime = (): 'lunch' | 'dinner' => {
+  const nowTime = getNowTime();
+  if (nowTime >= 1150 && nowTime <= 1400) return 'lunch';
+  if (nowTime >= 1830) return 'dinner';
+};
+
 export const setConvenienceFood = async () => {
   const foods: ConvenienceFoodType[][] = [
     [...ConvenienceFoodValues],
@@ -148,10 +154,7 @@ export const checkTardy = async (
 
   const extraMinute = await getMealConfig(MealConfigKeys.intervalTime);
 
-  let now: 'lunch' | 'dinner';
-
-  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
-  else if (nowTime >= 1830) now = 'dinner';
+  const now = getNowMealTime();
 
   const gradeIdx = student.grade - 1;
   const classIdx = mealSequences[now][gradeIdx].indexOf(student.class);
