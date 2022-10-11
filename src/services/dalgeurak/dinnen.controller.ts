@@ -67,11 +67,15 @@ export const DGLgetAllStudents = async (req: Request, res: Response) => {
     },
   });
 
-  students.forEach((e) => {
-    (students as any).permissions = permissions[permissions.findIndex((p) => p.userId === e.user_id)].permissions;
+  students.forEach((e, idx) => {
+    if (permissions.findIndex((p) => p.userId === e.user_id) !== -1) {
+      (students[idx] as any).permissions = permissions[permissions.findIndex((p) => p.userId === e.user_id)].permissions;
+    } else {
+      (students[idx] as any).permissions = [];
+    }
   });
 
-  res.json({ students, permissions });
+  res.json({ students });
 };
 
 // 급식 상태 모두 불러오기

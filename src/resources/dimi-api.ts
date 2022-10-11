@@ -8,7 +8,6 @@ import { services as allServices } from '../services';
 const apiRouter = {
   getIdentity: '/v1/users/identify',
   getAllUsers: '/v1/users',
-  getAllStudents: '/v1/user-students',
   getAllTeachers: '/v1/user-teachers',
   getStudent: '/v1/user-students/search',
   getTeacher: '/v1/user-students/search',
@@ -74,7 +73,11 @@ export const getTeacherInfo = async (userId: number): Promise<User> => {
 };
 
 export const getAllStudents = async (): Promise<User[]> => {
-  const { data } = await api.get(apiRouter.getAllStudents);
+  const { data } = await api.get(apiRouter.getStudent, {
+    params: {
+      grade: [1, 2, 3],
+    },
+  });
   return data;
 };
 export const getAllTeachers = async (): Promise<User[]> => {
