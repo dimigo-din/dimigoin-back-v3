@@ -7,13 +7,7 @@ import {
   notifyIngangAppliers, notifyMealMenu, notifyNewNotice,
 } from './notifier';
 import {
-  reloadAllUsers,
-  attachStudentInfo,
-  attachTeacherInfo,
-} from './dimi-api';
-import {
   resetExtraTimes,
-  resetStudentsMealStatus,
   setConvenienceFood,
   convenienceDepriveCheck,
 } from './dalgeurak';
@@ -39,20 +33,9 @@ const cronJobs = [
     runOnSetup: false,
   },
   {
-    name: '사용자 정보 및 학적 갱신',
-    schedule: '0 0 * * 1',
-    action: async () => {
-      await reloadAllUsers();
-      await attachStudentInfo();
-      await attachTeacherInfo();
-    },
-    runOnSetup: true,
-  },
-  {
     name: '달그락 일시적 정보 초기화',
     schedule: '0 14,20 * * *',
     action: async () => {
-      await resetStudentsMealStatus();
       await resetExtraTimes();
     },
     runOnSetup: false,

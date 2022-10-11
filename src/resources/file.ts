@@ -9,7 +9,7 @@ export const writeFile = async (buffer: Buffer | exceljs.Buffer, name: string, e
   const file = await new FileModel({
     name,
     extension,
-    owner: user._id,
+    owner: user.user_id,
     downloadLimit: typeof downloadLimit === 'number'
       ? downloadLimit : parseInt(downloadLimit),
   }).save();

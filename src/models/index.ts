@@ -2,7 +2,6 @@ import 'ts-mongoose/plugin';
 
 export * from './afterschool';
 export * from './afterschool-application';
-export * from './user';
 export * from './circle';
 export * from './circle-application';
 export * from './config';
@@ -20,3 +19,6 @@ export * from './dets';
 export * from './dets-application';
 export * from './user-latest-place';
 export * from './temporary-password';
+export * from './token';
+export * from './permission';
+export * from './user-type';

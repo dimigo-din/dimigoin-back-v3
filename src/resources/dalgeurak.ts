@@ -1,4 +1,4 @@
-import { UserModel } from '../models';
+/* eslint-disable camelcase */
 import { HttpException } from '../exceptions';
 import {
   MealExceptionModel,
@@ -27,9 +27,6 @@ import {
 export const getMealConfig = async (key: string) =>
   (await MealConfigModel.findOne({ key })).value;
 
-export const resetStudentsMealStatus = async () => {
-  await UserModel.updateMany({ userType: 'S' }, { mealStatus: 'empty' });
-};
 export const resetExtraTimes = async () => {
   await MealConfigModel.findOneAndUpdate(
     { key: MealConfigKeys.intervalTime },
@@ -132,7 +129,7 @@ interface Istudent {
   mealStatus: string;
   grade: number;
   class: number;
-  serial: number;
+  user_id: number;
 }
 export const checkTardy = async (
   student: Istudent,
@@ -169,7 +166,16 @@ export const checkTardy = async (
   type noPermission = 'rejected' | 'waiting';
 
   const exception = await MealExceptionModel.findOne({
-    serial: student.serial,
+    $or: [
+      { applier: student.user_id },
+      {
+        appliers: {
+          $elemMatch: {
+            student: student.user_id,
+          },
+        },
+      },
+    ],
   });
   if (nowTime < extraTime) {
     if (exception) {
@@ -226,8 +232,3 @@ export const getOrder = async () => {
 
   return { gradeIdx, classIdx, now };
 };
-
-export const popUser = (path: string) => ({
-  path,
-  model: UserModel,
-});

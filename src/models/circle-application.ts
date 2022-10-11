@@ -4,7 +4,6 @@ import {
 } from 'ts-mongoose';
 import { CircleApplicationStatusValues } from '../types';
 import { circleSchema } from './circle';
-import { userSchema } from './user';
 
 const circleApplicationQuestionSchema = createSchema({
   question: Type.string({ required: true, trim: true, unique: true }),
@@ -12,7 +11,7 @@ const circleApplicationQuestionSchema = createSchema({
 }, { versionKey: false, timestamps: true });
 
 const circleApplicationSchema = createSchema({
-  applier: Type.ref(Type.objectId()).to('User', userSchema),
+  applier: Type.number({ required: true }),
   form: Type.mixed({ required: true }),
   circle: Type.ref(Type.objectId()).to('Circle', circleSchema),
   status: Type.string({
@@ -26,11 +25,8 @@ type CircleApplicationDoc = ExtractDoc<typeof circleApplicationSchema>;
 
 const CircleApplicationQuestionModel = typedModel('CircleApplicationQuestion', circleApplicationQuestionSchema);
 const CircleApplicationModel = typedModel('CircleApplication', circleApplicationSchema, undefined, undefined, {
-  findByApplier(applier: ObjectId): CircleApplicationDoc[] {
+  findByApplier(applier: number): CircleApplicationDoc[] {
     return this.find({ applier });
-  },
-  findPopulatedByCircle(circle: ObjectId): CircleApplicationDoc[] {
-    return this.find({ circle }).populate('applier', ['name', 'serial', 'photos']);
   },
   findByCircle(circle: ObjectId): CircleApplicationDoc[] {
     return this.find({ circle });

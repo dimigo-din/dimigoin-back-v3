@@ -3,21 +3,26 @@ import { HttpException } from '../../exceptions';
 import { CircleApplicationModel, CircleModel } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
 import { getConfig } from '../../resources/config';
+import { getStudentInfo } from '../../resources/dimi-api';
 
 export const getApplications = async (req: Request, res: Response) => {
   const { user } = req;
-  const circle = await CircleModel.findByChairs(user._id);
+  const circle = await CircleModel.findByChairs(user.user_id);
   if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
 
   const applications = await CircleApplicationModel.find({
     circle: circle._id,
-  }).populateTs('applier');
+  });
+
+  applications.forEach(async (e, idx) => {
+    (applications[idx].applier as any) = await getStudentInfo(e.applier);
+  });
 
   res.json({ applications });
 };
 
 export const setApplierStatus = async (req: Request, res: Response) => { const { user } = req;
-  const circle = await CircleModel.findByChairs(user._id);
+  const circle = await CircleModel.findByChairs(user.user_id);
   if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
 
   const application = await CircleApplicationModel.findById(req.params.applicationId);

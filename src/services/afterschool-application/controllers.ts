@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { AfterschoolModel, AfterschoolApplicationModel, AfterschoolDoc } from '../../models';
 import { HttpException } from '../../exceptions';
 import { Grade } from '../../types';
@@ -12,12 +11,12 @@ import {
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await AfterschoolApplicationModel.find({
-    applier: req.user._id,
+    applier: req.user.user_id,
   }).populateTs('afterschool');
   res.json({ applications });
 };
 
-const checkOverlap = async (applierId: ObjectId, target: AfterschoolDoc): Promise<Boolean> => {
+const checkOverlap = async (applierId: number, target: AfterschoolDoc): Promise<Boolean> => {
   const overlapped = (await AfterschoolApplicationModel
     .find({ applier: applierId })
     .populateTs('afterschool'))
@@ -36,7 +35,7 @@ const checkOverlap = async (applierId: ObjectId, target: AfterschoolDoc): Promis
 export const applyAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
   if (!afterschool) throw new HttpException(404, '해당 방과 후 수업이 존재하지 않습니다.');
-  const { _id: userId, grade, class: klass } = req.user;
+  const { user_id: userId, grade, class: klass } = req.user;
   if (
     !afterschool.targetGrades.includes(grade)
     || !afterschool.targetClasses.includes(klass)
@@ -66,7 +65,7 @@ export const applyAfterschool = async (req: Request, res: Response) => {
 
 export const cancelApplication = async (req: Request, res: Response) => {
   // throw new HttpException(400, '추가모집 기간에는 방과후를 취소할 수 없습니다.');
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
   const afterschoolApplication = await AfterschoolApplicationModel.findOne({
     afterschool: req.params.afterschoolId,
     applier,

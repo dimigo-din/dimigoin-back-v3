@@ -1,6 +1,5 @@
 import { createSchema, Type } from 'ts-mongoose';
 import { Document, Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
 
 export interface ConvenienceCheckin extends Document {
@@ -10,17 +9,17 @@ export interface ConvenienceCheckin extends Document {
   };
   breakfast: {
     date: string;
-    student: ObjectId;
+    student: number;
   }[];
   dinner: {
     date: string;
-    student: ObjectId;
+    student: number;
   }[];
 }
 
 const checkinObj = {
   date: Type.string(),
-  student: Type.objectId(),
+  student: Type.number(),
 };
 
 const convenienceCheckinSchema = createSchema({

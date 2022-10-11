@@ -4,15 +4,15 @@ import {
   CircleModel,
   CircleApplicationModel,
   CircleApplicationQuestionModel,
-  UserModel,
 } from '../../models';
 import { ConfigKeys, CirclePeriod } from '../../types';
 import { getConfig, getEntireConfigs } from '../../resources/config';
+import { getStudentInfo } from '../../resources/dimi-api';
 
 export const getApplicationStatus = async (req: Request, res: Response) => {
   const period = await getConfig(ConfigKeys.circlePeriod);
   const applications = await CircleApplicationModel.find({
-    applier: req.user._id,
+    applier: req.user.user_id,
   }).populateTs('circle');
 
   const mappedApplications = applications.map((application) => {
@@ -42,18 +42,18 @@ export const getApplicationStatus = async (req: Request, res: Response) => {
 
 // 동아리장이 자신의 동아리 지원자가 함께 지원한 동아리 목록을 불러옴
 export const getApplicationsByApplier = async (req: Request, res: Response) => {
-  const circle = await CircleModel.findByChairs(req.user._id);
-  const applier = await UserModel.findById(req.params.applierId);
+  const circle = await CircleModel.findByChairs(req.user.user_id);
+  const applier = await getStudentInfo(+req.params.applierId);
   if (!applier) throw new HttpException(404, '해당 지원자를 찾을 수 없습니다.');
   const application = await CircleApplicationModel.findOne({
     circle: circle._id,
-    applier: applier._id,
+    applier: applier.user_id,
   });
   if (!application) throw new HttpException(403, '자신의 동아리에 지원자에 대한 정보만 확인할 수 있습니다.');
 
   const appliedCircles = (
     await CircleApplicationModel.find({
-      applier: applier._id,
+      applier: applier.user_id,
     })
       .select('circle')
       .populateTs('circle')
@@ -75,7 +75,7 @@ export const createApplication = async (req: Request, res: Response) => {
   }
 
   const { user } = req;
-  const applications = (await CircleApplicationModel.findByApplier(user._id))
+  const applications = (await CircleApplicationModel.findByApplier(user.user_id))
     .map((a) => a.circle.toString());
 
   // 최대 신청 동아리 개수 이내인지 검증
@@ -107,14 +107,14 @@ export const createApplication = async (req: Request, res: Response) => {
 
   const circleApplication = await new CircleApplicationModel({
     ...req.body,
-    applier: user._id,
+    applier: user.user_id,
   }).save();
   res.json({ circleApplication });
 };
 
 export const finalSelection = async (req: Request, res: Response) => {
   const { user } = req;
-  const applications = await CircleApplicationModel.findByApplier(user._id);
+  const applications = await CircleApplicationModel.findByApplier(user.user_id);
 
   if (applications.filter((v) => v.status === 'final').length > 0) {
     throw new HttpException(409, '이미 최종 결정을 했습니다.');

@@ -1,9 +1,8 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
 import { afterschoolSchema } from './afterschool';
-import { userSchema } from './user';
 
 const afterschoolApplicationSchema = createSchema({
-  applier: Type.ref(Type.objectId()).to('User', userSchema),
+  applier: Type.number({ required: true }),
   afterschool: Type.ref(Type.objectId()).to('Afterschool', afterschoolSchema),
 }, { versionKey: false, timestamps: true });
 

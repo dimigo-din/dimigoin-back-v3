@@ -133,7 +133,7 @@ export default createService({
       path: '/user',
       needAuth: true,
       needPermission: true,
-      handler: controllers.getStudentInfo,
+      handler: controllers.getStudent,
     },
     {
       method: 'get',
@@ -400,7 +400,7 @@ export default createService({
       path: '/student',
       needAuth: true,
       needPermission: true,
-      handler: dinnenControllers.getAllStudents,
+      handler: dinnenControllers.DGLgetAllStudents,
     },
     {
       method: 'post',

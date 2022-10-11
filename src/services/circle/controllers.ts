@@ -11,9 +11,7 @@ export const getAllCircles = async (req: Request, res: Response) => {
     res.json({ circles: [] });
   }
   else if (period === CirclePeriod.submitting) {
-    const circles = await CircleModel.find()
-      .populateTs('chair')
-      .populateTs('viceChair');
+    const circles = await CircleModel.find();
 
     const mappedCircles = circles.map((circle) => ({
       ...circle.toObject(),
@@ -22,11 +20,9 @@ export const getAllCircles = async (req: Request, res: Response) => {
     res.json({ circles: mappedCircles });
   }
   else {
-    const appliedIds = (await CircleApplicationModel.findByApplier(user._id))
+    const appliedIds = (await CircleApplicationModel.findByApplier(user.user_id))
       .map((a) => a.circle.toString());
-    const circles = await CircleModel.find()
-      .populateTs('chair')
-      .populateTs('viceChair');
+    const circles = await CircleModel.find();
 
     const mappedCircles = circles.map((circle) => ({
       ...(circle.toJSON()),
@@ -37,17 +33,13 @@ export const getAllCircles = async (req: Request, res: Response) => {
 };
 
 export const getCircle = async (req: Request, res: Response) => {
-  const circle = await CircleModel.findById(req.params.circleId)
-    .populateTs('chair')
-    .populateTs('viceChair');
+  const circle = await CircleModel.findById(req.params.circleId);
   res.json({ circle });
 };
 
 export const getMyCircle = async (req: Request, res: Response) => {
   const { user } = req;
-  const circle = await CircleModel.findByChairs(user._id)
-    .populate('chair')
-    .populate('viceChair');
+  const circle = await CircleModel.findByChairs(user.user_id);
   if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
 
   res.json({
@@ -65,9 +57,7 @@ export const editCircle = async (req: Request, res: Response) => {
 
   if (period === CirclePeriod.submitting) {
     const { user } = req;
-    const circle = await CircleModel.findByChairs(user._id)
-      .populate('chair')
-      .populate('viceChair');
+    const circle = await CircleModel.findByChairs(user.user_id);
     if (!circle) throw new HttpException(403, '동아리장 권한이 없습니다.');
     Object.assign(circle, req.body);
     await circle.save();

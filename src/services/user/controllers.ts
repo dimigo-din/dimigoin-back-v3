@@ -1,18 +1,19 @@
 import { Request, Response } from 'express';
-import { UserModel } from '../../models';
+import { getAllStudents, getAllTeachers } from '../../resources/dimi-api';
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await UserModel.find();
-  res.json({ users });
+  const students = await getAllStudents();
+  const teachers = await getAllTeachers();
+  res.json({ users: [...students, ...teachers] });
 };
 
-export const getAllStudents = async (req: Request, res: Response) => {
-  const students = await UserModel.findStudents();
+export const getAllStds = async (req: Request, res: Response) => {
+  const students = await getAllStudents();
   res.json({ students });
 };
 
-export const getAllTeachers = async (req: Request, res: Response) => {
-  const teachers = await UserModel.findTeachers();
+export const getAllTchs = async (req: Request, res: Response) => {
+  const teachers = await getAllTeachers();
   res.json({ teachers });
 };
 

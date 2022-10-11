@@ -1,7 +1,6 @@
 import {
   createSchema, Type, typedModel, ExtractDoc,
 } from 'ts-mongoose';
-import { userSchema } from './user';
 import { placeSchema } from './place';
 import { notEmptyArray } from '../resources/model-validators';
 import {
@@ -20,7 +19,7 @@ const afterschoolSchema = createSchema({
   targetClasses: Type.array({ required: true, validate: notEmptyArray })
     .of(Type.number({ enum: ClassValues })),
   key: Type.string(),
-  teacher: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  teacher: Type.number({ required: true }),
   days: Type.array().of(Type.string({ required: true, enum: DayValues })),
   times: Type.array().of(Type.string({ required: true, enum: [...AfterschoolTimeValues, ...NightTimeValues] })),
   capacity: Type.number({ required: true }),

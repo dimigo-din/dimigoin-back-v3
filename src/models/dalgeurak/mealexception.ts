@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { Model, Document } from 'mongoose';
 import { createSchema, Type } from 'ts-mongoose';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
@@ -10,13 +9,12 @@ import {
   MealExceptionTimeValues,
   MealExceptionTimeType,
 } from '../../types';
-import { userSchema } from '../user';
 
 interface IMealException extends Document {
-  applier: ObjectId;
+  applier: number;
   appliers?: Array<{
     entered: boolean;
-    student: ObjectId;
+    student: number;
   }>;
   reason: string;
   exceptionType: MealExceptionType;
@@ -29,10 +27,10 @@ interface IMealException extends Document {
 }
 
 const mealExceptionSchema = createSchema({
-  applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  applier: Type.number({ required: true }),
   appliers: Type.array().of({
     entered: Type.boolean({ default: false }),
-    student: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+    student: Type.number({ required: true }),
   }),
   reason: Type.string({ required: true }),
   exceptionType: Type.string({ required: true, enum: MealExceptionValues }),

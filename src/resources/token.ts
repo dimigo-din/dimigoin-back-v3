@@ -1,4 +1,5 @@
 import jwt from 'jsonwebtoken';
+import { PermissionModel, UserTypeModel } from '../models';
 import { User } from '../interfaces';
 import config from '../config';
 import { HttpException } from '../exceptions';
@@ -44,7 +45,7 @@ export const issue = async (identity: User, refresh: boolean) => {
     const token = await jwt.sign(
       {
         identity: {
-          idx: identity.idx,
+          user_id: identity.user_id,
         },
         refresh: true,
       },
@@ -56,9 +57,15 @@ export const issue = async (identity: User, refresh: boolean) => {
     );
     return token;
   }
+  const userType = await UserTypeModel.findOne({ userId: identity.user_id });
+  const { permissions } = await PermissionModel.findOne({ userId: identity.user_id });
   const token = await jwt.sign(
     {
-      identity,
+      identity: {
+        ...identity,
+        userType,
+        permissions,
+      },
       refresh: false,
     },
     config.jwtSecret as string,

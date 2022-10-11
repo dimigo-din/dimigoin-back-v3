@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import Jwt from 'jsonwebtoken';
 import { HttpException } from '../../exceptions';
 import config from '../../config';
 import {
   CheckinLogModel,
   MealExceptionModel,
+  MealStatusModel,
 } from '../../models/dalgeurak';
-import { UserModel } from '../../models';
 import {
+  MealStatusType,
   MealTardyStatusType,
 } from '../../types';
 import {
@@ -16,6 +16,7 @@ import {
 } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
 import io from '../../resources/socket';
+import { getStudentInfo } from '../../resources/dimi-api';
 
 export const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -60,17 +61,28 @@ const getQRToken = async (key: string): Promise<IQRkey> => {
 export const checkEntrance = async (req: Request, res: Response) => {
   const { key } = req.body;
   const decoded = await getQRToken(key);
-  const student = await UserModel.findById(decoded.studentId);
+  const student = await getStudentInfo(+decoded.studentId);
   if (!student) throw new HttpException(404, '학생 정보를 읽을 수가 없습니다.');
 
-  const mealStatus = await checkTardy(student);
+  const mealStatusType = await MealStatusModel.findOne({ userId: student.user_id });
+
+  const mealStatus = await checkTardy({
+    grade: student.grade,
+    class: student.class,
+    user_id: student.user_id,
+    mealStatus: mealStatusType.mealStatus as string,
+  });
   mealStatusFilter(mealStatus);
 
-  Object.assign(student, { mealStatus });
-  await student.save();
+  // Object.assign(student, { mealStatus });
+  // await student.save();
+  await MealStatusModel.updateOne(
+    { userId: student.user_id },
+    { mealStatus: mealStatus as MealStatusType },
+  );
   await new CheckinLogModel({
     date: getNowTimeString(),
-    student: new ObjectId(student._id),
+    student: student.user_id,
     status: mealStatus,
     class: student.class,
     grade: student.grade,
@@ -78,18 +90,26 @@ export const checkEntrance = async (req: Request, res: Response) => {
 
   res.json({ mealStatus, name: student.name });
   io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
-    _id: req.user._id,
+    _id: req.user.user_id,
     mealStatus,
   });
 };
 
 // 내 정보
 export const getUserInfo = async (req: Request, res: Response) => {
-  const student = await UserModel.findById(req.user._id);
-  const exception = await MealExceptionModel.findOne({ applier: req.user._id });
-  const mealStatus = await checkTardy(student);
+  const student = await getStudentInfo(req.user.user_id);
+  const exception = await MealExceptionModel.findOne({ applier: req.user.user_id });
+
+  const mealStatusType = await MealStatusModel.findOne({ userId: student.user_id });
+
+  const mealStatus = await checkTardy({
+    grade: student.grade,
+    class: student.class,
+    user_id: student.user_id,
+    mealStatus: mealStatusType.mealStatus as string,
+  });
   const QRkey = await Jwt.sign({
-    studentId: student._id,
+    studentId: student.user_id,
     randomValue: String(Math.random()),
   }, config.dalgeurakKey, {
     expiresIn: '33s',
@@ -110,21 +130,31 @@ export const getCheckInLog = async (req: Request, res: Response) => {
     ...(targetGrade !== 'all' && { grade: parseInt(targetGrade) }),
     ...(targetClass !== 'all' && { class: parseInt(targetClass) }),
     ...(targetNumber !== 'all' && { number: parseInt(targetNumber) }),
-  }).populate('student');
+  });
+
+  checkinlog.forEach(async (e, idx) => {
+    (checkinlog[idx].student as any) = await getStudentInfo(e.student);
+  });
 
   res.json({ checkinlog });
 };
 
-export const getStudentInfo = async (req: Request, res: Response) => {
+export const getStudent = async (req: Request, res: Response) => {
   const { student } = req.query;
 
-  const user = await UserModel.findOne({ _id: student })
-    .select('grade')
-    .select('class')
-    .select('serial')
-    .select('name');
+  const {
+    grade,
+    class: kclass,
+    serial,
+    name,
+  } = await getStudentInfo(+student);
 
   res.json({
-    user,
+    user: {
+      grade,
+      class: kclass,
+      serial,
+      name,
+    },
   });
 };

@@ -1,7 +1,6 @@
 import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
-import { userSchema } from './user';
 import { TimeValues, DayValues, GradeValues } from '../types';
 import { placeSchema } from './place';
 
@@ -9,7 +8,7 @@ const detsSchema = createSchema({
   name: Type.string({ required: true, trim: true }),
   description: Type.string({ required: true, trim: true }),
   times: Type.array({ required: true }).of(Type.string({ enum: TimeValues })),
-  speaker: Type.ref(Type.objectId()).to('User', userSchema),
+  speaker: Type.number({ required: true }),
   days: Type.array({ required: true }).of(Type.string({ enum: DayValues })),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
   capacity: Type.number({ required: true }),
