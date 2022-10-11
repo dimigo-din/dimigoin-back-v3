@@ -57,13 +57,13 @@ export const issue = async (identity: User, refresh: boolean) => {
     );
     return token;
   }
-  const userType = await UserTypeModel.findOne({ userId: identity.user_id });
+  const { type } = await UserTypeModel.findOne({ userId: identity.user_id });
   const { permissions } = await PermissionModel.findOne({ userId: identity.user_id });
   const token = await jwt.sign(
     {
       identity: {
         ...identity,
-        userType,
+        userType: type,
         permissions,
       },
       refresh: false,
