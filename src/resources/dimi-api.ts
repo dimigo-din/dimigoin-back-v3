@@ -27,14 +27,14 @@ export const getIdentity = async (account: Account) => {
     params: account,
   });
 
-  const userType = await UserTypeModel.findOne({ userId: data.user_id });
+  const userType = await UserTypeModel.findOne({ userId: data.id });
   if (!userType) {
     await new UserTypeModel({
-      userId: data.user_id,
-      type: data.userType,
+      userId: data.id,
+      type: data.user_type,
     }).save();
 
-    if ('TD'.includes(data.userType)) {
+    if ('TD'.includes(data.user_type)) {
       const initPermissions = allServices.filter(
         (e) =>
           e !== 'circle-applier-selection'
@@ -42,12 +42,12 @@ export const getIdentity = async (account: Account) => {
           && e !== 'dalgeurak-management',
       );
       await new PermissionModel({
-        userId: data.user_id,
+        userId: data.id,
         permissions: initPermissions,
       }).save();
     } else {
       await new PermissionModel({
-        userId: data.user_id,
+        userId: data.id,
         permissions: [],
       }).save();
     }

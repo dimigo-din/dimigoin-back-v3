@@ -23,6 +23,9 @@ const getEntireIdentity = async (userIdx: number) => {
   const identity = await getStudentInfo(userIdx);
   if (!identity) throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
   identity.permissions = permissions;
+  console.log(userIdx);
+  console.log(permissions);
+  console.log(identity.permissions);
   identity.permissions.push(
     ...await getExtraPermissions(userIdx),
   );
@@ -33,7 +36,7 @@ export const identifyUser = async (req: Request, res: Response) => {
   const account: Account = req.body;
 
   try {
-    const { user_id: idx } = await getIdentity(account);
+    const { id: idx } = await getIdentity(account);
     const identity = await getEntireIdentity(idx);
 
     res.json({
@@ -41,6 +44,7 @@ export const identifyUser = async (req: Request, res: Response) => {
       refreshToken: await issueToken(identity, true),
     });
   } catch (error) {
+    console.log(error);
     if (error.name === 'HttpException') throw error;
     throw new HttpException(401, '인증에 실패했습니다.');
   }

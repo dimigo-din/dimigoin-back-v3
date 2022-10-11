@@ -67,6 +67,10 @@ export const DGLgetAllStudents = async (req: Request, res: Response) => {
     },
   });
 
+  students.forEach((e) => {
+    (students as any).permissions = permissions[permissions.findIndex((p) => p.userId === e.user_id)].permissions;
+  });
+
   res.json({ students, permissions });
 };
 
