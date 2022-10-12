@@ -20,7 +20,7 @@ const convertFileName = (fileName: string, req: Request) => {
 
 // downloadFile 핸들러와 구분하기 위해서 네이밍을 다른 서비스와 조금 다르게 함
 export const getMyFileList = async (req: Request, res: Response) => {
-  const files = await FileModel.find({ owner: req.user._id });
+  const files = await FileModel.find({ owner: req.user.user_id });
   res.json({ files });
 };
 

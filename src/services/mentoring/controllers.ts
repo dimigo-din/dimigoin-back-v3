@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { getWeekStartString, getWeekEndString, getDateFromDay } from '../../resources/date';
 import { HttpException } from '../../exceptions';
 import { MentoringModel, MentoringApplicationModel } from '../../models';
+import { getTeacherInfo } from '../../resources/dimi-api';
 
 export const getAllMentorings = async (req: Request, res: Response) => {
   const { userType, grade } = req.user;
@@ -9,8 +10,11 @@ export const getAllMentorings = async (req: Request, res: Response) => {
     userType === 'T' ? {} : {
       targetGrade: grade,
     },
-  )
-    .populateTs('teacher');
+  );
+
+  mentorings.forEach(async (e, idx) => {
+    (mentorings[idx].teacher as any) = await getTeacherInfo(e.teacher);
+  });
 
   res.json({ mentorings });
 };
@@ -19,8 +23,10 @@ export const getRequestableMentorings = async (req: Request, res: Response) => {
   const { grade } = req.user;
   const mentorings = await MentoringModel.find({
     targetGrade: grade,
-  })
-    .populateTs('teacher');
+  });
+  mentorings.forEach(async (e, idx) => {
+    (mentorings[idx].teacher as any) = await getTeacherInfo(e.teacher);
+  });
   const applications = await MentoringApplicationModel.find({
     date: {
       $gte: getWeekStartString(),
@@ -50,11 +56,11 @@ export const getRequestableMentorings = async (req: Request, res: Response) => {
 export const getMentoring = async (req: Request, res: Response) => {
   const mentoring = await MentoringModel.findById(
     req.params.mentoringId,
-  )
-    .populateTs('teacher');
+  );
   if (!mentoring) {
     throw new HttpException(404, '해당 멘토링 수업을 찾을 수 없습니다.');
   }
+  (mentoring.teacher as any) = await getTeacherInfo(mentoring.teacher);
   res.json({ mentoring });
 };
 

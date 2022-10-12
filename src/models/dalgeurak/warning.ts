@@ -1,10 +1,9 @@
 import { createSchema, Type } from 'ts-mongoose';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
-import { userSchema } from '../user';
 import { WarningValues } from '../../types';
 
 const warningSchema = createSchema({
-  student: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  student: Type.number({ required: true }),
   type: Type.array({ required: true }).of(Type.string({ enum: WarningValues })),
   reason: Type.string({ required: true }),
   date: Type.string({ required: true }),

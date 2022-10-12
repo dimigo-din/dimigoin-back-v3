@@ -1,13 +1,12 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
-import { userSchema } from './user';
 import { placeSchema } from './place';
 
 const attendanceLogSchema = createSchema({
   date: Type.string({ required: true }),
-  student: Type.ref(Type.objectId()).to('User', userSchema),
+  student: Type.number({ required: true }),
   remark: Type.string({ trim: true, default: null }),
   place: Type.ref(Type.objectId()).to('Place', placeSchema),
-  updatedBy: Type.ref(Type.objectId({ default: null })).to('User', userSchema),
+  updatedBy: Type.number({ required: true }),
 }, { versionKey: false, timestamps: true });
 
 const AttendanceLogModel = typedModel('AttendanceLog', attendanceLogSchema);

@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { HttpException } from '../../exceptions';
 import { getTodayDateString, isValidDate } from '../../resources/date';
-import { AttendanceLogModel, UserModel } from '../../models';
+import { AttendanceLogModel } from '../../models';
+import { getStudentInfo, studentSearch } from '../../resources/dimi-api';
 
 export const getClassStatus = async (req: Request, res: Response) => {
   if (!(['T', 'D'].includes(req.user.userType)) && (
@@ -16,14 +17,16 @@ export const getClassStatus = async (req: Request, res: Response) => {
   const grade = parseInt(req.params.grade);
   const klass = parseInt(req.params.class);
 
-  const studentsInClass = await UserModel
-    .find({ grade, class: klass });
+  const studentsInClass = await studentSearch({
+    grade,
+    class: klass,
+  });
 
   const studentsWithLog = await Promise.all(
     studentsInClass.map(async (student) => {
       const log = await AttendanceLogModel.findOne({
         date,
-        student: student._id,
+        student: student.user_id,
       })
         .populateTs('place')
         .populateTs('updatedBy')
@@ -52,14 +55,16 @@ export const getClassTimeline = async (req: Request, res: Response) => {
   const klass = parseInt(req.params.class);
 
   const logs = (await AttendanceLogModel.find({ date })
-    .populateTs('student')
     .populateTs('place')
     .populateTs('updatedBy')
     .sort('-createdAt'))
-    .filter(({ student }) => (
-      student.grade === grade
-      && student.class === klass
-    ));
+    .filter(async ({ student }) => {
+      const std = await getStudentInfo(student);
+      return (
+        std.grade === grade
+        && std.class === klass
+      );
+    });
 
   res.json({ logs });
 };
@@ -68,26 +73,25 @@ export const getStudentAttendanceHistory = async (req: Request, res: Response) =
   const { date } = req.params;
   if (!isValidDate(date)) throw new HttpException(400, '유효하지 않은 날짜입니다.');
 
-  const student = await UserModel.findOne({
-    _id: req.params.studentId,
-    userType: 'S',
-  });
+  const student = await getStudentInfo(req.params.studentId as unknown as number);
   if (!student) throw new HttpException(404, '해당 학생을 찾을 수 없습니다.');
 
   const logs = await AttendanceLogModel.find({
     date: req.params.date,
-    student: student._id,
+    student: student.user_id,
   })
     .populateTs('place')
-    .populateTs('student')
     .populateTs('updatedBy')
     .sort('-createdAt');
+  logs.forEach(async (e, idx) => {
+    (logs[idx].student as any) = await getStudentInfo(e.student);
+  });
   res.json({ logs });
 };
 
 export const createAttendanceLog = async (req: Request, res: Response) => {
   const payload = req.body;
-  const { _id: student } = req.user;
+  const { user_id: student } = req.user;
 
   const today = getTodayDateString();
 
@@ -111,7 +115,7 @@ export const createAttendanceLogByManager = async (req: Request, res: Response) 
     student,
     date: today,
     ...payload,
-    updatedBy: req.user._id,
+    updatedBy: req.user.user_id,
   });
 
   await attendanceLog.save();
@@ -122,12 +126,14 @@ export const getMyAttendanceLogs = async (req: Request, res: Response) => {
   const logs = (await AttendanceLogModel
     .find({
       date: getTodayDateString(),
-      student: req.user._id,
+      student: req.user.user_id,
     })
-    .populateTs('student')
     .populateTs('place')
     .populateTs('updatedBy')
     .sort('-createdAt'));
 
+  logs.forEach(async (e, idx) => {
+    (logs[idx].student as any) = await getStudentInfo(e.student);
+  });
   res.json({ logs });
 };

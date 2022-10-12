@@ -1,16 +1,14 @@
 import { createSchema, Type } from 'ts-mongoose';
 import { Document, Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
-import { userSchema } from '../user';
 
 export interface ConvenienceDeprive extends Document {
-  student: ObjectId;
+  student: number;
   clear: boolean;
 }
 
 const convenienceDepriveSchema = createSchema({
-  student: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  student: Type.number({ required: true }),
   clear: Type.boolean({ default: false }),
 }, { versionKey: false, timestamps: true });
 

@@ -2,13 +2,12 @@ import {
   createSchema, Type, typedModel,
 } from 'ts-mongoose';
 import { OutgoRequestStatus } from '../types';
-import { userSchema } from './user';
 import { notEmptyArray } from '../resources/model-validators';
 
 const outgoRequestSchema = createSchema({
   applier: Type.array({ required: true, validate: notEmptyArray })
-    .of(Type.ref(Type.objectId()).to('User', userSchema)),
-  approver: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+    .of(Type.number({ required: true })),
+  approver: Type.number({ required: true }),
   reason: Type.string({ required: true }),
   detailReason: Type.string({ default: null }),
   duration: Type.object({ required: true }).of({

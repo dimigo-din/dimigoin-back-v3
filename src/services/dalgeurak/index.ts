@@ -82,7 +82,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: exceptionControllers.enterException,
     },
@@ -94,7 +94,7 @@ export default createService({
       studentOnly: true,
       validateSchema: {
         group: Joi.boolean().required(),
-        appliers: Joi.array().items(Joi.string()),
+        appliers: Joi.array().items(Joi.number()),
         reason: Joi.string().required(),
         time: Joi.string().valid(...MealTimeValues).required(),
         date: Joi.string().required(),
@@ -133,7 +133,7 @@ export default createService({
       path: '/user',
       needAuth: true,
       needPermission: true,
-      handler: controllers.getStudentInfo,
+      handler: controllers.getStudent,
     },
     {
       method: 'get',
@@ -213,7 +213,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
         type: Joi.array().required(),
         reason: Joi.string().required(),
       },
@@ -377,7 +377,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: dinnenControllers.entranceProcess,
     },
@@ -400,7 +400,7 @@ export default createService({
       path: '/student',
       needAuth: true,
       needPermission: true,
-      handler: dinnenControllers.getAllStudents,
+      handler: dinnenControllers.DGLgetAllStudents,
     },
     {
       method: 'post',

@@ -1,30 +1,33 @@
 import exceljs from 'exceljs';
-import { ObjectId } from 'mongodb';
 import {
-  AfterschoolTime, Day, Grade, NightTime,
-  AfterschoolTimeValues, NightTimeValues, DayValues,
+  AfterschoolTime,
+  Day,
+  Grade,
+  NightTime,
+  AfterschoolTimeValues,
+  NightTimeValues,
+  DayValues,
 } from '../../types';
-import {
-  AfterschoolApplicationModel, UserModel, UserDoc, AfterschoolModel,
-} from '../../models';
-import { PopulatedAfterschoolApplication } from '../../interfaces';
+import { AfterschoolApplicationModel, AfterschoolModel } from '../../models';
+import { PopulatedAfterschoolApplication, User } from '../../interfaces';
+import { getStudentInfo, studentSearch } from '../dimi-api';
 
 const getAppliedClassName = (
   applications: PopulatedAfterschoolApplication[],
-  applierId: ObjectId,
+  applierId: number,
   day: Day,
   time: AfterschoolTime | NightTime,
 ): string => {
-  const application = applications.find((a) => a.applier._id.equals(applierId)
+  const application = applications.find(
+    (a) =>
+      a.applier.user_id === applierId
       && a.afterschool.days.includes(day)
-      && a.afterschool.times.includes(time));
+      && a.afterschool.times.includes(time),
+  );
   return application?.afterschool.name || '자습반';
 };
 
-const times = [
-  ...AfterschoolTimeValues,
-  ...NightTimeValues,
-];
+const times = [...AfterschoolTimeValues, ...NightTimeValues];
 const timeStrings = {
   AFSC1: '방과후 1T',
   AFSC2: '방과후 2T',
@@ -55,12 +58,15 @@ const generateColumnSchema = () => {
   return columns;
 };
 
-const generateRowContent = (applications: any, student: UserDoc) => {
+const generateRowContent = (applications: any, student: User) => {
   const row: any = {};
   for (const day of DayValues) {
     for (const time of times) {
       row[`${day}|${time}`] = getAppliedClassName(
-        applications, student._id, day, time,
+        applications,
+        student.user_id,
+        day,
+        time,
       );
     }
   }
@@ -78,37 +84,51 @@ const addApplierByClassSheet = async (book: exceljs.Workbook, grade: Grade) => {
       { header: '비고', key: 'remark', width: 15 },
     ] as exceljs.Column[];
 
-    const students = await UserModel.find({ grade, class: klass }).sort('serial');
-    const applications = (await AfterschoolApplicationModel.find()
-      .populateTs('applier')
-      .populateTs('afterschool'))
-      .filter((a) => a.applier.grade === grade);
+    const students = (
+      await studentSearch({
+        grade,
+        class: klass,
+      })
+    ).sort((a, b) => {
+      if (a.user_id > b.user_id) {
+        return 1;
+      }
+      if (a.user_id < b.user_id) {
+        return -1;
+      }
+      return 0;
+    });
+    const applications = (
+      await AfterschoolApplicationModel.find().populateTs('afterschool')
+    ).filter(async (a) => {
+      const student = await getStudentInfo(a.applier);
+      return student.grade === grade;
+    });
 
-    students.forEach((student) => {
+    students.forEach((student: User) => {
       sheet.addRow({
         serial: student.serial,
         name: student.name,
-        ...generateRowContent(
-          applications,
-          student,
-        ),
+        ...generateRowContent(applications, student),
       });
     });
   }
 };
 
-const addApplierByAfterschoolSheet = async (book: exceljs.Workbook, grade: Grade) => {
+const addApplierByAfterschoolSheet = async (
+  book: exceljs.Workbook,
+  grade: Grade,
+) => {
   const sheet = book.addWorksheet('강좌별 신청자 명단');
-  const afterschools = await AfterschoolModel.find(
-    { targetGrades: { $all: [grade] } },
-  );
+  const afterschools = await AfterschoolModel.find({
+    targetGrades: { $all: [grade] },
+  });
   const afterschoolIds = afterschools.map((a) => a._id);
-  const applications = await AfterschoolApplicationModel.find(
-    { afterschool: { $in: afterschoolIds } },
-  )
+  const applications = await AfterschoolApplicationModel.find({
+    afterschool: { $in: afterschoolIds },
+  })
     .sort('afterschool')
-    .populateTs('afterschool')
-    .populateTs('applier');
+    .populateTs('afterschool');
 
   sheet.columns = [
     { header: '강좌명', key: 'className', width: 25 },
@@ -116,9 +136,10 @@ const addApplierByAfterschoolSheet = async (book: exceljs.Workbook, grade: Grade
   ] as exceljs.Column[];
 
   for (const { afterschool, applier } of applications) {
+    const student = await getStudentInfo(applier);
     sheet.addRow({
       className: afterschool.name,
-      applier: `${applier.serial} ${applier.name}`,
+      applier: `${student.serial} ${student.name}`,
     });
   }
 };

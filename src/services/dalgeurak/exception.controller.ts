@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { getNowMealTime, popUser } from '../../resources/dalgeurak';
+import { getNowMealTime } from '../../resources/dalgeurak';
 import {
   format,
   getDayCode,
@@ -16,13 +16,13 @@ import {
   MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
-import { UserModel } from '../../models';
 import { getMealConfig } from '../../resources/config';
+import { getStudentInfo } from '../../resources/dimi-api';
 
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const users = await MealExceptionModel.find({ }).populate(popUser('applier')).populate(popUser('appliers'));
+  const users = await MealExceptionModel.find({ });
 
   res.json({ users });
 };
@@ -35,7 +35,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     date,
     time,
   } = req.body;
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
 
   const nowTime = getNowTime();
   if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
@@ -173,7 +173,7 @@ export const permissionMealException = async (req: Request, res: Response) => {
   await exception.save();
 
   await DGRsendPushMessage(
-    { _id: exception.applier },
+    { user_id: exception.applier },
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청 알림`,
     `${exception.exceptionType === 'first' ? '선밥' : '후밥'} 신청이 ${
       permission === 'approve' ? '승인'
@@ -186,7 +186,7 @@ export const permissionMealException = async (req: Request, res: Response) => {
 export const giveMealException = async (req: Request, res: Response) => {
   const { type, sid, reason } = req.body;
 
-  const teacher = await UserModel.findById(req.user._id);
+  const teacher = await getStudentInfo(req.user.user_id);
 
   const exceptionStatus = await MealExceptionModel.findOne({ applier: sid });
   if (exceptionStatus) {
@@ -195,7 +195,7 @@ export const giveMealException = async (req: Request, res: Response) => {
     await exceptionStatus.save();
 
     await DGRsendPushMessage(
-      { _id: sid },
+      { user_id: sid },
       `${type === 'first' ? '선밥' : '후밥'} 안내`,
       `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,
     );
@@ -208,7 +208,7 @@ export const giveMealException = async (req: Request, res: Response) => {
     }).save();
 
     await DGRsendPushMessage(
-      { _id: sid },
+      { user_id: sid },
       `${type === 'first' ? '선밥' : '후밥'} 안내`,
       `${teacher.name} 선생님에 의해 ${type === 'first' ? '선밥' : '후밥'} 처리가 되었습니다.`,
     );

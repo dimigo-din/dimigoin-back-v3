@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
+import { studentSearch } from '../../resources/dimi-api';
 import {
   getConvTime,
   getLastWeek,
@@ -13,7 +14,6 @@ import {
   ConvenienceDepriveModel,
   ConvenienceFoodModel,
 } from '../../models/dalgeurak';
-import { UserModel } from '../../models';
 
 export const createConvenience = async (req: Request, res: Response) => {
   await setConvenienceFood();
@@ -51,7 +51,7 @@ export const checkIn = async (req: Request, res: Response) => {
   let applicationStatus = false;
   conveniences.forEach((convenience) => {
     const application = convenience.applications.map((e) => e.student);
-    if (application.includes(req.user._id)) applicationStatus = true;
+    if (application.includes(req.user.user_id)) applicationStatus = true;
   });
   if (!applicationStatus) throw new HttpException(401, '신청하지 않았습니다.');
 
@@ -61,7 +61,7 @@ export const checkIn = async (req: Request, res: Response) => {
   });
   if (!checkInCheck) throw new HttpException(501, '이번 주 체크인이 설정되어 있지 않습니다.');
   checkInCheck[nowTime].forEach((e) => {
-    if (e.date === getTodayDateString() && e.student === req.user._id) {
+    if (e.date === getTodayDateString() && e.student === req.user.user_id) {
       throw new HttpException(401, '이미 체크인 하였습니다.');
     }
   });
@@ -69,7 +69,7 @@ export const checkIn = async (req: Request, res: Response) => {
   Object.assign(checkInCheck, {
     [nowTime]: [...checkInCheck[nowTime], {
       date: getTodayDateString(),
-      student: new ObjectId(req.user._id),
+      student: new ObjectId(req.user.user_id),
     }],
   });
   await checkInCheck.save();
@@ -97,12 +97,12 @@ export const convenienceAppli = async (req: Request, res: Response) => {
 
   // 신청 했는지 체크
   const application = convenience.applications.map((e) => e.student);
-  if (application.includes(req.user._id)) throw new HttpException(401, '이미 신청하였습니다.');
+  if (application.includes(req.user.user_id)) throw new HttpException(401, '이미 신청하였습니다.');
 
   const allConvApplilcationCheck = await ConvenienceFoodModel.find({
     applications: {
       $elemMatch: {
-        student: new ObjectId(req.user._id),
+        student: new ObjectId(req.user.user_id),
       },
     },
     'duration.start': getWeekStartString(),
@@ -116,19 +116,21 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   const students = convenience.applications
     .map((e) => e.date === startWeek && e.student)
     .filter((e) => e);
-  const gradeCnt = await UserModel.count({
-    _id: { $in: students },
-    grade: req.user.grade,
-  });
+  const gradeCnt = (
+    await studentSearch({
+      user_id: students,
+      grade: req.user.grade,
+    })
+  ).length;
   if (gradeCnt >= 17) throw new HttpException(401, '학년별 신청이 마감되었습니다.');
 
   // 신청박탈 체크
   const depriveCheck = await ConvenienceDepriveModel.findOne({
-    student: new ObjectId(req.user._id),
+    student: req.user.user_id,
   });
   if (depriveCheck) {
     await ConvenienceDepriveModel.updateOne(
-      { student: new ObjectId(req.user._id) },
+      { student: req.user.user_id },
       { clear: true },
     );
     throw new HttpException(401, '신청이 취소되었습니다.\n사유 : 저번 간편식 2회이상 체크인하지 않음');
@@ -140,7 +142,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
       ...convenience.applications,
       {
         date: getTodayDateString(),
-        student: new ObjectId(req.user._id),
+        student: req.user.user_id,
       },
     ],
   });

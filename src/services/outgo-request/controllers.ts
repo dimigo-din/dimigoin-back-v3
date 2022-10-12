@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import moment from 'moment-timezone';
+import { getTeacherInfo, studentSearch } from '../../resources/dimi-api';
 import { HttpException } from '../../exceptions';
-import { OutgoRequestModel, UserModel } from '../../models';
+import { OutgoRequestModel, UserTypeModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
@@ -9,11 +10,14 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
   const startDate = moment().subtract(2, 'weeks').toDate();
   const outgoRequests = await OutgoRequestModel
     .find({
-      applier: { $all: [user._id] },
+      applier: { $all: [user.user_id] },
       createdAt: { $gte: startDate },
-    })
-    .populateTs('applier')
-    .populateTs('approver');
+    });
+
+  outgoRequests.forEach(async (e, idx) => {
+    (outgoRequests[idx].applier as any) = await studentSearch({ user_id: e.applier });
+    (outgoRequests[idx].approver as any) = await getTeacherInfo(e.approver);
+  });
 
   res.json({ outgoRequests });
 };
@@ -21,26 +25,27 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
 export const getOutgoRequest = async (req: Request, res: Response) => {
   const { user } = req;
   const outgoRequest = await OutgoRequestModel
-    .findById(req.params.outgoRequestId)
-    .populateTs('approver')
-    .populateTs('applier');
+    .findById(req.params.outgoRequestId);
+
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청이 없습니다.');
 
-  const applierIds = outgoRequest.applier.map((a) => a._id);
-  if (user.userType === 'S' && !applierIds.includes(user._id)) {
+  if (user.userType === 'S' && !outgoRequest.applier.includes(user.user_id)) {
     throw new HttpException(403, '권한이 없습니다.');
   }
+
+  (outgoRequest.applier as any) = await studentSearch({ user_id: outgoRequest.applier });
+  (outgoRequest.approver as any) = await getTeacherInfo(outgoRequest.approver);
   res.json({ outgoRequest });
 };
 
 export const createOutgoRequest = async (req: Request, res: Response) => {
   const request = req.body;
   const { user } = req;
-  if (!request.applier.includes(user._id)) {
+  if (!request.applier.includes(user.user_id)) {
     throw new HttpException(403, '자신의 외출만 신청할 수 있습니다.');
   }
 
-  const { userType: approverType } = await UserModel.findById(request.approver);
+  const { type: approverType } = await UserTypeModel.findOne({ userId: request.approver });
   if (approverType !== 'T') {
     throw new HttpException(403, '승인자는 교사여야 합니다.');
   }

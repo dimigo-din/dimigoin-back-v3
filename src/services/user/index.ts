@@ -17,14 +17,14 @@ export default createService({
       path: '/student',
       needAuth: true,
       needPermission: false,
-      handler: controllers.getAllStudents,
+      handler: controllers.getAllStds,
     },
     {
       method: 'get',
       path: '/teacher',
       needAuth: true,
       needPermission: false,
-      handler: controllers.getAllTeachers,
+      handler: controllers.getAllTchs,
     },
     {
       method: 'get',

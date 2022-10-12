@@ -1,5 +1,4 @@
 import { createSchema, Type, typedModel } from 'ts-mongoose';
-import { userSchema } from './user';
 import { DayValues, GradeValues } from '../types';
 
 const timeSchema = Type.object({ required: true }).of({
@@ -9,7 +8,7 @@ const timeSchema = Type.object({ required: true }).of({
 
 const mentoringSchema = createSchema({
   name: Type.string({ required: true, trim: true }),
-  teacher: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  teacher: Type.number({ required: true }),
   subject: Type.string({ required: true, trim: true }),
   days: Type.array().of(Type.string({ required: true, enum: DayValues })),
   targetGrade: Type.number({ required: true, enum: GradeValues }),
