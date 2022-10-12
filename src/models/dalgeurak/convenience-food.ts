@@ -1,6 +1,5 @@
 import { createSchema, Type } from 'ts-mongoose';
 import { Document, Model } from 'mongoose';
-import { ObjectId } from 'mongodb';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
 import {
   ConvenienceFoodType,
@@ -17,7 +16,7 @@ export interface ConvenienceFood extends Document {
   name: string;
   applications: {
     date: string;
-    student: ObjectId;
+    student: number;
   }[];
   duration: {
     start: string;
@@ -34,7 +33,7 @@ const convenienceFoodSchema = createSchema({
   name: Type.string({ required: true }),
   applications: Type.array({ default: [] }).of({
     date: Type.string(),
-    student: Type.objectId(),
+    student: Type.number(),
   }),
   duration: Type.object({ required: true }).of({
     start: Type.string({ required: true }),

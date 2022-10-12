@@ -1,24 +1,17 @@
-import { ObjectId } from 'mongodb';
-import { UserType, Gender } from '../types';
+/* eslint-disable camelcase */
+import { Gender, UserType } from '../types';
 
 export interface User {
-  _id: ObjectId;
-  idx: number;
-  username: string;
-  name: string;
-  userType: UserType;
+  user_id: number;
+  library_id: string;
+  class: number;
+  dormitory: string;
   gender: Gender;
-  phone: string;
-  permissions: string[];
-  photos: string[];
-  birthdate: string;
-
-  position?: string;
-  role?: string;
-
-  grade?: number;
-  class?: number;
-  number?: number;
-  serial?: number;
-  libraryId?: string;
+  grade: number;
+  name: string;
+  number: string;
+  serial: string;
+  username: string;
+  userType: UserType;
+  permissions: Array<string>;
 }

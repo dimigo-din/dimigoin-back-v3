@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getStudentInfo } from '../../resources/dimi-api';
 import {
   CircleApplicationModel,
   CircleApplicationQuestionModel,
@@ -13,7 +14,9 @@ export const updateApplicationForm = async (req: Request, res: Response) => {
 
 export const getAllApplications = async (req: Request, res: Response) => {
   const applications = await CircleApplicationModel.find()
-    .populateTs('circle')
-    .populateTs('applier');
+    .populateTs('circle');
+  applications.forEach(async (e, idx) => {
+    (applications[idx].applier as any) = await getStudentInfo(e.applier);
+  });
   res.json({ applications });
 };

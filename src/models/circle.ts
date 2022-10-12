@@ -2,15 +2,14 @@ import { ObjectId } from 'mongodb';
 import {
   createSchema, ExtractDoc, Type, typedModel,
 } from 'ts-mongoose';
-import { userSchema } from './user';
 
 const circleSchema = createSchema({
   name: Type.string({ required: true, unique: true, trim: true }),
   fullName: Type.string({ required: false }),
   imageUrl: Type.string({ required: true }),
   notion: Type.string({ required: true }),
-  chair: Type.ref(Type.objectId()).to('User', userSchema),
-  viceChair: Type.ref(Type.objectId()).to('User', userSchema),
+  chair: Type.number({ required: true }),
+  viceChair: Type.number({ required: true }),
   category: Type.string({
     required: true,
   }),
@@ -25,7 +24,7 @@ const CircleModel = typedModel('Circle', circleSchema, undefined, undefined, {
   findByViceChair(viceChair: ObjectId): CircleDoc {
     return this.findOne({ viceChair });
   },
-  findByChairs(user: ObjectId): CircleDoc {
+  findByChairs(user: number): CircleDoc {
     return this.findOne({ $or: [{ chair: user }, { viceChair: user }] });
   },
 });

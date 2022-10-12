@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 
-import { ObjectId } from 'mongodb';
 import { Gender, UserType } from '../types';
 
 export interface Account {
@@ -9,18 +8,13 @@ export interface Account {
 }
 
 export interface UserIdentity {
-  '_id': ObjectId;
-  'id': number;
+  'user_id': number;
   'username': string;
   'email': string;
   'name': string;
   'nick': string;
   'gender': Gender;
   'user_type': UserType;
-  'birthdate': string;
-  'phone': string;
-  'photofile1': string;
-  'photofile2': string;
 }
 
 export interface StudentIdentity {
@@ -38,18 +32,15 @@ export interface StudentIdentity {
   'birthdate': string;
   'phone': string;
   'library_id': string;
-  'photofile1': string;
-  'photofile2': string;
 }
 
 export interface TeacherIdentity {
-  'user_id': number;
-  'username': string;
-  'name': string;
-  'gender': string;
-  'position_name': string;
-  'role_name': string;
-  'grade': number;
-  'class': number;
-  'phone': string;
+  user_id: number;
+  username: string;
+  name: string;
+  gender: Gender;
+  position_name: string;
+  role_name: string;
+  grade: number;
+  class: number;
 }

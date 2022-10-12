@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { WarningModel } from '../../models/dalgeurak';
 import { getNowTimeString } from '../../resources/date';
 
@@ -9,7 +8,7 @@ export const createWarning = async (req: Request, res: Response) => {
   const date = getNowTimeString();
 
   const warning = await new WarningModel({
-    student: new ObjectId(sid),
+    student: +sid,
     type,
     reason,
     date,
@@ -20,7 +19,7 @@ export const createWarning = async (req: Request, res: Response) => {
 
 export const getWarning = async (req: Request, res: Response) => {
   const warning = await WarningModel.find({
-    student: new ObjectId(req.user._id),
+    student: req.user.user_id,
   });
 
   res.json({ warning });
@@ -30,7 +29,7 @@ export const getStudentWarning = async (req: Request, res: Response) => {
   const { sid } = req.params;
 
   const warning = await WarningModel.find({
-    student: new ObjectId(sid),
+    student: +sid,
   });
 
   res.json({ warning });

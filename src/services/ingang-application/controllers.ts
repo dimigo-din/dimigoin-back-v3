@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ObjectId, ObjectID } from 'mongodb';
 import { HttpException } from '../../exceptions';
 import {
   IngangApplicationDoc, IngangApplicationModel,
@@ -15,8 +14,9 @@ import {
   getWeekEndString,
   getKoreanTodayFullString,
 } from '../../resources/date';
+import { getStudentInfo } from '../../resources/dimi-api';
 
-const getWeeklyUsedTicket = async (applier: ObjectID) => await IngangApplicationModel.countDocuments({
+const getWeeklyUsedTicket = async (applier: number) => await IngangApplicationModel.countDocuments({
   applier,
   date: {
     $gte: getWeekStartString(),
@@ -24,19 +24,21 @@ const getWeeklyUsedTicket = async (applier: ObjectID) => await IngangApplication
   },
 });
 
-const getApplicationsByClass = async (grade: number, klass: number) => (await IngangApplicationModel
-  .find({ date: getTodayDateString() })
-  .populateTs('applier'))
-  .filter((application) => (
-    application.applier.grade === grade
-      && application.applier.class === klass
-  ));
+const getApplicationsByClass = async (grade: number, klass: number) => (
+  await IngangApplicationModel.find({ date: getTodayDateString() }))
+  .filter(async (application) => {
+    const applier = await getStudentInfo(application.applier);
+    return (
+      applier.grade === grade
+        && applier.class === klass
+    );
+  });
 
 const getMaxApplicationPerClass = async (grade: number) => (await getConfig(ConfigKeys.ingangMaxApplicationPerClass))[grade];
 const getSelfStudyTimes = async (grade: number) => (await getConfig(ConfigKeys.selfStudyTimes))[grade];
 
 export const getIngangApplicationStatus = async (req: Request, res: Response) => {
-  const { _id: applier, grade, class: klass } = req.user;
+  const { user_id: applier, grade, class: klass } = req.user;
 
   const weeklyTicketCount = await getConfig(ConfigKeys.weeklyIngangTicketCount);
   const ingangMaxApplier = await getMaxApplicationPerClass(grade);
@@ -60,14 +62,16 @@ export const getIngangApplicationStatus = async (req: Request, res: Response) =>
 };
 
 export const getTodayIngangApplications = async (req: Request, res: Response) => {
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
 
   const ingangApplications = await IngangApplicationModel
     .find({
       applier,
       date: getTodayDateString(),
-    })
-    .populateTs('applier');
+    });
+  ingangApplications.forEach(async (e, idx) => {
+    (ingangApplications[idx].applier as any) = await getStudentInfo(e.applier);
+  });
   res.json({ ingangApplications });
 };
 
@@ -75,8 +79,11 @@ export const getTodayEntireIngangApplications = async (req: Request, res: Respon
   const ingangApplications = await IngangApplicationModel
     .find({
       date: getTodayDateString(),
-    })
-    .populateTs('applier');
+    });
+
+  ingangApplications.forEach(async (e, idx) => {
+    (ingangApplications[idx].applier as any) = await getStudentInfo(e.applier);
+  });
 
   res.json({ ingangApplications });
 };
@@ -86,8 +93,11 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   const applications = (
     await IngangApplicationModel.find({
       date: getTodayDateString(),
-    }).populateTs('applier')
-  ).filter((a) => a.applier.grade === grade);
+    })
+  ).filter(async (a) => {
+    const applier = await getStudentInfo(a.applier);
+    return applier.grade === grade;
+  });
 
   type SplittedApps = [IngangApplicationDoc[], IngangApplicationDoc[]];
   const splittedApplications = applications.reduce(
@@ -107,14 +117,14 @@ export const exportTodayIngangApplications = async (req: Request, res: Response)
   res.json({ exportedFile: file });
 };
 
-const checkDuplicate = async (applier: ObjectId, date: string, time: NightTime) => !!(await IngangApplicationModel.findOne({
+const checkDuplicate = async (applier: number, date: string, time: NightTime) => !!(await IngangApplicationModel.findOne({
   applier,
   time,
   date,
 }));
 
 export const createIngangApplication = async (req: Request, res: Response) => {
-  const { _id: applier, grade, class: klass } = req.user;
+  const { user_id: applier, grade, class: klass } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
@@ -126,10 +136,13 @@ export const createIngangApplication = async (req: Request, res: Response) => {
   const todayAll = await IngangApplicationModel.find({
     date: today,
     time,
-  }).populateTs('applier');
+  });
 
   // 신청하려는 타임 인강실 신청 중 같은 반 학생들의 신청을 불러옴
-  const classAll = todayAll.filter((v) => v.applier.grade === grade && v.applier.class === klass);
+  const classAll = todayAll.filter(async (v) => {
+    const student = await getStudentInfo(v.applier);
+    return student.grade === grade && student.class === klass;
+  });
 
   const maxApply = await getMaxApplicationPerClass(grade);
   if (classAll.length >= maxApply) {
@@ -153,7 +166,7 @@ export const createIngangApplication = async (req: Request, res: Response) => {
 };
 
 export const removeIngangApplication = async (req: Request, res: Response) => {
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
   const today = getTodayDateString();
   const time = req.params.time as NightTime;
 
@@ -172,7 +185,7 @@ const gp = async (name: string) => (await PlaceModel.findOne({ name })).toJSON()
 export const forceApplierToAttendnaceIngangsil = async (req: Request, res: Response) => {
   const ingangApplication = await IngangApplicationModel.findById(
     req.params.applicationId,
-  ).populateTs('applier');
+  );
   if (!ingangApplication) throw new HttpException(404, '해당 인강실 신청을 찾을 수 없습니다.');
 
   const today = getTodayDateString();
@@ -180,18 +193,18 @@ export const forceApplierToAttendnaceIngangsil = async (req: Request, res: Respo
     throw new HttpException(403, '오늘자 인강실을 신청한 사람만 인강실에 출석시킬 수 있습니다.');
   }
 
-  const { applier } = ingangApplication;
+  const applier = await getStudentInfo(ingangApplication.applier);
 
   const attendanceLog = new AttendanceLogModel({
     date: getTodayDateString(),
-    student: applier._id,
+    student: applier.user_id,
     remark: '인강실 도우미가 등록함',
     place: [
       await gp('영어 전용 교실'),
       await gp('비즈쿨실'),
       await gp('열람실'),
     ][applier.grade - 1],
-    updatedBy: req.user._id,
+    updatedBy: req.user.user_id,
   });
 
   await attendanceLog.save();

@@ -1,6 +1,7 @@
 import exceljs from 'exceljs';
 import { MentoringApplicationModel } from '../../models';
 import { getWeekStartString, getWeekEndString } from '../date';
+import { getStudentInfo } from '../dimi-api';
 
 interface Time {
   hour: number;
@@ -33,13 +34,13 @@ export const createMentoringApplierBook = async () => {
     },
   })
     .populateTs('mentoring')
-    .populateTs('applier')
   );
 
-  applications.forEach((application) => {
+  applications.forEach(async (application) => {
+    const student = await getStudentInfo(application.applier);
     sheet.addRow({
       date: application.date,
-      applier: `${application.applier.serial} ${application.applier.name}`,
+      applier: `${student.serial} ${student.name}`,
       subject: application.mentoring.name,
       duration: toDurationString(application.mentoring.duration),
     });

@@ -3,14 +3,14 @@ import { ObjectId } from 'mongodb';
 import { MentoringModel, MentoringApplicationModel } from '../../models';
 import { HttpException } from '../../exceptions';
 import {
-  getDayCode, getKoreanTodayFullString, getTodayDateString, getWeekEndString, getWeekStartString,
+  getKoreanTodayFullString, getTodayDateString, getWeekEndString, getWeekStartString,
 } from '../../resources/date';
 import { createMentoringApplierBook } from '../../resources/exporter';
 import { writeFile } from '../../resources/file';
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await MentoringApplicationModel.find({
-    applier: req.user._id,
+    applier: req.user.user_id,
     date: {
       $gte: getWeekStartString(),
       $lte: getWeekEndString(),
@@ -38,12 +38,12 @@ export const applyMentoring = async (req: Request, res: Response) => {
   }
 
   // 신청하려는 날짜가 진행하는 요일인지 검사
-//   if (!mentoring.days.includes(getDayCode(date))) {
-//     throw new HttpException(404, '신청하려는 날짜에 진행되지 않는 멘토링 수업입니다.');
-//   }
+  //   if (!mentoring.days.includes(getDayCode(date))) {
+  //     throw new HttpException(404, '신청하려는 날짜에 진행되지 않는 멘토링 수업입니다.');
+  //   }
 
   // 신청 대상 학년인지 검사
-  const { _id: userId, grade } = req.user;
+  const { user_id: userId, grade } = req.user;
   if (mentoring.targetGrade !== grade) {
     throw new HttpException(403, '신청 대상 학년이 아닙니다.');
   }
@@ -68,7 +68,7 @@ export const applyMentoring = async (req: Request, res: Response) => {
 };
 
 export const cancelApplication = async (req: Request, res: Response) => {
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
   const mentoringApplication = await MentoringApplicationModel.findOne({
     mentoring: req.params.mentoringId,
     applier,

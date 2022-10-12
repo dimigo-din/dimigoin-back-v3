@@ -1,4 +1,3 @@
-import { ObjectId } from 'mongodb';
 import { Model, Document } from 'mongoose';
 import { createSchema, Type } from 'ts-mongoose';
 import { dalgeurakDB } from '../../resources/dalgeurakDB';
@@ -8,10 +7,9 @@ import {
   MealTimeType,
   MealCancelApplicationStatus,
 } from '../../types';
-import { userSchema } from '../user';
 
 interface IMealCancel extends Document {
-  applier: ObjectId;
+  applier: number;
   reason: string;
   applicationStatus: MealCancelApplicationStatus;
   duration: {
@@ -22,7 +20,7 @@ interface IMealCancel extends Document {
 }
 
 const mealCancelSchema = createSchema({
-  applier: Type.ref(Type.objectId({ required: true })).to('User', userSchema),
+  applier: Type.number({ required: true }),
   reason: Type.string({ required: true }),
   applicationStatus: Type.string({ required: true, enum: MealCancelApplicationStatusValues, default: 'teacherWaiting' }),
   duration: Type.object({ required: true }).of({

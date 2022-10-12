@@ -4,7 +4,7 @@ import { HttpException } from '../../exceptions';
 
 export const getMyAllApplications = async (req: Request, res: Response) => {
   const applications = await DetsApplicationModel.find({
-    applier: req.user._id,
+    applier: req.user.user_id,
   }).populateTs('dets');
   res.json({ applications });
 };
@@ -13,7 +13,7 @@ export const applyDetsClass = async (req: Request, res: Response) => {
   const dets = await DetsModel.findById(req.params.detsClassId);
   if (!dets) throw new HttpException(404, '해당 DETS 수업이 존재하지 않습니다.');
 
-  const { _id: userId, grade } = req.user;
+  const { user_id: userId, grade } = req.user;
   if (dets.targetGrade !== grade) throw new HttpException(403, '신청 대상 수업이 아닙니다.');
 
   const alreadyApplied = await DetsApplicationModel.count({
@@ -40,7 +40,7 @@ export const applyDetsClass = async (req: Request, res: Response) => {
 };
 
 export const cancelApplication = async (req: Request, res: Response) => {
-  const { _id: applier } = req.user;
+  const { user_id: applier } = req.user;
   const detsApplication = await DetsApplicationModel.findOne({
     dets: req.params.detsClassId,
     applier,

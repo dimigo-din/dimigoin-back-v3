@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getTeacherInfo } from '../../resources/dimi-api';
 import { HttpException } from '../../exceptions';
 // import {
 //   getAfterschoolApplierCount,
@@ -24,9 +25,11 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
       targetClasses: { $all: [klass] },
     },
   )
-    .populateTs('teacher')
     .populateTs('place');
 
+  afterschools.forEach(async (e, idx) => {
+    (afterschools[idx].teacher as any) = await getTeacherInfo(e.teacher);
+  });
   const mappedAfterschools = await Promise.all(
     afterschools.map(applierCountMapper),
   );
@@ -38,11 +41,11 @@ export const getAfterschool = async (req: Request, res: Response) => {
   const afterschool = await AfterschoolModel.findById(
     req.params.afterschoolId,
   )
-    .populateTs('teacher')
     .populateTs('place');
   if (!afterschool) {
     throw new HttpException(404, '해당 방과 후 수업을 찾을 수 없습니다.');
   }
+  (afterschool.teacher as any) = await getTeacherInfo(afterschool.teacher);
   const mappedAfterschool = await applierCountMapper(afterschool);
   res.json({ afterschool: mappedAfterschool });
 };

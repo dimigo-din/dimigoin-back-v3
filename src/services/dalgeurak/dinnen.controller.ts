@@ -1,29 +1,40 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
+import { PermissionModel } from '../../models';
 import { HttpException } from '../../exceptions';
-import { UserModel } from '../../models';
 import { checkTardy } from '../../resources/dalgeurak';
 import { mealStatusFilter } from './controllers';
-import { CheckinLogModel, MealConfigModel } from '../../models/dalgeurak';
+import { CheckinLogModel, MealConfigModel, MealStatusModel } from '../../models/dalgeurak';
 import { getNowTimeString } from '../../resources/date';
 import io from '../../resources/socket';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
-import { MealConfigKeys } from '../../types';
+import { MealConfigKeys, MealStatusType } from '../../types';
+import { getAllStudents, getStudentInfo, studentSearch } from '../../resources/dimi-api';
 
 export const entranceProcess = async (req: Request, res: Response) => {
   const { sid } = req.body;
 
-  const student = await UserModel.findById(sid);
+  const student = await getStudentInfo(sid);
   if (!student) throw new HttpException(404, '학생을 찾을 수 없습니다.');
 
-  const mealStatus = await checkTardy(student);
+  const mealStatusType = await MealStatusModel.findOne({ userId: sid });
+
+  const mealStatus = await checkTardy({
+    grade: student.grade,
+    class: student.class,
+    user_id: student.user_id,
+    mealStatus: mealStatusType.mealStatus as string,
+  });
   mealStatusFilter(mealStatus);
 
-  Object.assign(student, { mealStatus });
-  await student.save();
+  // Object.assign(student, { mealStatus });
+  // await student.save();
+  await MealStatusModel.updateOne(
+    { userId: student.user_id },
+    { mealStatus: mealStatus as MealStatusType },
+  );
   await new CheckinLogModel({
     date: getNowTimeString(),
-    student: new ObjectId(student._id),
+    student: student.user_id,
     status: mealStatus,
     class: student.class,
     grade: student.grade,
@@ -31,7 +42,7 @@ export const entranceProcess = async (req: Request, res: Response) => {
 
   res.json({ mealStatus });
   io.of('/dalgeurak').to('mealStatus').emit('mealStatus', {
-    _id: student._id,
+    user_id: student.user_id,
     mealStatus,
   });
 };
@@ -48,31 +59,36 @@ export const updateWaitingLine = async (req: Request, res: Response) => {
 };
 
 // 권한포함 학생정보 불러오기
-export const getAllStudents = async (req: Request, res: Response) => {
-  const students = await UserModel.find({
-    userType: 'S',
-    serial: { $ne: null },
-  }).sort('serial')
-    .select('name')
-    .select('serial')
-    .select('class')
-    .select('grade')
-    .select('number')
-    .select('permissions');
+export const DGLgetAllStudents = async (req: Request, res: Response) => {
+  const students = await getAllStudents();
+  const permissions = await PermissionModel.find({
+    userId: {
+      $in: students.map((e) => e.user_id),
+    },
+  });
+
+  students.forEach((e, idx) => {
+    if (permissions.findIndex((p) => p.userId === e.user_id) !== -1) {
+      (students[idx] as any).permissions = permissions[permissions.findIndex((p) => p.userId === e.user_id)].permissions;
+    } else {
+      (students[idx] as any).permissions = [];
+    }
+  });
 
   res.json({ students });
 };
 
 // 급식 상태 모두 불러오기
 export const getMealStatuses = async (req: Request, res: Response) => {
-  const students = await UserModel.find({ grade: { $in: [1, 2] } });
+  const students = await studentSearch({ grade: [1, 2] });
 
   interface mealStatusIF {
     [key: string]: string;
   }
   const mealStatuses: mealStatusIF = {};
-  students.forEach((student) => {
-    mealStatuses[student._id] = student.mealStatus;
+  students.forEach(async (student) => {
+    const { mealStatus } = await MealStatusModel.findOne({ userId: student.user_id });
+    mealStatuses[student.user_id] = mealStatus;
   });
 
   res.json({ mealStatuses });
@@ -82,7 +98,7 @@ export const getMealStatuses = async (req: Request, res: Response) => {
 export const alertTest = async (req: Request, res: Response) => {
   const { title, message } = req.body;
   await DGRsendPushMessage(
-    { _id: req.user._id },
+    { user_id: req.user.user_id },
     title,
     message,
   );
