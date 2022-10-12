@@ -54,7 +54,7 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (tokenType !== 'REFRESH') throw new HttpException(400, '리프레시 토큰이 아닙니다.');
 
   const payload = await verify(refreshToken);
-  const identity = await getEntireIdentity(payload.idx);
+  const identity = await getEntireIdentity(payload.user_id);
   res.json({
     accessToken: await issueToken(identity, false),
     refreshToken: await issueToken(identity, true),
