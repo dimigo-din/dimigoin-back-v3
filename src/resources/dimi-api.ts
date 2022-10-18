@@ -4,6 +4,7 @@ import config from '../config';
 import { User } from '../interfaces';
 import { PermissionModel, UserTypeModel } from '../models';
 import { services as allServices } from '../services';
+import { MealStatusModel } from '../models/dalgeurak';
 
 const apiRouter = {
   getIdentity: '/v1/users/identify',
@@ -21,7 +22,7 @@ const api = axios.create({
   baseURL: config.apiUrl,
 });
 
-export const getIdentity = async (account: Account) => {
+export const getIdentity = async (account: Account, dalgeurak: string) => {
   const { data } = await api.get(apiRouter.getIdentity, {
     params: account,
   });
@@ -40,17 +41,24 @@ export const getIdentity = async (account: Account) => {
           && e !== 'dalgeurak'
           && e !== 'dalgeurak-management',
       );
-      await new PermissionModel({
-        userId: data.id,
-        permissions: initPermissions,
-      }).save();
+      if (JSON.parse(dalgeurak)) {
+        await new PermissionModel({
+          userId: data.id,
+          permissions: initPermissions,
+        }).save();
+        data.dalgeurakFirstLogin = true;
+      }
     } else {
       await new PermissionModel({
         userId: data.id,
         permissions: [],
       }).save();
+      await new MealStatusModel({
+        userId: data.id,
+        mealStatus: 'empty',
+      }).save();
     }
-  }
+  } else data.dalgeurakFirstLogin = false;
 
   return data;
 };
