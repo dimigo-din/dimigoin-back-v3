@@ -22,10 +22,12 @@ const api = axios.create({
   baseURL: config.apiUrl,
 });
 
-export const getIdentity = async (account: Account, dalgeurak: string) => {
+export const getIdentity = async (account: Account, dalgeurak?: string) => {
   const { data } = await api.get(apiRouter.getIdentity, {
     params: account,
   });
+
+  const dalgeurakWhether = dalgeurak ? JSON.parse(dalgeurak) : false;
 
   const userType = await UserTypeModel.findOne({ userId: data.id });
   if (!userType) {
@@ -41,24 +43,35 @@ export const getIdentity = async (account: Account, dalgeurak: string) => {
           && e !== 'dalgeurak'
           && e !== 'dalgeurak-management',
       );
-      if (JSON.parse(dalgeurak)) {
-        await new PermissionModel({
-          userId: data.id,
-          permissions: initPermissions,
-        }).save();
-        data.dalgeurakFirstLogin = true;
-      }
+      await new PermissionModel({
+        userId: data.id,
+        permissions: initPermissions,
+      }).save();
     } else {
       await new PermissionModel({
         userId: data.id,
         permissions: [],
       }).save();
+    }
+    if (dalgeurakWhether) {
       await new MealStatusModel({
         userId: data.id,
         mealStatus: 'empty',
       }).save();
+      data.dalgeurakFirstLogin = true;
     }
-  } else data.dalgeurakFirstLogin = false;
+  } else {
+    const mealStatusWhether = await MealStatusModel.findOne({ userId: data.id });
+    if (!mealStatusWhether && dalgeurakWhether) {
+      await new MealStatusModel({
+        userId: data.id,
+        mealStatus: 'empty',
+      }).save();
+      data.dalgeurakFirstLogin = true;
+    } else {
+      data.dalgeurakFirstLogin = false;
+    }
+  }
 
   return data;
 };
