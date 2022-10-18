@@ -46,7 +46,7 @@ export const getIdentity = async (account: Account, dalgeurak: string) => {
           userId: data.id,
           permissions: initPermissions,
         }).save();
-        data.firstLogin = true;
+        data.dalgeurakFirstLogin = true;
       }
     } else {
       await new PermissionModel({
@@ -58,7 +58,7 @@ export const getIdentity = async (account: Account, dalgeurak: string) => {
         mealStatus: 'empty',
       }).save();
     }
-  } else data.firstLogin = false;
+  } else data.dalgeurakFirstLogin = false;
 
   return data;
 };
