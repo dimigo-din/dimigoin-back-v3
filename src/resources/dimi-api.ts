@@ -4,6 +4,7 @@ import config from '../config';
 import { User } from '../interfaces';
 import { PermissionModel, UserTypeModel } from '../models';
 import { services as allServices } from '../services';
+import { MealStatusModel } from '../models/dalgeurak';
 
 const apiRouter = {
   getIdentity: '/v1/users/identify',
@@ -48,6 +49,10 @@ export const getIdentity = async (account: Account) => {
       await new PermissionModel({
         userId: data.id,
         permissions: [],
+      }).save();
+      await new MealStatusModel({
+        userId: data.id,
+        mealStatus: 'empty',
       }).save();
     }
   }
