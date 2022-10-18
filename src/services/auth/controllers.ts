@@ -31,9 +31,10 @@ const getEntireIdentity = async (userIdx: number) => {
 
 export const identifyUser = async (req: Request, res: Response) => {
   const account: Account = req.body;
+  const { dalgeurak } = req.query;
 
   try {
-    const { id: idx, firstLogin } = await getIdentity(account);
+    const { id: idx, firstLogin } = await getIdentity(account, dalgeurak as string);
     const identity = await getEntireIdentity(idx);
 
     res.json({

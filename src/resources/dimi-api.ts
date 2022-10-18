@@ -22,14 +22,13 @@ const api = axios.create({
   baseURL: config.apiUrl,
 });
 
-export const getIdentity = async (account: Account) => {
+export const getIdentity = async (account: Account, dalgeurak: string) => {
   const { data } = await api.get(apiRouter.getIdentity, {
     params: account,
   });
 
   const userType = await UserTypeModel.findOne({ userId: data.id });
   if (!userType) {
-    data.firstLogin = true;
     await new UserTypeModel({
       userId: data.id,
       type: data.user_type,
@@ -42,10 +41,13 @@ export const getIdentity = async (account: Account) => {
           && e !== 'dalgeurak'
           && e !== 'dalgeurak-management',
       );
-      await new PermissionModel({
-        userId: data.id,
-        permissions: initPermissions,
-      }).save();
+      if (JSON.parse(dalgeurak)) {
+        await new PermissionModel({
+          userId: data.id,
+          permissions: initPermissions,
+        }).save();
+        data.firstLogin = true;
+      }
     } else {
       await new PermissionModel({
         userId: data.id,
