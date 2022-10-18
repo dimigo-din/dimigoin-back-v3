@@ -29,6 +29,7 @@ export const getIdentity = async (account: Account) => {
 
   const userType = await UserTypeModel.findOne({ userId: data.id });
   if (!userType) {
+    data.firstLogin = true;
     await new UserTypeModel({
       userId: data.id,
       type: data.user_type,
@@ -55,7 +56,7 @@ export const getIdentity = async (account: Account) => {
         mealStatus: 'empty',
       }).save();
     }
-  }
+  } else data.firstLogin = false;
 
   return data;
 };

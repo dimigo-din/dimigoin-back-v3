@@ -33,12 +33,13 @@ export const identifyUser = async (req: Request, res: Response) => {
   const account: Account = req.body;
 
   try {
-    const { id: idx } = await getIdentity(account);
+    const { id: idx, firstLogin } = await getIdentity(account);
     const identity = await getEntireIdentity(idx);
 
     res.json({
       accessToken: await issueToken(identity, false),
       refreshToken: await issueToken(identity, true),
+      firstLogin,
     });
   } catch (error) {
     if (error.name === 'HttpException') throw error;
