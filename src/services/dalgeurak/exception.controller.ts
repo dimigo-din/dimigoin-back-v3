@@ -1,5 +1,4 @@
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { getNowMealTime } from '../../resources/dalgeurak';
 import {
   format,
@@ -53,7 +52,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
         appliers: {
           $elemMatch: {
             student: {
-              $in: appliers.map((s: string) => new ObjectId(s)),
+              $in: appliers,
             },
           },
         },
@@ -84,7 +83,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
         appliers: {
           $elemMatch: {
             student: {
-              $in: appliers.map((s: string) => new ObjectId(s)),
+              $in: appliers,
             },
           },
         },
