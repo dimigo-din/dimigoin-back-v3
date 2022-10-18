@@ -293,6 +293,14 @@ export default createService({
       handler: convenienceControllers.checkIn,
     },
     {
+      method: 'get',
+      path: '/convenience/users',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      handler: convenienceControllers.getUserList,
+    },
+    {
       method: 'post',
       path: '/cancel',
       needAuth: true,

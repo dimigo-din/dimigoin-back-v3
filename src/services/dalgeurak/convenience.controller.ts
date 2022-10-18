@@ -1,6 +1,7 @@
+/* eslint-disable camelcase */
 import { Request, Response } from 'express';
 import { ObjectId } from 'mongodb';
-import { studentSearch } from '../../resources/dimi-api';
+import { getStudentInfo, studentSearch } from '../../resources/dimi-api';
 import {
   getConvTime,
   getLastWeek,
@@ -14,6 +15,7 @@ import {
   ConvenienceDepriveModel,
   ConvenienceFoodModel,
 } from '../../models/dalgeurak';
+import { ConvenienceFoodType } from '../../types';
 
 export const createConvenience = async (req: Request, res: Response) => {
   await setConvenienceFood();
@@ -154,4 +156,41 @@ export const convenienceAppli = async (req: Request, res: Response) => {
     time,
     food,
   });
+};
+
+export const getUserList = async (req: Request, res: Response) => {
+  type ul = {
+    [key in ConvenienceFoodType]: Array<{
+      user_id: number;
+      name: string;
+      serial: string;
+    }>;
+  };
+
+  const nowTime = getConvTime();
+  if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
+
+  const conveniences = await ConvenienceFoodModel.find({
+    time: nowTime,
+    'duration.start': getLastWeek(getWeekStartString()),
+  });
+  if (!conveniences) throw new HttpException(501, '체크인하려는 간편식이 존재하지 않습니다.');
+
+  const userList: ul = {
+    sandwich: [],
+    misu: [],
+    salad: [],
+  };
+
+  for (const food of conveniences) {
+    for (const { student } of food.applications) {
+      const { user_id, name, serial } = await getStudentInfo(student);
+      userList[food.food].push({
+        user_id,
+        name,
+        serial,
+      });
+    }
+  }
+  res.json({ ...userList });
 };
