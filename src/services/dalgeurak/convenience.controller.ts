@@ -102,7 +102,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   const allConvApplilcationCheck = await ConvenienceFoodModel.find({
     applications: {
       $elemMatch: {
-        student: new ObjectId(req.user.user_id),
+        student: req.user.user_id,
       },
     },
     'duration.start': getWeekStartString(),
@@ -117,10 +117,11 @@ export const convenienceAppli = async (req: Request, res: Response) => {
     .map((e) => e.date === startWeek && e.student)
     .filter((e) => e);
   const gradeCnt = (
-    await studentSearch({
-      user_id: students,
-      grade: req.user.grade,
-    })
+    students.length > 1
+      ? await studentSearch({
+        user_id: students,
+        grade: req.user.grade,
+      }) : []
   ).length;
   if (gradeCnt >= 17) throw new HttpException(401, '학년별 신청이 마감되었습니다.');
 
