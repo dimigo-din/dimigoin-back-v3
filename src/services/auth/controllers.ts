@@ -3,7 +3,7 @@ import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
 import { CircleModel, PermissionModel } from '../../models';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
-import { getIdentity, getStudentInfo } from '../../resources/dimi-api';
+import { getIdentity, getStudentInfo, getTeacherInfo } from '../../resources/dimi-api';
 
 const getExtraPermissions = async (userIdx: number) => {
   const user = await getStudentInfo(userIdx);
@@ -20,13 +20,24 @@ const getExtraPermissions = async (userIdx: number) => {
 
 const getEntireIdentity = async (userIdx: number) => {
   const { permissions } = await PermissionModel.findOne({ userId: userIdx });
-  const identity = await getStudentInfo(userIdx);
-  if (!identity) throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
-  identity.permissions = permissions;
-  identity.permissions.push(
-    ...await getExtraPermissions(userIdx),
-  );
-  return identity;
+  try {
+    const identity = await getStudentInfo(userIdx);
+    if (!identity) throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
+    identity.permissions = permissions;
+    identity.permissions.push(
+      ...await getExtraPermissions(userIdx),
+    );
+    return identity;
+  } catch (e) {
+    try {
+      const identity = await getTeacherInfo(userIdx);
+      if (!identity) throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
+      identity.permissions = permissions;
+      return identity;
+    } catch (err) {
+      throw new HttpException(404, '해당 사용자를 찾을 수 없습니다.');
+    }
+  }
 };
 
 export const identifyUser = async (req: Request, res: Response) => {
@@ -37,6 +48,7 @@ export const identifyUser = async (req: Request, res: Response) => {
     const { id: idx, dalgeurakFirstLogin } = await getIdentity(account, dalgeurak as string);
     const identity = await getEntireIdentity(idx);
 
+    console.log(identity);
     res.json({
       accessToken: await issueToken(identity, false),
       refreshToken: await issueToken(identity, true),
