@@ -11,7 +11,7 @@ const apiRouter = {
   getAllUsers: '/v1/users',
   getAllTeachers: '/v1/user-teachers',
   getStudent: '/v1/user-students/search',
-  getTeacher: '/v1/user-students/search',
+  getTeacher: '/v1/user-teachers/search',
 };
 
 const api = axios.create({
