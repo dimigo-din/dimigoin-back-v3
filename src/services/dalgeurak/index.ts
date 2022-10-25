@@ -291,7 +291,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: convenienceControllers.checkIn,
     },
