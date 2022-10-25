@@ -48,7 +48,6 @@ export const identifyUser = async (req: Request, res: Response) => {
     const { id: idx, dalgeurakFirstLogin } = await getIdentity(account, dalgeurak as string);
     const identity = await getEntireIdentity(idx);
 
-    console.log(identity);
     res.json({
       accessToken: await issueToken(identity, false),
       refreshToken: await issueToken(identity, true),
