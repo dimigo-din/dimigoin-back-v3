@@ -290,6 +290,9 @@ export default createService({
       path: '/convenience/checkin',
       needAuth: true,
       needPermission: false,
+      validateSchema: {
+        sid: Joi.string().required(),
+      },
       handler: convenienceControllers.checkIn,
     },
     {

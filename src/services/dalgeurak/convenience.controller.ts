@@ -1,6 +1,5 @@
 /* eslint-disable camelcase */
 import { Request, Response } from 'express';
-import { ObjectId } from 'mongodb';
 import { getStudentInfo, studentSearch } from '../../resources/dimi-api';
 import {
   getConvTime,
@@ -39,6 +38,8 @@ export const getConvenience = async (req: Request, res: Response) => {
 
 // 체크인
 export const checkIn = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
   // 조식/석식 시간 체크
   const nowTime = getConvTime();
   if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
@@ -53,7 +54,7 @@ export const checkIn = async (req: Request, res: Response) => {
   let applicationStatus = false;
   conveniences.forEach((convenience) => {
     const application = convenience.applications.map((e) => e.student);
-    if (application.includes(req.user.user_id)) applicationStatus = true;
+    if (application.includes(sid)) applicationStatus = true;
   });
   if (!applicationStatus) throw new HttpException(401, '신청하지 않았습니다.');
 
@@ -63,7 +64,7 @@ export const checkIn = async (req: Request, res: Response) => {
   });
   if (!checkInCheck) throw new HttpException(501, '이번 주 체크인이 설정되어 있지 않습니다.');
   checkInCheck[nowTime].forEach((e) => {
-    if (e.date === getTodayDateString() && e.student === req.user.user_id) {
+    if (e.date === getTodayDateString() && e.student === sid) {
       throw new HttpException(401, '이미 체크인 하였습니다.');
     }
   });
@@ -71,7 +72,7 @@ export const checkIn = async (req: Request, res: Response) => {
   Object.assign(checkInCheck, {
     [nowTime]: [...checkInCheck[nowTime], {
       date: getTodayDateString(),
-      student: new ObjectId(req.user.user_id),
+      student: sid,
     }],
   });
   await checkInCheck.save();
