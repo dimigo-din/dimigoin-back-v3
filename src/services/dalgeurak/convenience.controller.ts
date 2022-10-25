@@ -165,6 +165,8 @@ export const getUserList = async (req: Request, res: Response) => {
       user_id: number;
       name: string;
       serial: string;
+      grade: number;
+      class: number;
     }>;
   };
 
@@ -185,11 +187,19 @@ export const getUserList = async (req: Request, res: Response) => {
 
   for (const food of conveniences) {
     for (const { student } of food.applications) {
-      const { user_id, name, serial } = await getStudentInfo(student);
+      const {
+        user_id,
+        name,
+        serial,
+        grade,
+        class: kclass,
+      } = await getStudentInfo(student);
       userList[food.food].push({
         user_id,
         name,
         serial,
+        grade,
+        class: kclass,
       });
     }
   }
