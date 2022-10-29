@@ -7,6 +7,7 @@ import { join as pathJoin } from 'path';
 import { HTTPMethod } from '../types';
 import { validator } from '../middlewares';
 import checkPermission from '../middlewares/check-permission';
+import config from '../config';
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -124,6 +125,12 @@ const createSwaggerDocs = (services: Service[]) => {
           description: 'OK',
           schema: route.validateSchema ? schemaMapper(route.validateSchema) : {},
         },
+        401: {
+          description: 'Unauthorized (액세스 토큰이 없거나, 잘못된 경우)',
+        },
+        403: {
+          description: '특정 권한 (학과 선생님, 사감 선생님 ...) 등만 접근 가능한 Route',
+        },
       },
     };
     return routeDocs;
@@ -140,8 +147,9 @@ const createSwaggerDocs = (services: Service[]) => {
   });
 
   return {
-    paths: path,
+    ...config.swaggerOpts,
     tags: tag,
+    paths: path,
   };
 };
 

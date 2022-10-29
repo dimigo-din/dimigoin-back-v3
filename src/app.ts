@@ -6,12 +6,10 @@ import cors from 'cors';
 import bearerToken from 'express-bearer-token';
 import helmet from 'helmet';
 import swaggerUi from 'swagger-ui-express';
-import swaggerAutogen from 'swagger-autogen';
-import swaggerJson from './resources/swagger.json';
 import config from './config';
 
 import { attachUserInfo, errorHandler } from './middlewares';
-import { serviceDocsRouter, serviceRouter } from './services';
+import { serviceDocsRouter, serviceRouter, swaggerOptions } from './services';
 import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
@@ -34,7 +32,6 @@ class App {
     this.app = express();
     this.initializeMiddlewares();
     this.connectMongoDB();
-    this.initalizeSwagger();
     this.initializeRouter();
     this.initializeErrorHandlers();
     this.initializeFileStorage();
@@ -50,11 +47,7 @@ class App {
   private initializeRouter() {
     this.app.use('/', serviceRouter);
     this.app.use('/docs', serviceDocsRouter);
-    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerJson));
-  }
-
-  private initalizeSwagger() {
-    swaggerAutogen(config.swaggerOptions, './services/**/index.ts', './resources/swagger.json');
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
   }
 
   private initializeMiddlewares() {
