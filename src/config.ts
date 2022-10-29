@@ -23,4 +23,29 @@ export default {
   fileStoragePath: process.env.NODE_ENV === 'prod'
     ? process.env.FILE_STORAGE_PATH!
     : path.join(path.parse(__dirname).dir, 'exported-files'),
+  swaggerOptions: {
+    info: {
+      title: 'DIMIGOin Backend',
+      description: '디미고인 백엔드 v3 API Docs',
+    },
+    servers: [
+      {
+        url: 'http://localhost:5001',
+        description: 'dev',
+      },
+      {
+        url: 'https://api.dimigo.in',
+        description: 'production',
+      },
+    ],
+    schemes: ['http', 'https'],
+    securityDefinitions: {
+      bearerAuth: {
+        type: 'http',
+        scheme: 'bearer',
+        in: 'header',
+        bearerFormat: 'JWT',
+      },
+    },
+  },
 };

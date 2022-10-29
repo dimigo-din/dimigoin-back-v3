@@ -105,6 +105,46 @@ const createDocsRouter = (services: Service[]) => {
   return router;
 };
 
+const createSwaggerDocs = (services: Service[]) => {
+  const schemaMapper = (validateSchema: KeyValue<Joi.AnySchema>) => {
+    const keys = Object.keys(validateSchema);
+    const result: KeyValue<String> = {};
+    keys.forEach((key) => {
+      result[key] = validateSchema[key].type;
+    });
+    return result;
+  };
+
+  const createSwagger = (route: Route, service: Service): object => {
+    const routeDocs: KeyValue<Object> = {};
+    routeDocs[route.method] = {
+      tags: [service.baseURL.replace('/', '')],
+      responses: {
+        200: {
+          description: 'OK',
+          schema: route.validateSchema ? schemaMapper(route.validateSchema) : {},
+        },
+      },
+    };
+    return routeDocs;
+  };
+
+  const path: KeyValue<Object> = {};
+  const tag: Array<object> = [];
+
+  services.forEach((service) => {
+    tag.push({ name: service.baseURL.replace('/', ''), description: service.name });
+    service.routes.forEach((route) => {
+      path[(service.baseURL + route.path).replace(/\/$/, '')] = createSwagger(route, service);
+    });
+  });
+
+  return {
+    paths: path,
+    tags: tag,
+  };
+};
+
 export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'));
 
@@ -116,3 +156,4 @@ export const importedServices = services.map((s) => ({
 
 export const serviceRouter = createRouter(importedServices);
 export const serviceDocsRouter = createDocsRouter(importedServices);
+export const swaggerOptions = createSwaggerDocs(importedServices);
