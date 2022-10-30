@@ -410,7 +410,7 @@ export default createService({
       method: 'get',
       path: '/student',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
       handler: dinnenControllers.DGLgetAllStudents,
     },
     {
