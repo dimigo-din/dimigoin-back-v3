@@ -12,7 +12,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: controllers.addPermission,
     },
@@ -22,7 +22,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: controllers.removePermission,
     },
@@ -32,7 +32,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        sid: Joi.string().required(),
+        sid: Joi.number().required(),
       },
       handler: controllers.mandate,
     },
