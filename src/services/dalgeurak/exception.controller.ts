@@ -1,12 +1,12 @@
 import { Request, Response } from 'express';
 import { getNowMealTime } from '../../resources/dalgeurak';
 import {
-  format,
+  // format,
   getDayCode,
   getNextWeekDay,
   getNowTime,
   getTodayDateString,
-  getWeekCalcul,
+  // getWeekCalcul,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
@@ -39,32 +39,32 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   const nowTime = getNowTime();
   if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
 
-  const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
+  // const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
-  const applications = await MealExceptionModel.count({
-    date: {
-      $gte: getWeekCalcul(7).format(format),
-      $lte: getWeekCalcul(11).format(format),
-    },
-    $or: [
-      { applier },
-      {
-        appliers: {
-          $elemMatch: {
-            student: {
-              $in: appliers,
-            },
-          },
-        },
-      },
-    ],
-  });
-  if (applications >= applicationCount) {
-    throw new HttpException(
-      401,
-      `${applicationCount}회 이상 신청${group ? '한 학생이 있어 선/후밥을 신청할 수 없습니다.' : '할 수 없습니다.'}`,
-    );
-  }
+  // const applications = await MealExceptionModel.count({
+  //   date: {
+  //     $gte: getWeekCalcul(7).format(format),
+  //     $lte: getWeekCalcul(11).format(format),
+  //   },
+  //   $or: [
+  //     { applier },
+  //     {
+  //       appliers: {
+  //         $elemMatch: {
+  //           student: {
+  //             $in: appliers,
+  //           },
+  //         },
+  //       },
+  //     },
+  //   ],
+  // });
+  // if (applications >= applicationCount) {
+  //   throw new HttpException(
+  //     401,
+  //     `${applicationCount}회 이상 신청${group ? '한 학생이 있어 선/후밥을 신청할 수 없습니다.' : '할 수 없습니다.'}`,
+  //   );
+  // }
 
   if (appliers.length < 5 && group) throw new HttpException(401, '최소 신청자 수는 다섯 명부터입니다.');
   if (!MealExceptionValues.includes(type)) throw new HttpException(401, 'type parameter 종류는 first 또는 last 이어야 합니다.');
