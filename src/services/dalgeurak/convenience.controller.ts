@@ -141,7 +141,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   }
 
   Object.assign(convenience, {
-    remain: convenience.remain - 1,
+    remain: convenience.remain - convenience.applications.length,
     applications: [
       ...convenience.applications,
       {
