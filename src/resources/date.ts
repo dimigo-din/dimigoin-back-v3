@@ -80,7 +80,7 @@ export const getConvTime = (): ConvenienceTimeType | null => {
   const now = getNowTime();
 
   if (now >= 715 && now <= 800) return 'breakfast';
-  if (now >= 1835 && now <= 1950) return 'dinner';
+  if (now >= 1800 && now <= 1950) return 'dinner';
   return null;
 };
 
