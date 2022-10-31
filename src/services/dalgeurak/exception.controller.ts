@@ -77,7 +77,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   if (!MealExceptionTimeValues.includes(time)) throw new HttpException(401, 'time 형태가 올바르지 않습니다.');
 
   const today = getDayCode();
-  if (today === 'fri' || today === 'sat' || today === 'sun') throw new HttpException(401, '신청할 수 없는 요일입니다.');
+  if (['fri', 'sat', 'sun'].includes(today)) throw new HttpException(401, '신청할 수 없는 요일입니다.');
 
   if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
   const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
