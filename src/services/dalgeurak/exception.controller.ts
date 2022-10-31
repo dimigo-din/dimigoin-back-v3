@@ -1,12 +1,13 @@
+/* eslint-disable camelcase */
 import { Request, Response } from 'express';
 import { getNowMealTime } from '../../resources/dalgeurak';
 import {
-  // format,
+  format,
   getDayCode,
   getNextWeekDay,
   getNowTime,
   getTodayDateString,
-  // getWeekCalcul,
+  getWeekCalcul,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
@@ -21,7 +22,12 @@ import { getStudentInfo } from '../../resources/dimi-api';
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
 export const getMealExceptions = async (req: Request, res: Response) => {
-  const users = await MealExceptionModel.find({ });
+  const users = await MealExceptionModel.find({
+    date: {
+      $gte: getWeekCalcul(7).format(format),
+      $lte: getWeekCalcul(11).format(format),
+    },
+  });
 
   res.json({ users });
 };
