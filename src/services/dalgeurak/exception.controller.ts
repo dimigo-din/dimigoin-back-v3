@@ -13,7 +13,7 @@ import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { MealExceptionModel } from '../../models/dalgeurak';
 import {
-  MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionValues,
+  MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
@@ -274,16 +274,75 @@ export const enterException = async (req: Request, res: Response) => {
 };
 
 export const getExceptionRemain = async (req: Request, res: Response) => {
-  const { date, time } = req.params;
+  // const { date, time } = req.params;
 
-  if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
-  const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
+  // if (!weekday.includes(date)) throw new HttpException(401, '요일 형태가 올바르지 않습니다.');
+  // const appliDate = getNextWeekDay(weekday.indexOf(date) + 7);
 
+  // const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
+  // const exception = await MealExceptionModel.count({
+  //   date: appliDate,
+  //   time: time as MealExceptionTimeType,
+  // });
+
+  // res.json({ remain: lastMealMaxNum - exception });
+  interface LunchDinner {
+    lunch: {
+      first: number;
+      last: number;
+    };
+    dinner: {
+      first: number;
+      last: number;
+    };
+  }
+
+  const exceptionWeekday = weekday.slice(1, 6);
+  const remain: {
+    [key: typeof exceptionWeekday[number]]: LunchDinner
+  } = exceptionWeekday.reduce((p, e) => ({
+    ...p,
+    [e]: {
+      lunch: {
+        first: 0,
+        last: 0,
+      },
+      dinner: {
+        first: 0,
+        last: 0,
+      },
+    },
+  }), {});
+
+  const firstMealMaxNum = await getMealConfig(MealConfigKeys.firstMealMaxApplicationPerMeal);
   const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
-  const exception = await MealExceptionModel.count({
-    date: appliDate,
-    time: time as MealExceptionTimeType,
-  });
 
-  res.json({ remain: lastMealMaxNum - exception });
+  for (const day of exceptionWeekday) {
+    const appliDate = getNextWeekDay(weekday.indexOf(day) + 7);
+    const firstLunchException = await MealExceptionModel.count({
+      date: appliDate,
+      time: 'lunch',
+    });
+    remain[day].lunch.first = firstMealMaxNum - firstLunchException;
+
+    const lastLunchException = await MealExceptionModel.count({
+      date: appliDate,
+      time: 'lunch',
+    });
+    remain[day].lunch.last = lastMealMaxNum - lastLunchException;
+
+    const firstDinnerException = await MealExceptionModel.count({
+      date: appliDate,
+      time: 'dinner',
+    });
+    remain[day].dinner.first = firstMealMaxNum - firstDinnerException;
+
+    const lastDinnerException = await MealExceptionModel.count({
+      date: appliDate,
+      time: 'dinner',
+    });
+    remain[day].dinner.last = lastMealMaxNum - lastDinnerException;
+  }
+
+  res.json({ ...remain });
 };

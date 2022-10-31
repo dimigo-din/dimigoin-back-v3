@@ -87,6 +87,13 @@ export default createService({
       handler: exceptionControllers.enterException,
     },
     {
+      method: 'get',
+      path: '/exception/remain',
+      needAuth: true,
+      needPermission: false,
+      handler: exceptionControllers.getExceptionRemain,
+    },
+    {
       method: 'post',
       path: '/exception/:type',
       needAuth: true,
@@ -112,13 +119,6 @@ export default createService({
         reason: Joi.string(),
       },
       handler: exceptionControllers.permissionMealException,
-    },
-    {
-      method: 'get',
-      path: '/exception/:date/:time',
-      needAuth: true,
-      needPermission: false,
-      handler: exceptionControllers.getExceptionRemain,
     },
     // {
     //   method: 'delete',
