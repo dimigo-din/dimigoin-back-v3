@@ -178,6 +178,7 @@ export const getUserList = async (req: Request, res: Response) => {
       serial: string;
       grade: number;
       class: number;
+      checkin: boolean;
     }>;
   };
 
@@ -205,12 +206,22 @@ export const getUserList = async (req: Request, res: Response) => {
         grade,
         class: kclass,
       } = await getStudentInfo(student);
+      const checkin = await ConvenienceCheckinModel.findOne({
+        'duration.start': getWeekStartString(),
+        [nowTime]: {
+          $elemMatch: {
+            date: getTodayDateString(),
+            student: user_id,
+          },
+        },
+      });
       userList[food.food].push({
         user_id,
         name,
         serial,
         grade,
         class: kclass,
+        checkin: !!checkin,
       });
     }
   }
