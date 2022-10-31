@@ -4,6 +4,7 @@ import {
   ClassValues,
   MealTimeValues,
   MealExceptionApplicationStatusValues,
+  MealExceptionValues,
 } from '../../types';
 
 import * as controllers from './controllers';
@@ -95,7 +96,7 @@ export default createService({
     },
     {
       method: 'post',
-      path: '/exception/:type',
+      path: '/exception',
       needAuth: true,
       needPermission: false,
       studentOnly: true,
@@ -103,8 +104,9 @@ export default createService({
         group: Joi.boolean().required(),
         appliers: Joi.array().items(Joi.number()),
         reason: Joi.string().required(),
-        time: Joi.string().valid(...MealTimeValues).required(),
-        date: Joi.string().required(),
+        time: Joi.array().items(Joi.string().valid(...MealTimeValues)).required(),
+        date: Joi.array().items(Joi.string()).required(),
+        type: Joi.array().items(Joi.string().valid(...MealExceptionValues)).required(),
       },
       handler: exceptionControllers.createMealExceptions,
     },
