@@ -209,6 +209,7 @@ export const getOrder = async () => {
   let now: nowType;
   if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
   else if (nowTime >= 1830) now = 'dinner';
+  else throw new HttpException(401, '식사시간이 아닙니다.');
 
   let gradeIdx: number;
   let classIdx: number;
