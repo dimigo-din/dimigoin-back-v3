@@ -277,6 +277,13 @@ export default createService({
       handler: convenienceControllers.getConvenience,
     },
     {
+      method: 'get',
+      path: '/convenience/me',
+      needAuth: true,
+      needPermission: false,
+      handler: convenienceControllers.getMyConvenienceAppli,
+    },
+    {
       method: 'post',
       path: '/convenience',
       needAuth: true,

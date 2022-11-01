@@ -228,3 +228,22 @@ export const getUserList = async (req: Request, res: Response) => {
   }
   res.json({ ...userList });
 };
+
+export const getMyConvenienceAppli = async (req: Request, res: Response) => {
+  const conveniences = await ConvenienceFoodModel.find({
+    'duration.start': {
+      $gte: getLastWeek(getWeekStartString()),
+      $lte: getWeekStartString(),
+    },
+    applications: {
+      $elemMatch: {
+        student: req.user.user_id,
+      },
+    },
+  })
+    .select('duration')
+    .select('time')
+    .select('food');
+
+  res.json({ conveniences });
+};
