@@ -316,6 +316,13 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/convenience/checkeat',
+      needAuth: true,
+      needPermission: true,
+      handler: convenienceControllers.getCheckEat,
+    },
+    {
+      method: 'get',
       path: '/convenience/me',
       needAuth: true,
       needPermission: false,
