@@ -79,6 +79,26 @@ export default createService({
     // },
     {
       method: 'post',
+      path: '/exception/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: exceptionControllers.addBlackList,
+    },
+    {
+      method: 'delete',
+      path: '/exception/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: exceptionControllers.deleteBlackList,
+    },
+    {
+      method: 'post',
       path: '/exception/enter',
       needAuth: true,
       needPermission: true,

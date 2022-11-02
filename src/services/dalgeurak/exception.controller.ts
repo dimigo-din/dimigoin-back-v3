@@ -12,7 +12,7 @@ import {
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
-import { MealExceptionModel } from '../../models/dalgeurak';
+import { MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
 import {
   MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
@@ -344,4 +344,29 @@ export const getExceptionRemain = async (req: Request, res: Response) => {
   }
 
   res.json({ ...remain });
+};
+
+export const addBlackList = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  const blackCheck = await MealExceptionBlacklistModel.findOne({
+    userId: sid,
+  });
+  if (!blackCheck) throw new HttpException(401, '이미 블랙리스트에 존재합니다.');
+
+  await new MealExceptionBlacklistModel({
+    userId: sid,
+  }).save();
+
+  res.json({ userId: sid });
+};
+
+export const deleteBlackList = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  await MealExceptionBlacklistModel.deleteOne({
+    userId: sid,
+  });
+
+  res.json({ userId: sid });
 };
