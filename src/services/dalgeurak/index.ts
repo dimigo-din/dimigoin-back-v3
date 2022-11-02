@@ -327,6 +327,16 @@ export default createService({
       handler: convenienceControllers.checkIn,
     },
     {
+      method: 'delete',
+      path: '/convenience/checkin',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.deleteCheckIn,
+    },
+    {
       method: 'get',
       path: '/convenience/users',
       needAuth: true,

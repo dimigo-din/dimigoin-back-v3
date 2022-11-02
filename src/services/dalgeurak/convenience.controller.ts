@@ -87,6 +87,31 @@ export const checkIn = async (req: Request, res: Response) => {
   });
 };
 
+export const deleteCheckIn = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  const nowTime = getConvTime();
+  if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
+
+  const checkInCheck = await ConvenienceCheckinModel.findOne({
+    'duration.start': getWeekStartString(),
+  });
+
+  const today = getTodayDateString();
+  const checkInIdx = checkInCheck[nowTime].findIndex((e) => (e.date === today) && (e.student === sid));
+  if (checkInIdx === -1) throw new HttpException(401, '체크인 되어있지 않습니다.');
+
+  Object.assign(checkInCheck, {
+    [nowTime]: [...checkInCheck[nowTime].filter((e) => !((e.date === today) && (e.student === sid)))],
+  });
+  await checkInCheck.save();
+
+  res.json({
+    result: 'success',
+    time: nowTime,
+  });
+};
+
 export const insteadOfAppli = async (req: Request, res: Response) => {
   const { sid, time, food } = req.body;
 
