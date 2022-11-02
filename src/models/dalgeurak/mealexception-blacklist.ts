@@ -9,7 +9,7 @@ const mealExceptionBlacklistScheme = createSchema({
   userId: Type.number({ required: true }),
 }, { versionKey: false, timestamps: true });
 
-const MealExceptionBlacklistModel: Model<MealExceptionBlacklist> = dalgeurakDB.model('convenienceacheckin', mealExceptionBlacklistScheme);
+const MealExceptionBlacklistModel: Model<MealExceptionBlacklist> = dalgeurakDB.model('mealexceptionblacklist', mealExceptionBlacklistScheme);
 
 export {
   mealExceptionBlacklistScheme,

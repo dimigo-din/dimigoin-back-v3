@@ -407,3 +407,34 @@ export const deleteBlackList = async (req: Request, res: Response) => {
 
   res.json({ userId: sid });
 };
+
+export const getCheckinData = async (req: Request, res: Response) => {
+  const { start, end } = req.params;
+
+  const checkin = await ConvenienceCheckinModel.find({
+    $or: [
+      {
+        breakfast: {
+          $elemMatch: {
+            date: {
+              $gte: start,
+              $lte: end,
+            },
+          },
+        },
+      },
+      {
+        dinner: {
+          $elemMatch: {
+            date: {
+              $gte: start,
+              $lte: end,
+            },
+          },
+        },
+      },
+    ],
+  });
+
+  res.json({ checkin });
+};
