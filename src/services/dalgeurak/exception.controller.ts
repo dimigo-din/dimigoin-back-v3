@@ -18,7 +18,7 @@ import {
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
-import { getStudentInfo } from '../../resources/dimi-api';
+import { getTeacherInfo } from '../../resources/dimi-api';
 
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
@@ -42,6 +42,18 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     type,
   } = req.body;
   const { user_id: applier } = req.user;
+
+  const appliersBlackCheck = await MealExceptionBlacklistModel.count({
+    userId: {
+      $in: appliers,
+    },
+  });
+  if (appliersBlackCheck > 0) throw new HttpException(401, '블랙리스트에 등록된 멤버가 있습니다.');
+
+  const blackCheck = await MealExceptionBlacklistModel.findOne({
+    userId: applier,
+  });
+  if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
   const nowTime = getNowTime();
   if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
@@ -202,7 +214,12 @@ export const permissionMealException = async (req: Request, res: Response) => {
 export const giveMealException = async (req: Request, res: Response) => {
   const { type, sid, reason } = req.body;
 
-  const teacher = await getStudentInfo(req.user.user_id);
+  const blackCheck = await MealExceptionBlacklistModel.findOne({
+    userId: sid,
+  });
+  if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
+
+  const teacher = await getTeacherInfo(req.user.user_id);
 
   const exceptionStatus = await MealExceptionModel.findOne({ applier: sid });
   if (exceptionStatus) {

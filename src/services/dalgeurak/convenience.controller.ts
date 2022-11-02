@@ -116,6 +116,11 @@ export const deleteCheckIn = async (req: Request, res: Response) => {
 export const insteadOfAppli = async (req: Request, res: Response) => {
   const { sid, time, food } = req.body;
 
+  const blackCheck = await ConvenienceBlacklistModel.findOne({
+    userId: sid,
+  });
+  if (!blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
+
   const convenience = await ConvenienceFoodModel.findOne({
     food,
     time,
@@ -193,6 +198,11 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
 
 export const convenienceAppli = async (req: Request, res: Response) => {
   const { time, food } = req.body;
+
+  const blackCheck = await ConvenienceBlacklistModel.findOne({
+    userId: req.user.user_id,
+  });
+  if (!blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
   // 신청 인원 체크
   const convenience = await ConvenienceFoodModel.findOne({
