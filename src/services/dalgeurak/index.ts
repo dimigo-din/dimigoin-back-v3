@@ -308,6 +308,14 @@ export default createService({
     },
     {
       method: 'get',
+      path: '/convenience/data',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      handler: convenienceControllers.getConvenienceData,
+    },
+    {
+      method: 'get',
       path: '/convenience/me',
       needAuth: true,
       needPermission: false,

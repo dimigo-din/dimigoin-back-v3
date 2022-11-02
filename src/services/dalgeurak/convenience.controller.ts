@@ -41,6 +41,15 @@ export const getConvenience = async (req: Request, res: Response) => {
   res.json({ convenience });
 };
 
+export const getConvenienceData = async (req: Request, res: Response) => {
+  const convenience = await ConvenienceFoodModel.find({
+    'duration.start': getWeekStartString(),
+  });
+  if (!convenience) throw new HttpException(501, '간편식이 없습니다.');
+
+  res.json({ convenience });
+};
+
 // 체크인
 export const checkIn = async (req: Request, res: Response) => {
   const { sid } = req.body;
