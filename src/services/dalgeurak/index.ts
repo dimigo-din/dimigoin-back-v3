@@ -306,6 +306,18 @@ export default createService({
     },
     {
       method: 'post',
+      path: '/convenience/instead',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+        time: Joi.string().required(),
+        food: Joi.string().required(),
+      },
+      handler: convenienceControllers.insteadOfAppli,
+    },
+    {
+      method: 'post',
       path: '/convenience/checkin',
       needAuth: true,
       needPermission: false,

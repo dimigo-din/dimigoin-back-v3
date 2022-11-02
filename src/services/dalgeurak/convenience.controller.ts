@@ -87,6 +87,84 @@ export const checkIn = async (req: Request, res: Response) => {
   });
 };
 
+export const insteadOfAppli = async (req: Request, res: Response) => {
+  const { sid, time, food } = req.body;
+
+  const convenience = await ConvenienceFoodModel.findOne({
+    food,
+    time,
+    'duration.start': getWeekStartString(),
+    'duration.applicationend': {
+      $gte: getTodayDateString(),
+    },
+  });
+  if (!convenience) throw new HttpException(401, '신청하려는 시간대의 간편식이 없습니다.');
+  if (convenience.remain <= 0) throw new HttpException(401, '신청이 마감되었습니다.');
+
+  const today = getDayCode();
+  if (!['tue', 'wed'].includes(today)) throw new HttpException(401, '신청할 수 있는 날이 아닙니다.');
+
+  // 신청 했는지 체크
+  const application = convenience.applications.map((e) => e.student);
+  if (application.includes(sid)) throw new HttpException(401, '이미 신청하였습니다.');
+
+  const allConvApplilcationCheck = await ConvenienceFoodModel.find({
+    applications: {
+      $elemMatch: {
+        student: sid,
+      },
+    },
+    'duration.start': getWeekStartString(),
+  });
+  if (allConvApplilcationCheck) { allConvApplilcationCheck.forEach((e) => {
+    if (e.time === time) throw new HttpException(401, '이미 신청하였습니다.');
+  }); }
+
+  // 월요일 학년 별 17명 이상 신청 막기
+  const startWeek = getWeekStartString();
+  const students = convenience.applications
+    .map((e) => e.date === startWeek && e.student)
+    .filter((e) => e);
+  const gradeCnt = (
+    students.length > 1
+      ? await studentSearch({
+        user_id: students,
+        grade: req.user.grade,
+      }) : []
+  ).length;
+  if (gradeCnt >= 17) throw new HttpException(401, '학년별 신청이 마감되었습니다.');
+
+  // 신청박탈 체크
+  const depriveCheck = await ConvenienceDepriveModel.findOne({
+    student: sid,
+  });
+  if (depriveCheck) {
+    await ConvenienceDepriveModel.updateOne(
+      { student: sid },
+      { clear: true },
+    );
+    throw new HttpException(401, '신청이 취소되었습니다.\n사유 : 저번 간편식 2회이상 체크인하지 않음');
+  }
+
+  Object.assign(convenience, {
+    remain: convenience.limit - (convenience.applications.length + 1),
+    applications: [
+      ...convenience.applications,
+      {
+        date: getTodayDateString(),
+        student: sid,
+      },
+    ],
+  });
+  await convenience.save();
+
+  res.json({
+    result: 'success',
+    time,
+    food,
+  });
+};
+
 export const convenienceAppli = async (req: Request, res: Response) => {
   const { time, food } = req.body;
 
