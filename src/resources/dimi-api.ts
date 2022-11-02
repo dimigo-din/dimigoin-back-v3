@@ -5,6 +5,7 @@ import { User } from '../interfaces';
 import { PermissionModel, UserTypeModel } from '../models';
 import { services as allServices } from '../services';
 import { MealStatusModel } from '../models/dalgeurak';
+import logger from './logger';
 
 const apiRouter = {
   getIdentity: '/v1/users/identify',
@@ -76,25 +77,34 @@ export const getIdentity = async (account: Account, dalgeurak?: string) => {
   return data;
 };
 
+const apiRequest = async (url: string, params?: object) => {
+  try {
+    const { data } = await api.get(url, {
+      params,
+    });
+
+    return data;
+  } catch (e) {
+    logger.error(e);
+    return [];
+  }
+};
+
 export const getStudentInfo = async (userId: number): Promise<User> => {
-  const { data } = await api.get(apiRouter.getStudent, {
-    params: {
-      user_id: userId,
-    },
+  const data = await apiRequest(apiRouter.getStudent, {
+    user_id: userId,
   });
   return data[0];
 };
 export const getTeacherInfo = async (userId: number): Promise<User> => {
-  const { data } = await api.get(apiRouter.getTeacher, {
-    params: {
-      user_id: userId,
-    },
+  const data = await apiRequest(apiRouter.getTeacher, {
+    user_id: userId,
   });
   return data[0];
 };
 
 export const getAllStudents = async (): Promise<User[]> => {
-  const { data } = await api.get(apiRouter.getStudent, {
+  const data = await apiRequest(apiRouter.getStudent, {
     params: {
       grade: [1, 2, 3],
     },
@@ -102,12 +112,12 @@ export const getAllStudents = async (): Promise<User[]> => {
   return data;
 };
 export const getAllTeachers = async (): Promise<User[]> => {
-  const { data } = await api.get(apiRouter.getAllTeachers);
+  const data = await apiRequest(apiRouter.getAllTeachers);
   return data;
 };
 
 export const studentSearch = async (param: object): Promise<User[]> => {
-  const { data } = await api.get(apiRouter.getStudent, {
+  const data = await apiRequest(apiRouter.getStudent, {
     params: param,
   });
   return data;
