@@ -7,6 +7,7 @@ import {
   getLastWeek,
   getNowTime,
   getTodayDateString,
+  getWeekdayEndString,
   getWeekStartString,
 } from '../../resources/date';
 import { setConvenienceFood } from '../../resources/dalgeurak';
@@ -15,6 +16,7 @@ import {
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
   ConvenienceFoodModel,
+  FriDayHomeModel,
 } from '../../models/dalgeurak';
 import { ConvenienceFoodType } from '../../types';
 
@@ -246,4 +248,23 @@ export const getMyConvenienceAppli = async (req: Request, res: Response) => {
     .select('food');
 
   res.json({ conveniences });
+};
+
+export const friRegistry = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  const date = getWeekdayEndString();
+
+  const friHome = await FriDayHomeModel.findOne({
+    userId: sid,
+    date,
+  });
+  if (friHome) throw new HttpException(401, '이미 신청되었습니다.');
+
+  await new FriDayHomeModel({
+    userId: sid,
+    date,
+  }).save();
+
+  res.json({ date });
 };

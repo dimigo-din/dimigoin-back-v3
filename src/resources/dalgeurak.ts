@@ -7,6 +7,7 @@ import {
   ConvenienceFoodModel,
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
+  FriDayHomeModel,
 } from '../models/dalgeurak';
 import {
   MealTardyStatusType,
@@ -20,9 +21,11 @@ import {
   getExtraTime,
   getLastWeek,
   getNowTime,
+  getTodayDateString,
   getWeekdayEndString,
   getWeekStartString,
 } from './date';
+import logger from './logger';
 
 export const getMealConfig = async (key: string) =>
   (await MealConfigModel.findOne({ key })).value;
@@ -50,6 +53,7 @@ export const setConvenienceFood = async () => {
     salad: '샐러드',
     misu: '선식',
   };
+  const convenienceLimit = await getMealConfig(MealConfigKeys.convenienceApplicationLimit);
   ConvenienceTimeValues.map(async (time, idx) =>
     foods[idx].map(
       async (food) =>
@@ -57,8 +61,8 @@ export const setConvenienceFood = async () => {
           time,
           food,
           name: foodname[food],
-          limit: 50,
-          remain: 50,
+          limit: convenienceLimit,
+          remain: convenienceLimit,
           applications: [],
           duration: {
             start: getWeekStartString(),
@@ -232,4 +236,44 @@ export const getOrder = async () => {
   }
 
   return { gradeIdx, classIdx, now };
+};
+
+export const fridayHomeCheck = async () => {
+  const today = getTodayDateString();
+  const fri = getWeekdayEndString();
+
+  if (today !== fri) return logger.error('오늘날짜와 금요일 날짜가 다릅니다. [달그락 : 금요귀가자 체크]');
+
+  const fridayAppliers = await FriDayHomeModel.find({
+    date: today,
+  });
+
+  fridayAppliers.map(async (e) => {
+    ConvenienceTimeValues.map(async (time) => {
+      const conveniences = await ConvenienceFoodModel.find({
+        time,
+        'duration.start': getLastWeek(getWeekStartString()),
+      });
+
+      let applicationStatus = false;
+      conveniences.forEach((convenience) => {
+        const application = convenience.applications.map((e1) => e1.student);
+        if (application.includes(e.userId)) applicationStatus = true;
+      });
+      if (!applicationStatus) throw new HttpException(401, '신청하지 않았습니다.');
+
+      const checkInCheck = await ConvenienceCheckinModel.findOne({
+        'duration.start': getWeekStartString(),
+      });
+      if (!checkInCheck) throw new HttpException(501, '이번 주 체크인이 설정되어 있지 않습니다.');
+
+      Object.assign(checkInCheck, {
+        [time]: [...checkInCheck[time], {
+          date: getTodayDateString(),
+          student: e.userId,
+        }],
+      });
+      await checkInCheck.save();
+    });
+  });
 };

@@ -10,3 +10,4 @@ export * from './convenience-food';
 export * from './convenience-checkin';
 export * from './convenience-deprive';
 export * from './meal-status';
+export * from './friday-home';

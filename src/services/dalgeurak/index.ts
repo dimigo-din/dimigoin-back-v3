@@ -263,6 +263,16 @@ export default createService({
       handler: fcmControllers.revokeDeviceToken,
     },
     {
+      method: 'post',
+      path: '/convenience/fri',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.friRegistry,
+    },
+    {
       method: 'get',
       path: '/convenience/set',
       needAuth: true,
