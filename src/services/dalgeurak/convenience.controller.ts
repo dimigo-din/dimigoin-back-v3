@@ -13,6 +13,7 @@ import {
 import { setConvenienceFood } from '../../resources/dalgeurak';
 import { HttpException } from '../../exceptions';
 import {
+  ConvenienceBlacklistModel,
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
   ConvenienceFoodModel,
@@ -370,4 +371,29 @@ export const friRegistry = async (req: Request, res: Response) => {
   }).save();
 
   res.json({ date });
+};
+
+export const addBlackList = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  const blackCheck = await ConvenienceBlacklistModel.findOne({
+    userId: sid,
+  });
+  if (!blackCheck) throw new HttpException(401, '이미 블랙리스트에 존재합니다.');
+
+  await new ConvenienceBlacklistModel({
+    userId: sid,
+  }).save();
+
+  res.json({ userId: sid });
+};
+
+export const deleteBlackList = async (req: Request, res: Response) => {
+  const { sid } = req.body;
+
+  await ConvenienceBlacklistModel.deleteOne({
+    userId: sid,
+  });
+
+  res.json({ userId: sid });
 };

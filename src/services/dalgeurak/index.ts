@@ -337,6 +337,26 @@ export default createService({
       handler: convenienceControllers.deleteCheckIn,
     },
     {
+      method: 'post',
+      path: '/convenience/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.addBlackList,
+    },
+    {
+      method: 'delete',
+      path: '/convenience/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.deleteBlackList,
+    },
+    {
       method: 'get',
       path: '/convenience/users',
       needAuth: true,
