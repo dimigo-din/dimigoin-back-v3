@@ -318,7 +318,8 @@ export default createService({
       method: 'get',
       path: '/convenience/checkeat',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
+      teacherOnly: true,
       handler: convenienceControllers.getCheckEat,
     },
     {
