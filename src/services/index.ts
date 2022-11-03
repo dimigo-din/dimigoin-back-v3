@@ -16,6 +16,7 @@ interface KeyValue<T> {
 export interface Route {
   method: HTTPMethod;
   path: string;
+  description?: string;
   middlewares?: RequestHandler[];
   handler: RequestHandler;
   validateSchema?: KeyValue<Joi.Schema>;
@@ -119,6 +120,7 @@ const createSwaggerDocs = (services: Service[]) => {
   const createSwagger = (route: Route, service: Service): object => {
     const routeDocs: KeyValue<Object> = {};
     routeDocs[route.method] = {
+      summary: route.description,
       tags: [service.baseURL.replace('/', '')],
       responses: {
         200: {
@@ -142,7 +144,7 @@ const createSwaggerDocs = (services: Service[]) => {
   services.forEach((service) => {
     tag.push({ name: service.baseURL.replace('/', ''), description: service.name });
     service.routes.forEach((route) => {
-      path[(service.baseURL + route.path).replace(/\/$/, '')] = createSwagger(route, service);
+      path[(service.baseURL + route.path).replace(/\/$/, '').replace(/(:[A-Z+a-z]\w+)/g, (i, match) => `{${match.replace(':', '')}}`)] = createSwagger(route, service);
     });
   });
 

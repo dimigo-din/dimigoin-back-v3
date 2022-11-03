@@ -12,6 +12,7 @@ export default createService({
     {
       method: 'get',
       path: '/',
+      description: '모든 방과후 과목을 불러옵니다.',
       needAuth: true,
       needPermission: false,
       handler: controllers.getAllAfterschools,
@@ -19,6 +20,7 @@ export default createService({
     {
       method: 'get',
       path: '/:afterschoolId',
+      description: '선택된 방과후 과목을 불러옵니다.',
       needAuth: true,
       needPermission: false,
       handler: controllers.getAfterschool,
@@ -26,6 +28,7 @@ export default createService({
     {
       method: 'post',
       path: '/',
+      description: '새 방과후 과목을 생성합니다.',
       needAuth: true,
       needPermission: true,
       validateSchema: {
@@ -47,6 +50,7 @@ export default createService({
     {
       method: 'delete',
       path: '/:afterschoolId',
+      description: '선택된 방과후 과목을 삭제합니다.',
       needAuth: true,
       needPermission: true,
       handler: controllers.deleteAfterschool,
@@ -54,6 +58,7 @@ export default createService({
     {
       method: 'patch',
       path: '/:afterschoolId',
+      description: '선택된 방과후 과목을 수정합니다.',
       needAuth: true,
       needPermission: true,
       validateSchema: {
