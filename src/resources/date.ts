@@ -42,7 +42,7 @@ export const getWeekEndString = (date?: string) => {
 };
 export const getWeekdayEndString = () => moment().clone().endOf('isoWeek').add(-2, 'd')
   .format(format);
-export const getConvAppliEndString = () => moment().clone().startOf('isoWeek').add(1, 'd')
+export const getConvAppliEndString = () => moment().clone().startOf('isoWeek').add(2, 'd')
   .format(format);
 
 export const getMonthStartString = (date?: string) => {
@@ -79,7 +79,7 @@ export const getMinutesValue = ({ hour, minute }: {
 export const getConvTime = (): ConvenienceTimeType | null => {
   const now = getNowTime();
 
-  if (now >= 715 && now <= 800) return 'breakfast';
+  if (now >= 700 && now <= 800) return 'breakfast';
   if (now >= 1800 && now <= 1950) return 'dinner';
   return null;
 };

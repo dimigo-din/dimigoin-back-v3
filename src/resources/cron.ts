@@ -10,6 +10,7 @@ import {
   resetExtraTimes,
   setConvenienceFood,
   convenienceDepriveCheck,
+  fridayHomeCheck,
 } from './dalgeurak';
 import {
   updateMeal,
@@ -29,6 +30,14 @@ const cronJobs = [
       await updateMeal();
       await setConvenienceFood();
       await convenienceDepriveCheck();
+    },
+    runOnSetup: false,
+  },
+  {
+    name: '달그락 금요귀가자 체크',
+    schedule: '0 1 * * 5',
+    action: async () => {
+      await fridayHomeCheck();
     },
     runOnSetup: false,
   },

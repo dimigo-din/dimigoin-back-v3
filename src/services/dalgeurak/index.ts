@@ -4,6 +4,7 @@ import {
   ClassValues,
   MealTimeValues,
   MealExceptionApplicationStatusValues,
+  MealExceptionValues,
 } from '../../types';
 
 import * as controllers from './controllers';
@@ -78,6 +79,26 @@ export default createService({
     // },
     {
       method: 'post',
+      path: '/exception/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: exceptionControllers.addBlackList,
+    },
+    {
+      method: 'delete',
+      path: '/exception/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: exceptionControllers.deleteBlackList,
+    },
+    {
+      method: 'post',
       path: '/exception/enter',
       needAuth: true,
       needPermission: true,
@@ -87,8 +108,15 @@ export default createService({
       handler: exceptionControllers.enterException,
     },
     {
+      method: 'get',
+      path: '/exception/remain',
+      needAuth: true,
+      needPermission: false,
+      handler: exceptionControllers.getExceptionRemain,
+    },
+    {
       method: 'post',
-      path: '/exception/:type',
+      path: '/exception',
       needAuth: true,
       needPermission: false,
       studentOnly: true,
@@ -96,8 +124,9 @@ export default createService({
         group: Joi.boolean().required(),
         appliers: Joi.array().items(Joi.number()),
         reason: Joi.string().required(),
-        time: Joi.string().valid(...MealTimeValues).required(),
-        date: Joi.string().required(),
+        time: Joi.array().items(Joi.string().valid(...MealTimeValues)).required(),
+        date: Joi.array().items(Joi.string()).required(),
+        type: Joi.array().items(Joi.string().valid(...MealExceptionValues)).required(),
       },
       handler: exceptionControllers.createMealExceptions,
     },
@@ -112,13 +141,6 @@ export default createService({
         reason: Joi.string(),
       },
       handler: exceptionControllers.permissionMealException,
-    },
-    {
-      method: 'get',
-      path: '/exception/:date/:time',
-      needAuth: true,
-      needPermission: false,
-      handler: exceptionControllers.getExceptionRemain,
     },
     // {
     //   method: 'delete',
@@ -261,6 +283,16 @@ export default createService({
       handler: fcmControllers.revokeDeviceToken,
     },
     {
+      method: 'post',
+      path: '/convenience/fri',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.friRegistry,
+    },
+    {
       method: 'get',
       path: '/convenience/set',
       needAuth: true,
@@ -275,6 +307,28 @@ export default createService({
       handler: convenienceControllers.getConvenience,
     },
     {
+      method: 'get',
+      path: '/convenience/data',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      handler: convenienceControllers.getConvenienceData,
+    },
+    {
+      method: 'get',
+      path: '/convenience/checkeat',
+      needAuth: true,
+      needPermission: true,
+      handler: convenienceControllers.getCheckEat,
+    },
+    {
+      method: 'get',
+      path: '/convenience/me',
+      needAuth: true,
+      needPermission: false,
+      handler: convenienceControllers.getMyConvenienceAppli,
+    },
+    {
       method: 'post',
       path: '/convenience',
       needAuth: true,
@@ -287,6 +341,18 @@ export default createService({
     },
     {
       method: 'post',
+      path: '/convenience/instead',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+        time: Joi.string().required(),
+        food: Joi.string().required(),
+      },
+      handler: convenienceControllers.insteadOfAppli,
+    },
+    {
+      method: 'post',
       path: '/convenience/checkin',
       needAuth: true,
       needPermission: false,
@@ -296,12 +362,49 @@ export default createService({
       handler: convenienceControllers.checkIn,
     },
     {
+      method: 'delete',
+      path: '/convenience/checkin',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.deleteCheckIn,
+    },
+    {
+      method: 'post',
+      path: '/convenience/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.addBlackList,
+    },
+    {
+      method: 'delete',
+      path: '/convenience/blacklist',
+      needAuth: true,
+      needPermission: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+      },
+      handler: convenienceControllers.deleteBlackList,
+    },
+    {
       method: 'get',
       path: '/convenience/users',
       needAuth: true,
       needPermission: false,
       teacherOnly: true,
       handler: convenienceControllers.getUserList,
+    },
+    {
+      method: 'get',
+      path: '/convenience/:start/:end',
+      needAuth: true,
+      needPermission: true,
+      handler: convenienceControllers.getCheckinData,
     },
     {
       method: 'post',
