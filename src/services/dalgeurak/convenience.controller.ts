@@ -212,7 +212,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   const blackCheck = await ConvenienceBlacklistModel.findOne({
     userId: req.user.user_id,
   });
-  if (!blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
+  if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
   // 신청 인원 체크
   const convenience = await ConvenienceFoodModel.findOne({
