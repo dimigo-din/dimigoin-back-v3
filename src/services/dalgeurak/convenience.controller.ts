@@ -308,10 +308,10 @@ export const getUserList = async (req: Request, res: Response) => {
     }>;
   };
 
-  // const nowTime = getConvTime();
-  // if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
+  const nowTime = getConvTime();
+  if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
 
-  const nowTime = 'dinner';
+  //const nowTime = 'dinner';
   const conveniences = await ConvenienceFoodModel.find({
     time: nowTime,
     'duration.start': getLastWeek(getWeekStartString()),
