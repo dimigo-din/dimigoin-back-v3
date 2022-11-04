@@ -105,9 +105,7 @@ export const getTeacherInfo = async (userId: number): Promise<User> => {
 
 export const getAllStudents = async (): Promise<User[]> => {
   const data = await apiRequest(apiRouter.getStudent, {
-    params: {
-      grade: [1, 2, 3],
-    },
+    grade: [1, 2, 3],
   });
   return data;
 };
@@ -118,7 +116,7 @@ export const getAllTeachers = async (): Promise<User[]> => {
 
 export const studentSearch = async (param: object): Promise<User[]> => {
   const data = await apiRequest(apiRouter.getStudent, {
-    params: param,
+    ...param,
   });
   return data;
 };
@@ -126,7 +124,7 @@ export const teacherSearch = async (
   param: object,
 ): Promise<TeacherIdentity[]> => {
   const { data } = await api.get(apiRouter.getTeacher, {
-    params: param,
+    ...param,
   });
   return data;
 };
