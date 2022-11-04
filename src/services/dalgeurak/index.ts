@@ -81,7 +81,8 @@ export default createService({
       method: 'post',
       path: '/exception/blacklist',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
+      teacherOnly: true,
       validateSchema: {
         sid: Joi.number().required(),
       },
@@ -91,7 +92,8 @@ export default createService({
       method: 'delete',
       path: '/exception/blacklist',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
+      teacherOnly: true,
       validateSchema: {
         sid: Joi.number().required(),
       },
@@ -376,7 +378,8 @@ export default createService({
       method: 'post',
       path: '/convenience/blacklist',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
+      teacherOnly: true,
       validateSchema: {
         sid: Joi.number().required(),
       },
@@ -386,7 +389,8 @@ export default createService({
       method: 'delete',
       path: '/convenience/blacklist',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
+      teacherOnly: true,
       validateSchema: {
         sid: Joi.number().required(),
       },
