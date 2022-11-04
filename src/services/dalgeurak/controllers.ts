@@ -12,7 +12,7 @@ import {
   MealTardyStatusType,
 } from '../../types';
 import {
-  getNowTimeString,
+  getNowTimeString, getTodayDateString,
 } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
 import io from '../../resources/socket';
@@ -98,7 +98,8 @@ export const checkEntrance = async (req: Request, res: Response) => {
 // 내 정보
 export const getUserInfo = async (req: Request, res: Response) => {
   const student = await getStudentInfo(req.user.user_id);
-  const exception = await MealExceptionModel.findOne({ applier: req.user.user_id });
+  const today = getTodayDateString();
+  const exception = await MealExceptionModel.findOne({ applier: req.user.user_id, date: today });
 
   const mealStatusType = await MealStatusModel.findOne({ userId: student.user_id });
 
