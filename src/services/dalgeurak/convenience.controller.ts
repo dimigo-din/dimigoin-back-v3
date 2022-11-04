@@ -399,7 +399,7 @@ export const addBlackList = async (req: Request, res: Response) => {
   const blackCheck = await ConvenienceBlacklistModel.findOne({
     userId: sid,
   });
-  if (!blackCheck) throw new HttpException(401, '이미 블랙리스트에 존재합니다.');
+  if (blackCheck) throw new HttpException(401, '이미 블랙리스트에 존재합니다.');
 
   await new ConvenienceBlacklistModel({
     userId: sid,
