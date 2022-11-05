@@ -117,10 +117,19 @@ const createSwaggerDocs = (services: Service[]) => {
     return result;
   };
 
+  const createSwaggerParameter = (path: string) => {
+    const matches = path.match(/(:[A-z+a-z]\w+)/g);
+    return matches.map((m) => ({
+      in: 'path', name: m.replace(':', ''),
+    }));
+  };
+
   const createSwagger = (route: Route, service: Service): object => {
     const routeDocs: KeyValue<Object> = {};
+
     routeDocs[route.method] = {
       summary: route.description,
+      parameters: route.path.match(/(:[A-z+a-z]\w+)/g) ? createSwaggerParameter(route.path) : null,
       tags: [service.baseURL.replace('/', '')],
       responses: {
         200: {
