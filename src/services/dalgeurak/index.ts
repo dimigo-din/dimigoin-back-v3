@@ -336,6 +336,7 @@ export default createService({
       path: '/convenience',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       validateSchema: {
         time: Joi.string().required(),
         food: Joi.string().required(),
