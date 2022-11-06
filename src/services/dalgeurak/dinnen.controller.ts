@@ -3,7 +3,9 @@ import { PermissionModel } from '../../models';
 import { HttpException } from '../../exceptions';
 import { checkTardy } from '../../resources/dalgeurak';
 import { mealStatusFilter } from './controllers';
-import { CheckinLogModel, MealConfigModel, MealStatusModel } from '../../models/dalgeurak';
+import {
+  CheckinLogModel, ConvenienceBlacklistModel, MealConfigModel, MealExceptionBlacklistModel, MealStatusModel,
+} from '../../models/dalgeurak';
 import { getNowTimeString } from '../../resources/date';
 import io from '../../resources/socket';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
@@ -61,9 +63,23 @@ export const updateWaitingLine = async (req: Request, res: Response) => {
 // 권한포함 학생정보 불러오기
 export const DGLgetAllStudents = async (req: Request, res: Response) => {
   const students = await getAllStudents();
+
+  const users = students.map((e) => e.user_id);
+
   const permissions = await PermissionModel.find({
     userId: {
-      $in: students.map((e) => e.user_id),
+      $in: users,
+    },
+  });
+
+  const convenienceBlack = await ConvenienceBlacklistModel.find({
+    userId: {
+      $in: users,
+    },
+  });
+  const exceptionBlack = await MealExceptionBlacklistModel.find({
+    userId: {
+      $in: users,
     },
   });
 
@@ -73,6 +89,11 @@ export const DGLgetAllStudents = async (req: Request, res: Response) => {
     } else {
       (students[idx] as any).permissions = [];
     }
+    if (convenienceBlack.findIndex((b) => b.userId === e.user_id) !== -1) (students[idx] as any).convenienceBlack = true;
+    else (students[idx] as any).convenienceBlack = false;
+
+    if (exceptionBlack.findIndex((x) => x.userId === e.user_id) !== -1) (students[idx] as any).exceptionBlack = true;
+    else (students[idx] as any).exceptionBlack = false;
   });
 
   res.json({ students });
