@@ -12,13 +12,14 @@ import {
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
-import { MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
+import { IMealException, MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
 import {
   MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
 import { getTeacherInfo, studentSearch } from '../../resources/dimi-api';
+import { User } from '../../interfaces';
 
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
@@ -37,7 +38,9 @@ export const getMealExceptions = async (req: Request, res: Response) => {
     user_id: processedAppliers,
   });
 
-  const u: any = [];
+  const u: (Omit<IMealException, 'applier'> & {
+    applier: User
+  })[] = [];
   users.forEach((p) => {
     const { applier } = p;
     delete (p as any)._doc.applier;
