@@ -523,6 +523,13 @@ export default createService({
       handler: dinnenControllers.DGLgetAllStudents,
     },
     {
+      method: 'get',
+      path: '/alert/exceptionLast',
+      needAuth: true,
+      needPermission: true,
+      handler: dinnenControllers.alertExceptionLast,
+    },
+    {
       method: 'post',
       path: '/alert',
       needAuth: true,

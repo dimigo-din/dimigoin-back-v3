@@ -45,7 +45,7 @@ export const getMealExceptions = async (req: Request, res: Response) => {
     const { applier } = p;
     delete (p as any)._doc.applier;
     u.push({
-      applier: students[students.findIndex((v) => v.user_id === applier)],
+      applier: students[students.findIndex(({ user_id }) => user_id === applier)],
       ...(p as any)._doc,
     });
   });
