@@ -3,7 +3,7 @@ import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
 import { CircleModel, PermissionModel } from '../../models';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
-import { getIdentity } from '../../resources/dimi-api';
+import { getIdentity, getStudentInfo } from '../../resources/dimi-api';
 
 const getExtraPermissions = async (userIdx: number) => {
   try {
@@ -34,9 +34,17 @@ export const identifyUser = async (req: Request, res: Response) => {
       ...await getExtraPermissions(identity.id),
     );
 
+    const additional: any = {};
+    if (identity.user_type === 'S') {
+      const student = await getStudentInfo(identity.id);
+      additional.class = student.class;
+      additional.grade = student.grade;
+      additional.serial = student.serial;
+    }
+
     res.json({
-      accessToken: await issueToken(identity, false),
-      refreshToken: await issueToken(identity, true),
+      accessToken: await issueToken({ ...identity, ...additional }, false),
+      refreshToken: await issueToken({ ...identity, ...additional }, true),
       dalgeurakFirstLogin: identity.dalgeurakFirstLogin,
     });
   } catch (error) {
