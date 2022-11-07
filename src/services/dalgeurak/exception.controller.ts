@@ -31,21 +31,50 @@ export const getMealExceptions = async (req: Request, res: Response) => {
     },
   });
 
-  const appliers = users.map((e) => e.applier);
-  const processedAppliers = appliers.filter((v, i) => appliers.indexOf(v) === i);
+  const exceptionAppliers = users.map((e) => e.applier);
+  const processedExceptionAppliers = exceptionAppliers.filter((v, i) => exceptionAppliers.indexOf(v) === i);
+
+  const appliersP: Array<number> = [];
+
+  for (const i of users.map((e) => e.appliers)) {
+    for (const { student } of i) {
+      appliersP.push(student);
+    }
+  }
+
+  const processedAppliers = appliersP.filter((v, i) => appliersP.indexOf(v) === i);
 
   const students = await studentSearch({
+    user_id: processedExceptionAppliers,
+  });
+  const appliersStudent = await studentSearch({
     user_id: processedAppliers,
   });
 
-  const u: Array<Omit<IMealException, 'applier'> & {
-    applier: User
+  const u: Array<Omit<Omit<IMealException, 'applier'>, 'appliers'> & {
+    applier: User;
+    appliers: Array<{
+      entered: boolean;
+      student: User;
+    }>
   }> = [];
   users.forEach((p) => {
-    const { applier } = p;
+    const { applier, appliers } = p;
     delete (p as any)._doc.applier;
+    delete (p as any)._doc.appliers;
+    const appliersPP: Array<{
+      entered: boolean;
+      student: User;
+    }> = [];
+    appliers.forEach((s) => {
+      appliersPP.push({
+        entered: s.entered,
+        student: appliersStudent[appliersStudent.findIndex(({ user_id }) => user_id === s.student)],
+      });
+    });
     u.push({
       applier: students[students.findIndex(({ user_id }) => user_id === applier)],
+      appliers: appliersPP,
       ...(p as any)._doc,
     });
   });
