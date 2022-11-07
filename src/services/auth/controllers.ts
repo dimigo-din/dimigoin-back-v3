@@ -3,15 +3,14 @@ import { HttpException } from '../../exceptions';
 import { Account } from '../../interfaces/dimi-api';
 import { CircleModel, PermissionModel } from '../../models';
 import { issue as issueToken, verify, getTokenType } from '../../resources/token';
-import { getIdentity, getStudentInfo } from '../../resources/dimi-api';
+import { getIdentity } from '../../resources/dimi-api';
 
 const getExtraPermissions = async (userIdx: number) => {
   try {
-    const user = await getStudentInfo(userIdx);
     const permissions = [];
 
     // (부)동아리장은 동아리원 선발 서비스 권한 부여
-    const circle = await CircleModel.findByChairs(user.user_id);
+    const circle = await CircleModel.findByChairs(userIdx);
     if (circle) {
       permissions.push('circle-applier-selection');
     }

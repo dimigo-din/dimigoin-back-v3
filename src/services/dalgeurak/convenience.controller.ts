@@ -1,7 +1,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable camelcase */
 import { Request, Response } from 'express';
-import { getStudentInfo, studentSearch } from '../../resources/dimi-api';
+import { studentSearch } from '../../resources/dimi-api';
 import {
   getConvTime,
   getDayCode,
@@ -323,15 +323,26 @@ export const getUserList = async (req: Request, res: Response) => {
     salad: [],
   };
 
+  const sids: Array<number> = [];
+  for (const n of conveniences.map((e) => e.applications).map((e) => e.map((s) => s.student))) {
+    sids.push(...n);
+  }
+  const appliers = sids.filter((v, i) => sids.indexOf(v) === i);
+
+  const students = await studentSearch({
+    user_id: appliers,
+  });
+
   for (const food of conveniences) {
     for (const { student } of food.applications) {
+      const idx = students.findIndex((v) => v.user_id === student);
       const {
         user_id,
         name,
         serial,
         grade,
         class: kclass,
-      } = await getStudentInfo(student);
+      } = students[idx];
       const checkin = await ConvenienceCheckinModel.findOne({
         'duration.start': getWeekStartString(),
         [nowTime]: {

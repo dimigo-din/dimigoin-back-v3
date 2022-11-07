@@ -67,6 +67,7 @@ export const issue = async (identity: studentApiLogin, refresh: boolean) => {
     {
       identity: {
         ...identity,
+        user_id: identity.id,
         userType: type,
         permissions,
       },
