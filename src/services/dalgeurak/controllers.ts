@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Request, Response } from 'express';
 import Jwt from 'jsonwebtoken';
 import { HttpException } from '../../exceptions';
@@ -8,10 +10,12 @@ import {
   MealStatusModel,
 } from '../../models/dalgeurak';
 import {
+  MealExceptionTimeType,
   MealStatusType,
   MealTardyStatusType,
 } from '../../types';
 import {
+  getNowTime,
   getNowTimeString, getTodayDateString,
 } from '../../resources/date';
 import { checkTardy } from '../../resources/dalgeurak';
@@ -99,7 +103,11 @@ export const checkEntrance = async (req: Request, res: Response) => {
 export const getUserInfo = async (req: Request, res: Response) => {
   const student = await getStudentInfo(req.user.user_id);
   const today = getTodayDateString();
-  const exception = await MealExceptionModel.findOne({ applier: req.user.user_id, date: today });
+  const now = getNowTime();
+  let time: MealExceptionTimeType;
+  if (now >= 0 && now <= 1300) time = 'lunch';
+  else time = 'dinner';
+  const exception = await MealExceptionModel.findOne({ applier: req.user.user_id, date: today, time });
 
   const mealStatusType = await MealStatusModel.findOne({ userId: student.user_id });
 
