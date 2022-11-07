@@ -6,6 +6,7 @@ import {
   Day,
   DayValues,
   ConvenienceTimeType,
+  MealExceptionTimeType,
 } from '../types';
 
 const timezone = 'Asia/Seoul';
@@ -80,6 +81,13 @@ export const getConvTime = (): ConvenienceTimeType | null => {
   const now = getNowTime();
 
   if (now >= 700 && now <= 800) return 'breakfast';
+  if (now >= 1800 && now <= 1950) return 'dinner';
+  return null;
+};
+export const getExcpTime = (): MealExceptionTimeType | null => {
+  const now = getNowTime();
+
+  if (now >= 1200 && now <= 1350) return 'lunch';
   if (now >= 1800 && now <= 1950) return 'dinner';
   return null;
 };

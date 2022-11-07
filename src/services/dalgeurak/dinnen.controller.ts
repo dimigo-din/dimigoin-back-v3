@@ -4,9 +4,9 @@ import { HttpException } from '../../exceptions';
 import { checkTardy } from '../../resources/dalgeurak';
 import { mealStatusFilter } from './controllers';
 import {
-  CheckinLogModel, ConvenienceBlacklistModel, MealConfigModel, MealExceptionBlacklistModel, MealStatusModel,
+  CheckinLogModel, ConvenienceBlacklistModel, MealConfigModel, MealExceptionBlacklistModel, MealExceptionModel, MealStatusModel,
 } from '../../models/dalgeurak';
-import { getNowTimeString } from '../../resources/date';
+import { getExcpTime, getNowTimeString, getTodayDateString } from '../../resources/date';
 import io from '../../resources/socket';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { MealConfigKeys, MealStatusType } from '../../types';
@@ -125,4 +125,37 @@ export const alertTest = async (req: Request, res: Response) => {
   );
 
   res.json({ title, message });
+};
+
+// 후밥 알림 보내기
+export const alertExceptionLast = async (req: Request, res: Response) => {
+  const nowTime = getExcpTime();
+  if (nowTime) throw new HttpException(401, '식사 시간이 아닙니다.');
+
+  const exception = await MealExceptionModel.find({
+    time: nowTime,
+    date: getTodayDateString(),
+  });
+
+  const appliers = exception.map((e) => e.applier);
+  const processedAppliers = appliers.filter((v, i) => appliers.indexOf(v) === i);
+
+  await DGRsendPushMessage(
+    { user_id: processedAppliers },
+    '후밥 알림',
+    '지금 후밥 먹으로 와주세요',
+  );
+
+  const sids: Array<number> = [];
+  for (const n of exception.map((e) => e.appliers).map((e) => e.map((s) => !s.entered && s.student)).filter((e) => e)) {
+    sids.push(...n);
+  }
+
+  await DGRsendPushMessage(
+    { user_id: sids.filter((e) => e) },
+    '후밥 알림',
+    '지금 후밥 먹으러 와주세요',
+  );
+
+  res.json({ success: true });
 };

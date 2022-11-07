@@ -1,9 +1,29 @@
+/* eslint-disable camelcase */
 import jwt from 'jsonwebtoken';
 import { PermissionModel, UserTypeModel } from '../models';
-import { User } from '../interfaces';
 import config from '../config';
 import { HttpException } from '../exceptions';
-import { TokenType } from '../types';
+import { Gender, TokenType, UserType } from '../types';
+
+interface studentApiLogin {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  nick: string;
+  gender: Gender;
+  user_type: UserType;
+  birthdate: string;
+  phone: null;
+  status: 10;
+  photofile1: null;
+  photofile2: null;
+  created_at: string;
+  updated_at: string;
+  password_hash: null;
+  sso_token: string;
+  dalgeurakFirstLogin: boolean;
+}
 
 export const getTokenType = async (token: string): Promise<TokenType> => {
   try {
@@ -40,38 +60,23 @@ export const verify = async (token: string) => {
   }
 };
 
-export const issue = async (identity: User, refresh: boolean) => {
-  if (refresh) {
-    const token = await jwt.sign(
-      {
-        identity: {
-          user_id: identity.user_id,
-        },
-        refresh: true,
-      },
-      config.jwtSecret as string,
-      {
-        algorithm: 'HS512',
-        expiresIn: '1y',
-      },
-    );
-    return token;
-  }
-  const { type } = await UserTypeModel.findOne({ userId: identity.user_id });
-  const { permissions } = await PermissionModel.findOne({ userId: identity.user_id });
+export const issue = async (identity: studentApiLogin, refresh: boolean) => {
+  const { type } = await UserTypeModel.findOne({ userId: identity.id });
+  const { permissions } = await PermissionModel.findOne({ userId: identity.id });
   const token = await jwt.sign(
     {
       identity: {
         ...identity,
+        user_id: identity.id,
         userType: type,
         permissions,
       },
-      refresh: false,
+      refresh,
     },
     config.jwtSecret as string,
     {
       algorithm: 'HS512',
-      expiresIn: '1w',
+      expiresIn: refresh ? '1y' : '1w',
     },
   );
   return token;

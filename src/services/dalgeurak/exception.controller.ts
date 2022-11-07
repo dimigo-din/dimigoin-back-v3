@@ -12,13 +12,14 @@ import {
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
-import { MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
+import { IMealException, MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
 import {
   MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
-import { getTeacherInfo } from '../../resources/dimi-api';
+import { getTeacherInfo, studentSearch } from '../../resources/dimi-api';
+import { User } from '../../interfaces';
 
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
 
@@ -30,7 +31,26 @@ export const getMealExceptions = async (req: Request, res: Response) => {
     },
   });
 
-  res.json({ users });
+  const appliers = users.map((e) => e.applier);
+  const processedAppliers = appliers.filter((v, i) => appliers.indexOf(v) === i);
+
+  const students = await studentSearch({
+    user_id: processedAppliers,
+  });
+
+  const u: Array<Omit<IMealException, 'applier'> & {
+    applier: User
+  }> = [];
+  users.forEach((p) => {
+    const { applier } = p;
+    delete (p as any)._doc.applier;
+    u.push({
+      applier: students[students.findIndex(({ user_id }) => user_id === applier)],
+      ...(p as any)._doc,
+    });
+  });
+
+  res.json({ users: u });
 };
 export const createMealExceptions = async (req: Request, res: Response) => {
   const {

@@ -2,7 +2,7 @@ import axios from 'axios';
 import { Account, TeacherIdentity } from '../interfaces/dimi-api';
 import config from '../config';
 import { User } from '../interfaces';
-import { PermissionModel, UserTypeModel } from '../models';
+import { PermissionModel, TokenModel, UserTypeModel } from '../models';
 import { services as allServices } from '../services';
 import { MealStatusModel } from '../models/dalgeurak';
 import logger from './logger';
@@ -32,6 +32,11 @@ export const getIdentity = async (account: Account, dalgeurak?: string) => {
 
   const userType = await UserTypeModel.findOne({ userId: data.id });
   if (!userType) {
+    await new TokenModel({
+      userId: data.id,
+      tokens: [],
+      dalgeurakToken: [],
+    }).save();
     await new UserTypeModel({
       userId: data.id,
       type: data.user_type,
@@ -72,6 +77,14 @@ export const getIdentity = async (account: Account, dalgeurak?: string) => {
     } else {
       data.dalgeurakFirstLogin = false;
     }
+    const tokens = await TokenModel.findOne({ userId: data.id });
+    if (!tokens) {
+      await new TokenModel({
+        userId: data.id,
+        tokens: [],
+        dalgeurakToken: [],
+      }).save();
+    }
   }
 
   return data;
@@ -85,7 +98,7 @@ const apiRequest = async (url: string, params?: object) => {
 
     return data;
   } catch (e) {
-    logger.error(e);
+    logger.error(JSON.stringify(e.data));
     return [];
   }
 };

@@ -336,6 +336,7 @@ export default createService({
       path: '/convenience',
       needAuth: true,
       needPermission: false,
+      studentOnly: true,
       validateSchema: {
         time: Joi.string().required(),
         food: Joi.string().required(),
@@ -520,6 +521,13 @@ export default createService({
       needAuth: true,
       needPermission: false,
       handler: dinnenControllers.DGLgetAllStudents,
+    },
+    {
+      method: 'get',
+      path: '/alert/exceptionLast',
+      needAuth: true,
+      needPermission: true,
+      handler: dinnenControllers.alertExceptionLast,
     },
     {
       method: 'post',

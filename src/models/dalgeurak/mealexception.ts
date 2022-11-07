@@ -10,7 +10,7 @@ import {
   MealExceptionTimeType,
 } from '../../types';
 
-interface IMealException extends Document {
+export interface IMealException extends Document {
   applier: number;
   appliers?: Array<{
     entered: boolean;
