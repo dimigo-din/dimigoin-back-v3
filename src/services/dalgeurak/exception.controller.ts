@@ -38,9 +38,9 @@ export const getMealExceptions = async (req: Request, res: Response) => {
     user_id: processedAppliers,
   });
 
-  const u: (Omit<IMealException, 'applier'> & {
+  const u: Array<Omit<IMealException, 'applier'> & {
     applier: User
-  })[] = [];
+  }> = [];
   users.forEach((p) => {
     const { applier } = p;
     delete (p as any)._doc.applier;
