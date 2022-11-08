@@ -20,7 +20,7 @@ import {
   ConvenienceFoodModel,
   FriDayHomeModel,
 } from '../../models/dalgeurak';
-import { ConvenienceFoodType, ConvenienceTimeValues } from '../../types';
+import { ConvenienceFoodType } from '../../types';
 
 export const createConvenience = async (req: Request, res: Response) => {
   await setConvenienceFood();
@@ -469,18 +469,18 @@ export const getCheckEat = async (req: Request, res: Response) => {
     date: Array<string>;
   }> = [];
 
-  ConvenienceTimeValues.map((time) => {
-    checkin[time].forEach((e) => {
-      const idx = data.findIndex((v) => v.student === e.student);
-      if (idx === -1) {
-        data.push({
-          student: e.student,
-          date: [e.date],
-        });
-      } else if (!data[idx].date.includes(e.date)) {
-        data[idx].date = [...data[idx].date, e.date];
-      }
-    });
+  const nowTime = getConvTime();
+
+  checkin[nowTime].forEach((e) => {
+    const idx = data.findIndex((v) => v.student === e.student);
+    if (idx === -1) {
+      data.push({
+        student: e.student,
+        date: [e.date],
+      });
+    } else if (!data[idx].date.includes(e.date)) {
+      data[idx].date = [...data[idx].date, e.date];
+    }
   });
 
   res.json({ data });
