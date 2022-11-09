@@ -33,7 +33,7 @@ export const getWeekStartString = (date?: string) => {
   return moment().startOf('isoWeek').format(format);
 };
 
-export const getNextWeekDay = (day: number) => moment().day(day).format(format);
+export const getDayToDate = (day: number) => moment().day(day).format(format);
 
 export const getWeekCalcul = (add: number) => moment().clone().startOf('isoWeek').add(add, 'day');
 
