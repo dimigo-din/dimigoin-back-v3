@@ -5,10 +5,11 @@ import fs from 'fs';
 import cors from 'cors';
 import bearerToken from 'express-bearer-token';
 import helmet from 'helmet';
+import swaggerUi from 'swagger-ui-express';
 import config from './config';
 
 import { attachUserInfo, errorHandler } from './middlewares';
-import { serviceRouter, serviceDocsRouter } from './services';
+import { serviceDocsRouter, serviceRouter, swaggerOptions } from './services';
 import { setCronJobsAndRun } from './resources/cron';
 
 // Defualt Setting
@@ -46,6 +47,7 @@ class App {
   private initializeRouter() {
     this.app.use('/', serviceRouter);
     this.app.use('/docs', serviceDocsRouter);
+    this.app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerOptions));
   }
 
   private initializeMiddlewares() {

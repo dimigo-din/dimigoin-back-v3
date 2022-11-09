@@ -7,6 +7,7 @@ import { join as pathJoin } from 'path';
 import { HTTPMethod } from '../types';
 import { validator } from '../middlewares';
 import checkPermission from '../middlewares/check-permission';
+import config from '../config';
 
 interface KeyValue<T> {
   [key: string]: T;
@@ -15,6 +16,7 @@ interface KeyValue<T> {
 export interface Route {
   method: HTTPMethod;
   path: string;
+  description?: string;
   middlewares?: RequestHandler[];
   handler: RequestHandler;
   validateSchema?: KeyValue<Joi.Schema>;
@@ -105,6 +107,63 @@ const createDocsRouter = (services: Service[]) => {
   return router;
 };
 
+const createSwaggerDocs = (services: Service[]) => {
+  const schemaMapper = (validateSchema: KeyValue<Joi.AnySchema>) => {
+    const keys = Object.keys(validateSchema);
+    const result: KeyValue<String> = {};
+    keys.forEach((key) => {
+      result[key] = validateSchema[key].type;
+    });
+    return result;
+  };
+
+  const createSwaggerParameter = (path: string) => {
+    const matches = path.match(/(:[A-z+a-z]\w+)/g);
+    return matches.map((m) => ({
+      in: 'path', name: m.replace(':', ''),
+    }));
+  };
+
+  const createSwagger = (route: Route, service: Service): object => {
+    const routeDocs: KeyValue<Object> = {};
+
+    routeDocs[route.method] = {
+      summary: route.description,
+      parameters: route.path.match(/(:[A-z+a-z]\w+)/g) ? createSwaggerParameter(route.path) : null,
+      tags: [service.baseURL.replace('/', '')],
+      responses: {
+        200: {
+          description: 'OK',
+          schema: route.validateSchema ? schemaMapper(route.validateSchema) : {},
+        },
+        401: {
+          description: 'Unauthorized (액세스 토큰이 없거나, 잘못된 경우)',
+        },
+        403: {
+          description: '특정 권한 (학과 선생님, 사감 선생님 ...) 등만 접근 가능한 Route',
+        },
+      },
+    };
+    return routeDocs;
+  };
+
+  const path: KeyValue<Object> = {};
+  const tag: Array<object> = [];
+
+  services.forEach((service) => {
+    tag.push({ name: service.baseURL.replace('/', ''), description: service.name });
+    service.routes.forEach((route) => {
+      path[(service.baseURL + route.path).replace(/\/$/, '').replace(/(:[A-Z+a-z]\w+)/g, (i, match) => `{${match.replace(':', '')}}`)] = createSwagger(route, service);
+    });
+  });
+
+  return {
+    ...config.swaggerOpts,
+    tags: tag,
+    paths: path,
+  };
+};
+
 export const services = fs.readdirSync(__dirname)
   .filter((s) => !s.startsWith('index'));
 
@@ -116,3 +175,4 @@ export const importedServices = services.map((s) => ({
 
 export const serviceRouter = createRouter(importedServices);
 export const serviceDocsRouter = createDocsRouter(importedServices);
+export const swaggerOptions = createSwaggerDocs(importedServices);

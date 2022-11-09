@@ -1,13 +1,13 @@
 import request from 'supertest';
 import App from '../src/app';
+
 const { app } = new App();
 
 describe('식단표 서비스 테스트', () => {
   const today = new Date();
-  const dateString =
-    `${today.getFullYear()}-` +
-    `${(today.getMonth() + 1).toString().padStart(2, '0')}-` +
-    `${today.getDate()}`;
+  const dateString = `${today.getFullYear()}-`
+    + `${(today.getMonth() + 1).toString().padStart(2, '0')}-`
+    + `${today.getDate()}`;
 
   // TODO: 식단 등록 서비스 테스트 구현
   // TODO: 토큰 발급 구현
