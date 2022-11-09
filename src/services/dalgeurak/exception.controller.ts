@@ -4,7 +4,7 @@ import { Request, Response } from 'express';
 import { getNowMealTime } from '../../resources/dalgeurak';
 import {
   getDayCode,
-  getNextWeekDay,
+  getDayToDate,
   getNowTime,
   getTodayDateString,
   getWeekdayEndString,
@@ -18,7 +18,7 @@ import {
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
-import { getTeacherInfo, studentSearch } from '../../resources/dimi-api';
+import { getStudentInfo, getTeacherInfo, studentSearch } from '../../resources/dimi-api';
 import { User } from '../../interfaces';
 
 const weekday = ['sun', 'mon', 'tue', 'wed', 'thr', 'fri', 'sat'];
@@ -118,7 +118,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
 
   for (const i in date) {
-    const appliDate = getNextWeekDay(weekday.indexOf(date[i]) + 7);
+    const appliDate = getDayToDate(weekday.indexOf(date[i]) + 7);
 
     if (!MealExceptionValues.includes(type[i])) throw new HttpException(401, 'type parameter 종류 first 또는 last 이여야 합니다.');
     if (!MealExceptionTimeValues.includes(time[i])) throw new HttpException(401, 'time 형태가 올바르지 않습니다.');
@@ -140,7 +140,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   }
 
   for (const i in date) {
-    const appliDate = getNextWeekDay(weekday.indexOf(date[i]) + 7);
+    const appliDate = getDayToDate(weekday.indexOf(date[i]) + 7);
 
     const exceptionStatus = await MealExceptionModel.findOne({
       $or: [
@@ -162,10 +162,15 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       date: appliDate,
     });
     if (exceptionStatus) {
-      throw new HttpException(
-        401,
-        group ? '이미 신청되어 있는 학생이 있습니다.' : '이미 신청하였습니다.',
-      );
+      for (const j of appliers) {
+        if (exceptionStatus.appliers.findIndex((e) => e.student === j) !== -1) {
+          const s = await getStudentInfo(j);
+          throw new HttpException(
+            401,
+            group ? `${s.name} 학생이 이미 신청되어 있습니다.` : '이미 신청하였습니다.',
+          );
+        }
+      }
     }
 
     await new MealExceptionModel({
@@ -383,7 +388,7 @@ export const getExceptionRemain = async (req: Request, res: Response) => {
   const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
 
   for (const day of exceptionWeekday) {
-    const appliDate = getNextWeekDay(weekday.indexOf(day) + 7);
+    const appliDate = getDayToDate(weekday.indexOf(day) + 7);
     const firstLunchException = await MealExceptionModel.count({
       date: appliDate,
       time: 'lunch',
