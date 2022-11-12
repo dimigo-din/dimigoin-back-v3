@@ -3,7 +3,10 @@ import jwt from 'jsonwebtoken';
 import { PermissionModel, UserTypeModel } from '../models';
 import config from '../config';
 import { HttpException } from '../exceptions';
-import { Gender, TokenType, UserType } from '../types';
+import {
+  ConfigKeys, Gender, TokenType, UserType,
+} from '../types';
+import { getConfig } from './config';
 
 interface studentApiLogin {
   id: number;
@@ -63,6 +66,7 @@ export const verify = async (token: string) => {
 export const issue = async (identity: studentApiLogin, refresh: boolean) => {
   const { type } = await UserTypeModel.findOne({ userId: identity.id });
   const { permissions } = await PermissionModel.findOne({ userId: identity.id });
+  const tokenVersion = await getConfig(ConfigKeys.tokenVersion);
   const token = await jwt.sign(
     {
       identity: {
@@ -70,6 +74,7 @@ export const issue = async (identity: studentApiLogin, refresh: boolean) => {
         user_id: identity.id,
         userType: type,
         permissions,
+        tokenVersion,
       },
       refresh,
     },

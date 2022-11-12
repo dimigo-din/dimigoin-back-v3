@@ -151,4 +151,6 @@ export const defaultConfigs = {
     start: new Date('2021-03-10T07:00:00.000Z'),
     end: new Date('2021-03-10T08:00:00.000Z'),
   },
+  // 토큰 버전
+  [ConfigKeys.tokenVersion]: 1,
 };
