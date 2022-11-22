@@ -218,6 +218,7 @@ export const getOrder = async () => {
   let gradeIdx: number;
   let classIdx: number;
   for (let i = 0; i < mealTimes[now].length; i += 1) {
+    if (gradeIdx && classIdx) break;
     if (nowTime >= mealTimes[now][i][5]) {
       gradeIdx = i;
       classIdx = 5;

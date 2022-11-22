@@ -17,10 +17,12 @@ import {
   ConvenienceBlacklistModel,
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
+  ConvenienceFood,
   ConvenienceFoodModel,
   FriDayHomeModel,
 } from '../../models/dalgeurak';
 import { ConvenienceFoodType } from '../../types';
+import { User } from '../../interfaces';
 
 export const createConvenience = async (req: Request, res: Response) => {
   await setConvenienceFood();
@@ -48,7 +50,44 @@ export const getConvenienceData = async (req: Request, res: Response) => {
   });
   if (!convenience) throw new HttpException(501, '간편식이 없습니다.');
 
-  res.json({ convenience });
+  const processData: Array<Omit<ConvenienceFood, 'applications'> & {
+    applications: {
+      date: string;
+      student: User;
+    };
+  }> = [];
+
+  const sids: Array<number> = [];
+  for (const n of convenience.map((e) => e.applications).map((e) => e.map((s) => s.student))) {
+    sids.push(...n);
+  }
+  const appliers = sids.filter((v, i) => sids.indexOf(v) === i);
+
+  const students = await studentSearch({
+    user_id: appliers,
+  });
+
+  for (const food of convenience) {
+    const processApplications: Array<{
+      date: string;
+      student: User;
+    }> = [];
+    for (const { student, date } of food.applications) {
+      const idx = students.findIndex((v) => v.user_id === student);
+      const user = students[idx];
+      delete (food as any)._doc.appliers;
+      processApplications.push({
+        date,
+        student: user,
+      });
+    }
+    processData.push({
+      ...(food as any)._doc,
+      applications: processApplications,
+    });
+  }
+
+  res.json({ convenience: processData });
 };
 
 // 체크인
@@ -131,6 +170,9 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
   });
   if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
+  const today = getDayCode();
+  if (!['tue', 'wed'].includes(today)) throw new HttpException(401, '신청할 수 있는 날이 아닙니다.');
+
   const convenience = await ConvenienceFoodModel.findOne({
     food,
     time,
@@ -141,9 +183,6 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
   });
   if (!convenience) throw new HttpException(401, '신청하려는 시간대의 간편식이 없습니다.');
   if (convenience.remain <= 0) throw new HttpException(401, '신청이 마감되었습니다.');
-
-  const today = getDayCode();
-  if (!['tue', 'wed'].includes(today)) throw new HttpException(401, '신청할 수 있는 날이 아닙니다.');
 
   // 신청 했는지 체크
   const application = convenience.applications.map((e) => e.student);

@@ -2,9 +2,9 @@ import Joi from 'joi';
 import { createService } from '../index';
 import {
   ClassValues,
-  MealTimeValues,
   MealExceptionApplicationStatusValues,
   MealExceptionValues,
+  MealExceptionTimeValues,
 } from '../../types';
 
 import * as controllers from './controllers';
@@ -126,7 +126,7 @@ export default createService({
         group: Joi.boolean().required(),
         appliers: Joi.array().items(Joi.number()),
         reason: Joi.string().required(),
-        time: Joi.array().items(Joi.string().valid(...MealTimeValues)).required(),
+        time: Joi.array().items(Joi.string().valid(...MealExceptionTimeValues)).required(),
         date: Joi.array().items(Joi.string()).required(),
         type: Joi.array().items(Joi.string().valid(...MealExceptionValues)).required(),
       },
@@ -208,7 +208,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        time: Joi.string().valid(...MealTimeValues).required(),
+        time: Joi.string().valid(...MealExceptionTimeValues).required(),
         sequences: Joi.array().length(6).items(Joi.number().valid(...ClassValues)).required(),
       },
       handler: timeControllers.editGradeMealSequences,
@@ -219,7 +219,7 @@ export default createService({
       needAuth: true,
       needPermission: true,
       validateSchema: {
-        time: Joi.string().valid(...MealTimeValues).required(),
+        time: Joi.string().valid(...MealExceptionTimeValues).required(),
         classTimes: Joi.array().length(6).items(Joi.number()).required(),
       },
       handler: timeControllers.editGradeMealTimes,
