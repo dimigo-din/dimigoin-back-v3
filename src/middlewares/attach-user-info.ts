@@ -10,7 +10,7 @@ const attachUserInfo = async (req: Request, res: Response, next: NextFunction) =
   try {
     const identity = await verifyToken(token);
     const tokenVersion = await getConfig(ConfigKeys.tokenVersion);
-    if (tokenVersion !== identity.tokenVersion) throw new HttpException(403, 'MISMATCH_TOKEN_VERSION');
+    if (tokenVersion !== identity.tokenVersion) throw new HttpException(403, '업데이트된 서비스를 이용하기 위해 재로그인이 필요합니다. (MISMATCH_TOKEN_VERSION)');
     req.user = identity;
     next();
   } catch (error) {
