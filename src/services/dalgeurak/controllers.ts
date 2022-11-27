@@ -21,6 +21,7 @@ import {
 import { checkTardy } from '../../resources/dalgeurak';
 import io from '../../resources/socket';
 import { getStudentInfo } from '../../resources/dimi-api';
+import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 
 export const mealStatusFilter = (mealStatus: MealTardyStatusType): void => {
   switch (mealStatus) {
@@ -166,4 +167,12 @@ export const getStudent = async (req: Request, res: Response) => {
       name,
     },
   });
+};
+
+export const pushNotification = async (req: Request, res: Response) => {
+  const { sid, title, message } = req.body;
+
+  await DGRsendPushMessage({ user_id: sid }, title, message);
+
+  res.json({});
 };

@@ -29,7 +29,7 @@ export const DGRsendPushMessage = async (
     userId: {
       $in: users,
     },
-  });
+  }).select('dalgeurakToken');
   const message = { title, body };
   const userTokens = FCMTokens.reduce(
     (t, u) => [...t, ...u.dalgeurakToken],
