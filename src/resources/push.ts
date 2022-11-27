@@ -14,9 +14,9 @@ export const sendPushMessage = async (userFilter: object, title: string, body: s
     userId: {
       $in: users,
     },
-  });
+  }).select('tokens');
   const message = { title, body };
-  const userTokens = FCMTokens.reduce((t, u) => [...t, ...(u.dalgeurakToken)], []);
+  const userTokens = FCMTokens.reduce((t, u) => [...t, ...(u.tokens)], []);
 
   // Firebase에서 한 번 호출 시에 최대 500개의 토큰까지만 지원함
   const devidedUserTokens = Array.from(

@@ -540,5 +540,18 @@ export default createService({
       },
       handler: dinnenControllers.alertTest,
     },
+    {
+      method: 'post',
+      path: '/alert/target',
+      needAuth: true,
+      needPermission: true,
+      teacherOnly: true,
+      validateSchema: {
+        sid: Joi.number().required(),
+        title: Joi.string().required(),
+        message: Joi.string().required(),
+      },
+      handler: controllers.pushNotification,
+    },
   ],
 });
