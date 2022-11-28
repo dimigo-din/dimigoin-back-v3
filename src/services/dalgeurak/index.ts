@@ -547,7 +547,7 @@ export default createService({
       needPermission: true,
       teacherOnly: true,
       validateSchema: {
-        sid: Joi.number().required(),
+        sid: Joi.array().items(Joi.number()).required(),
         title: Joi.string().required(),
         message: Joi.string().required(),
       },
