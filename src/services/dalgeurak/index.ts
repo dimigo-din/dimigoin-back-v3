@@ -144,6 +144,13 @@ export default createService({
       },
       handler: exceptionControllers.permissionMealException,
     },
+    {
+      method: 'get',
+      path: '/exception/my',
+      needAuth: true,
+      needPermission: false,
+      handler: exceptionControllers.getMyExceptions,
+    },
     // {
     //   method: 'delete',
     //   path: '/exception',

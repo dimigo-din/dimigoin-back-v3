@@ -7,8 +7,10 @@ import {
   getDayToDate,
   getNowTime,
   getTodayDateString,
+  getWeekCalcul,
   getWeekdayEndString,
   getWeekStartString,
+  format,
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
@@ -440,4 +442,30 @@ export const deleteBlackList = async (req: Request, res: Response) => {
   });
 
   res.json({ userId: sid });
+};
+
+export const getMyExceptions = async (req: Request, res: Response) => {
+  const { user_id: applier } = req.user;
+
+  const exceptions = await MealExceptionModel.find({
+    $or: [
+      { applier },
+      {
+        appliers: {
+          $elemMatch: {
+            student: applier,
+          },
+        },
+      },
+    ],
+    applicationStatus: {
+      $ne: 'reject',
+    },
+    date: {
+      $gte: getWeekStartString(),
+      $lte: getWeekCalcul(11).format(format),
+    },
+  });
+
+  res.json({ exceptions });
 };
