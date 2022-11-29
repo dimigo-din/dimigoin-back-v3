@@ -338,7 +338,7 @@ export const enterException = async (req: Request, res: Response) => {
       { _id: exception._id },
       {
         appliers: exception.appliers.map((e) => {
-          if (String(e.student) === applier) {
+          if (e.student === applier) {
             return {
               student: applier,
               entered: true,
