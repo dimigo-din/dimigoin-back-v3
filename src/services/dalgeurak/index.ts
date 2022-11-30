@@ -133,6 +133,22 @@ export default createService({
       handler: exceptionControllers.createMealExceptions,
     },
     {
+      method: 'post',
+      path: '/exception/instead',
+      needAuth: true,
+      needPermission: true,
+      teacherOnly: true,
+      validateSchema: {
+        applier: Joi.number().required(),
+        group: Joi.boolean().required(),
+        reason: Joi.string().required(),
+        time: Joi.array().items(Joi.string().valid(...MealExceptionTimeValues)).required(),
+        date: Joi.array().items(Joi.string()).required(),
+        type: Joi.array().items(Joi.string().valid(...MealExceptionValues)).required(),
+      },
+      handler: exceptionControllers.insteadOfException,
+    },
+    {
       method: 'patch',
       path: '/exception/application',
       needAuth: true,

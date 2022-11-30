@@ -16,7 +16,7 @@ import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
 import { IMealException, MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
 import {
-  MealConfigKeys, MealExceptionTimeValues, MealExceptionValues,
+  MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionType, MealExceptionValues,
 } from '../../types';
 import { DGRsendPushMessage } from '../../resources/dalgeurakPush';
 import { getMealConfig } from '../../resources/config';
@@ -83,17 +83,17 @@ export const getMealExceptions = async (req: Request, res: Response) => {
 
   res.json({ users: u });
 };
-export const createMealExceptions = async (req: Request, res: Response) => {
-  const {
-    appliers = [],
-    group,
-    reason,
-    date,
-    time,
-    type,
-  } = req.body;
-  const { user_id: applier } = req.user;
 
+const createException = async (
+  applier: number,
+  appliers: Array<number>,
+  group: boolean,
+  reason: string,
+  date: Array<string>,
+  time: Array<MealExceptionTimeType>,
+  type: Array<MealExceptionType>,
+  instead: boolean,
+) => {
   const appliersBlackCheck = await MealExceptionBlacklistModel.count({
     userId: {
       $in: appliers,
@@ -106,15 +106,17 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   });
   if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
-  const nowTime = getNowTime();
-  if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
+  if (!instead) {
+    const nowTime = getNowTime();
+    if (nowTime < 800) throw new HttpException(401, '신청시간이 아닙니다.');
+
+    const today = getDayCode();
+    if (['fri', 'sat', 'sun'].includes(today)) throw new HttpException(401, '신청할 수 없는 요일입니다.');
+  }
 
   if (date.length !== time.length && time.length !== type.length) throw new HttpException(401, '데이터의 길이가 일치하지 않습니다.');
 
   if (appliers.length < 5 && group) throw new HttpException(401, '최소 신청자 수는 다섯 명부터입니다.');
-
-  const today = getDayCode();
-  if (['fri', 'sat', 'sun'].includes(today)) throw new HttpException(401, '신청할 수 없는 요일입니다.');
 
   const firstMealMaxNum = await getMealConfig(MealConfigKeys.firstMealMaxApplicationPerMeal);
   const lastMealMaxNum = await getMealConfig(MealConfigKeys.lastMealMaxApplicationPerMeal);
@@ -132,11 +134,11 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       date: appliDate,
       time: time[i],
     });
-    if (group && exceptionMealCount + appliers.length >= (type === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
+    if (group && exceptionMealCount + appliers.length >= (type[i] === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
       throw new HttpException(401, `${
-        (exceptionMealCount + appliers.length) - (type === 'first' ? firstMealMaxNum : lastMealMaxNum)
+        (exceptionMealCount + appliers.length) - (type[i] === 'first' ? firstMealMaxNum : lastMealMaxNum)
       }명 초과하였습니다.`);
-    } else if (!group && exceptionMealCount >= (type === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
+    } else if (!group && exceptionMealCount >= (type[i] === 'first' ? firstMealMaxNum : lastMealMaxNum)) {
       throw new HttpException(401, '신청인원수를 초과하였습니다.');
     }
   }
@@ -178,7 +180,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     await new MealExceptionModel({
       exceptionType: type[i],
       applier,
-      appliers: appliers.map((e: string) => ({ student: e, entered: false })),
+      appliers: appliers.map((e: number) => ({ student: e, entered: false })),
       reason,
       time: time[i],
       group,
@@ -187,6 +189,20 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       applicationStatus: 'approve',
     }).save();
   }
+
+  return date;
+};
+
+export const createMealExceptions = async (req: Request, res: Response) => {
+  const {
+    appliers = [],
+    group,
+    reason,
+    date,
+    time,
+    type,
+  } = req.body;
+  const { user_id: applier } = req.user;
 
   // const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
@@ -228,7 +244,43 @@ export const createMealExceptions = async (req: Request, res: Response) => {
   //   );
   // }
 
-  res.json({ date });
+  res.json({
+    date: await createException(
+      applier,
+      appliers,
+      group,
+      reason,
+      date,
+      time,
+      type,
+      false,
+    ),
+  });
+};
+
+export const insteadOfException = async (req: Request, res: Response) => {
+  const {
+    applier,
+    appliers = [],
+    group,
+    reason,
+    date,
+    time,
+    type,
+  } = req.body;
+
+  res.json({
+    date: await createException(
+      applier,
+      appliers,
+      group,
+      reason,
+      date,
+      time,
+      type,
+      true,
+    ),
+  });
 };
 
 // 선후밥
