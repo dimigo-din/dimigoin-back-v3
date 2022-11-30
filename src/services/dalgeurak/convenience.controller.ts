@@ -271,7 +271,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
   const nowTime = getNowTime();
   if (
     !(today === 'tue' && nowTime >= 700)
-    && !(today === 'wed' && nowTime <= 1900)
+    && !(today === 'wed' && nowTime <= 1930)
   ) throw new HttpException(401, '신청할 수 있는 시간이 아닙니다.');
 
   // 신청 했는지 체크
