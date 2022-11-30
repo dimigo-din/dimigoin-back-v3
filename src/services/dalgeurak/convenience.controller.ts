@@ -200,20 +200,6 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
     if (e.time === time) throw new HttpException(401, '이미 신청하였습니다.');
   }); }
 
-  // 월요일 학년 별 17명 이상 신청 막기
-  const startWeek = getWeekStartString();
-  const students = convenience.applications
-    .map((e) => e.date === startWeek && e.student)
-    .filter((e) => e);
-  const gradeCnt = (
-    students.length > 1
-      ? await studentSearch({
-        user_id: students,
-        grade: req.user.grade,
-      }) : []
-  ).length;
-  if (gradeCnt >= 17) throw new HttpException(401, '학년별 신청이 마감되었습니다.');
-
   // 신청박탈 체크
   const depriveCheck = await ConvenienceDepriveModel.findOne({
     student: sid,
