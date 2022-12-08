@@ -1,3 +1,5 @@
+/* eslint-disable no-useless-return */
+/* eslint-disable no-nested-ternary */
 /* eslint-disable camelcase */
 import { HttpException } from '../exceptions';
 import {
@@ -15,6 +17,7 @@ import {
   ConvenienceFoodValues,
   ConvenienceFoodType,
   MealConfigKeys,
+  MealTimeType,
 } from '../types';
 import {
   getConvAppliEndString,
@@ -205,36 +208,30 @@ export const checkTardy = async (
 
 export const getOrder = async () => {
   const mealTimes = await MealOrderModel.findOne({ field: 'times' });
+
   if (!mealTimes) throw new HttpException(404, '급식 시간 데이터를 찾을 수 없습니다.');
 
   const nowTime = await getNowTime();
+  const now: MealTimeType = nowTime >= 1150 && nowTime <= 1400 ? 'lunch' : nowTime >= 1830 ? 'dinner' : null;
 
-  type nowType = 'lunch' | 'dinner';
-  let now: nowType;
-  if (nowTime >= 1150 && nowTime <= 1400) now = 'lunch';
-  else if (nowTime >= 1830) now = 'dinner';
-  else throw new HttpException(401, '식사시간이 아닙니다.');
+  if (!now) throw new HttpException(401, '식사시간이 아닙니다.');
 
-  let gradeIdx: number;
-  let classIdx: number;
-  for (let i = 0; i < mealTimes[now].length; i += 1) {
-    if (gradeIdx && classIdx) break;
-    if (nowTime >= mealTimes[now][i][5]) {
-      gradeIdx = i;
-      classIdx = 5;
-      break;
-    }
-    for (let j = 0; j < mealTimes[now][i].length - 1; j += 1) {
-      if (
-        nowTime >= mealTimes[now][i][j]
-        && nowTime < mealTimes[now][i][j + 1]
-      ) {
+  let gradeIdx = 0;
+  let classIdx = 0;
+
+  let thisEnd: boolean = false;
+
+  mealTimes[now].forEach((grade, i) => {
+    if (thisEnd) return;
+    grade.forEach((time, j) => {
+      if (nowTime >= time) {
         gradeIdx = i;
         classIdx = j;
-        break;
+        thisEnd = true;
+        return;
       }
-    }
-  }
+    });
+  });
 
   return { gradeIdx, classIdx, now };
 };
