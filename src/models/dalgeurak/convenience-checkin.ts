@@ -31,7 +31,7 @@ const convenienceCheckinSchema = createSchema({
   dinner: Type.array({ default: [] }).of(checkinObj),
 }, { versionKey: false, timestamps: true });
 
-const ConvenienceCheckinModel: Model<ConvenienceCheckin> = dalgeurakDB.model('convenienceacheckin', convenienceCheckinSchema);
+const ConvenienceCheckinModel: Model<ConvenienceCheckin> = dalgeurakDB.model('conveniencecheckin', convenienceCheckinSchema);
 
 export {
   convenienceCheckinSchema,
