@@ -3,6 +3,7 @@ import 'ts-mongoose/plugin';
 export * from './checkinlog';
 export * from './mealexception';
 export * from './mealexception-blacklist';
+export * from './mealexception-deprive';
 export * from './mealcancel';
 export * from './mealorder';
 export * from './mealconfig';

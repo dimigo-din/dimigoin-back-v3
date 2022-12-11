@@ -11,6 +11,7 @@ import {
   setConvenienceFood,
   convenienceDepriveCheck,
   fridayHomeCheck,
+  mealExceptionDepriveCheck,
 } from './dalgeurak';
 import {
   updateMeal,
@@ -30,6 +31,7 @@ const cronJobs = [
       await updateMeal();
       await setConvenienceFood();
       await convenienceDepriveCheck();
+      await mealExceptionDepriveCheck();
     },
     runOnSetup: false,
   },
