@@ -10,6 +10,7 @@ import {
   ConvenienceCheckinModel,
   ConvenienceDepriveModel,
   FriDayHomeModel,
+  MealExceptionDepriveModel,
 } from '../models/dalgeurak';
 import {
   MealTardyStatusType,
@@ -112,7 +113,7 @@ export const convenienceDepriveCheck = async () => {
           await new ConvenienceDepriveModel({
             student,
             clear: false,
-          });
+          }).save();
         }
       });
   });
@@ -126,9 +127,45 @@ export const convenienceDepriveCheck = async () => {
           await new ConvenienceDepriveModel({
             student,
             clear: false,
-          });
+          }).save();
         }
       });
+  });
+};
+
+export const mealExceptionDepriveCheck = async () => {
+  await MealExceptionDepriveModel.deleteMany({ clear: true }); // 한 번 신청 시도했을 때 신청기회 제공
+
+  const exceptions = await MealExceptionModel.find({
+    date: {
+      $gte: getLastWeek(getWeekStartString()),
+      $lte: getLastWeek(getWeekdayEndString()),
+    },
+  });
+
+  const depriveList: Array<number> = [];
+  exceptions.forEach((exception) => {
+    if (exception.group) {
+      exception.appliers.forEach(({ student, entered }) => {
+        if (!entered) depriveList.push(student);
+      });
+    } else if (!exception.entered) depriveList.push(exception.applier);
+  });
+
+  const listCount: {
+    [key: number]: number
+  } = {};
+  depriveList.forEach((student) => {
+    listCount[student] = (listCount[student] || 0) + 1;
+  });
+
+  Object.keys(listCount).forEach(async (student) => {
+    if (listCount[+student] >= 2) {
+      await new MealExceptionDepriveModel({
+        student: +student,
+        clear: false,
+      }).save();
+    }
   });
 };
 

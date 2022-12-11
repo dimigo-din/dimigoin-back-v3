@@ -12,9 +12,9 @@ const mealExceptionDepriveSchema = createSchema({
   clear: Type.boolean({ default: false }),
 }, { versionKey: false, timestamps: true });
 
-const MealExceeptionDepriveModel: Model<MealExceptionDeprive> = dalgeurakDB.model('mealexceptiondeprive', mealExceptionDepriveSchema);
+const MealExceptionDepriveModel: Model<MealExceptionDeprive> = dalgeurakDB.model('mealexceptiondeprive', mealExceptionDepriveSchema);
 
 export {
   mealExceptionDepriveSchema,
-  MealExceeptionDepriveModel,
+  MealExceptionDepriveModel,
 };

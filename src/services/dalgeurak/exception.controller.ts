@@ -14,7 +14,9 @@ import {
 } from '../../resources/date';
 import io from '../../resources/socket';
 import { HttpException } from '../../exceptions';
-import { IMealException, MealExceptionBlacklistModel, MealExceptionModel } from '../../models/dalgeurak';
+import {
+  IMealException, MealExceptionBlacklistModel, MealExceptionDepriveModel, MealExceptionModel,
+} from '../../models/dalgeurak';
 import {
   MealConfigKeys, MealExceptionTimeType, MealExceptionTimeValues, MealExceptionType, MealExceptionValues,
 } from '../../types';
@@ -203,6 +205,47 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     type,
   } = req.body;
   const { user_id: applier } = req.user;
+
+  const exceptionDeprive = await MealExceptionDepriveModel.find({
+    $or: [
+      {
+        student: applier,
+      },
+      {
+        student: {
+          $in: appliers,
+        },
+      },
+    ],
+  });
+  if (exceptionDeprive) {
+    await MealExceptionDepriveModel.update(
+      {
+        $or: [
+          {
+            student: applier,
+          },
+          {
+            student: {
+              $in: appliers,
+            },
+          },
+        ],
+      },
+      {
+        clear: true,
+      },
+    );
+    const depriveStudents = await studentSearch({
+      user_id: exceptionDeprive.map((e) => e.student),
+    });
+    throw new HttpException(
+      401,
+      `신청이 취소되었습니다.\n사유 : 2회 이상 선/후밥 체크인 되지 않은 학생이 있어 신청할 수 없습니다.\n${depriveStudents
+        .map((e) => e.name).join(', ')
+      }\n다음 주에 다시 시도해주세요.`,
+    );
+  }
 
   // const applicationCount = await getMealConfig(MealConfigKeys.mealExceptionApplicationCount);
 
