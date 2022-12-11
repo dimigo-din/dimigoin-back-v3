@@ -9,7 +9,7 @@ const convenienceBlacklistScheme = createSchema({
   userId: Type.number({ required: true }),
 }, { versionKey: false, timestamps: true });
 
-const ConvenienceBlacklistModel: Model<ConvenienceBlacklist> = dalgeurakDB.model('conveniencebacklist', convenienceBlacklistScheme);
+const ConvenienceBlacklistModel: Model<ConvenienceBlacklist> = dalgeurakDB.model('convenienceblacklist', convenienceBlacklistScheme);
 
 export {
   convenienceBlacklistScheme,
