@@ -218,7 +218,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
       },
     ],
   });
-  if (exceptionDeprive) {
+  if (exceptionDeprive.length !== 0) {
     await MealExceptionDepriveModel.update(
       {
         $or: [
