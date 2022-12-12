@@ -205,7 +205,7 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
     student: sid,
   });
   if (depriveCheck) {
-    await ConvenienceDepriveModel.updateOne(
+    await ConvenienceDepriveModel.updateMany(
       { student: sid },
       { clear: true },
     );
@@ -295,7 +295,7 @@ export const convenienceAppli = async (req: Request, res: Response) => {
     student: req.user.user_id,
   });
   if (depriveCheck) {
-    await ConvenienceDepriveModel.update(
+    await ConvenienceDepriveModel.updateMany(
       { student: req.user.user_id },
       { clear: true },
     );

@@ -219,7 +219,7 @@ export const createMealExceptions = async (req: Request, res: Response) => {
     ],
   });
   if (exceptionDeprive.length !== 0) {
-    await MealExceptionDepriveModel.update(
+    await MealExceptionDepriveModel.updateMany(
       {
         $or: [
           {
@@ -236,14 +236,20 @@ export const createMealExceptions = async (req: Request, res: Response) => {
         clear: true,
       },
     );
-    const depriveStudents = await studentSearch({
+    const depriveStudents = await (await studentSearch({
       user_id: exceptionDeprive.map((e) => e.student),
-    });
+    })).map((e) => e.name);
+
     throw new HttpException(
       401,
-      `신청이 취소되었습니다.\n사유 : 2회 이상 선/후밥 체크인 되지 않은 학생이 있어 신청할 수 없습니다.\n${depriveStudents
-        .map((e) => e.name).join(', ')
-      }\n다음 주에 다시 시도해주세요.`,
+      `신청이 취소되었습니다.\n사유 : 2회 이상 선/후밥 체크인 ${
+        group
+          ? `하지 않은 학생이 있어 신청할 수 없습니다.\n${
+            depriveStudents.filter((element, index) =>
+              depriveStudents.indexOf(element) === index)
+              .map((name) => name).join(', ')
+          }`
+          : '하지 않아 신청할 수 없습니다.'}\n다음 주에 다시 시도해주세요.`,
     );
   }
 
