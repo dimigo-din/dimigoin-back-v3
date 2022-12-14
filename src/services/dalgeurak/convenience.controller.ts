@@ -333,11 +333,7 @@ export const getUserList = async (req: Request, res: Response) => {
     }>;
   };
 
-  const nowTime = getConvTime();
-  if (!nowTime) throw new HttpException(401, '식사시간이 아닙니다.');
-
   const conveniences = await ConvenienceFoodModel.find({
-    time: nowTime,
     'duration.start': getLastWeek(getWeekStartString()),
   });
   if (!conveniences) throw new HttpException(501, '체크인하려는 간편식이 존재하지 않습니다.');
@@ -370,7 +366,7 @@ export const getUserList = async (req: Request, res: Response) => {
       } = students[idx];
       const checkin = await ConvenienceCheckinModel.findOne({
         'duration.start': getWeekStartString(),
-        [nowTime]: {
+        [food.time]: {
           $elemMatch: {
             date: getTodayDateString(),
             student: user_id,
