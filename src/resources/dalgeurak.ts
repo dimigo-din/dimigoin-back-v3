@@ -288,27 +288,68 @@ export const fridayHomeCheck = async () => {
       const conveniences = await ConvenienceFoodModel.find({
         time,
         'duration.start': getLastWeek(getWeekStartString()),
+        applications: {
+          $elemMatch: {
+            student: e.userId,
+          },
+        },
       });
+      if (conveniences.length > 0) {
+        const checkInCheck = await ConvenienceCheckinModel.findOne({
+          'duration.start': getWeekStartString(),
+        });
+        if (!checkInCheck) return; // 이번 주 체크인이 설정되어 있지 않음.
 
-      let applicationStatus = false;
-      conveniences.forEach((convenience) => {
-        const application = convenience.applications.map((e1) => e1.student);
-        if (application.includes(e.userId)) applicationStatus = true;
-      });
-      if (!applicationStatus) throw new HttpException(401, '신청하지 않았습니다.');
-
-      const checkInCheck = await ConvenienceCheckinModel.findOne({
-        'duration.start': getWeekStartString(),
-      });
-      if (!checkInCheck) throw new HttpException(501, '이번 주 체크인이 설정되어 있지 않습니다.');
-
-      Object.assign(checkInCheck, {
-        [time]: [...checkInCheck[time], {
-          date: getTodayDateString(),
-          student: e.userId,
-        }],
-      });
-      await checkInCheck.save();
+        await ConvenienceCheckinModel.updateOne(
+          { _id: checkInCheck._id },
+          {
+            [time]: [...checkInCheck[time], {
+              date: getTodayDateString(),
+              student: e.userId,
+            }],
+          },
+        );
+      }
     });
+
+    const mealExceptions = await MealExceptionModel.find({
+      $or: [
+        {
+          applier: e.userId,
+        },
+        {
+          appliers: {
+            $elemMatch: {
+              student: e.userId,
+            },
+          },
+        },
+      ],
+      date: today,
+    });
+    if (mealExceptions.length > 0) {
+      mealExceptions.map(async (exception) => {
+        if (exception.group) {
+          await MealExceptionModel.updateOne(
+            { _id: exception._id },
+            {
+              appliers: exception.appliers.map((e1) => {
+                if (e1.student === e.userId) {
+                  return {
+                    student: e.userId,
+                    entered: true,
+                  };
+                } return e1;
+              }),
+            },
+          );
+        } else {
+          await MealExceptionModel.updateOne(
+            { _id: exception._id },
+            { entered: true },
+          );
+        }
+      });
+    }
   });
 };
