@@ -14,3 +14,4 @@ export * from './convenience-deprive';
 export * from './convenience-blacklist';
 export * from './meal-status';
 export * from './friday-home';
+export * from './notice';
