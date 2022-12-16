@@ -17,6 +17,7 @@ import * as convenienceControllers from './convenience.controller';
 import * as warningController from './warning.controller';
 import * as cancelController from './cancel.controller';
 import * as configController from './config.controller';
+import * as noticeController from './notice.controller';
 
 export default createService({
   name: '달그락 서비스',
@@ -575,6 +576,35 @@ export default createService({
         message: Joi.string().required(),
       },
       handler: controllers.pushNotification,
+    },
+    {
+      method: 'post',
+      path: '/notice',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      validateSchema: {
+        mesage: Joi.string().required(),
+      },
+      handler: noticeController.createNotice,
+    },
+    {
+      method: 'get',
+      path: '/notice',
+      needAuth: false,
+      needPermission: false,
+      handler: noticeController.getNotice,
+    },
+    {
+      method: 'delete',
+      path: '/notice',
+      needAuth: true,
+      needPermission: false,
+      teacherOnly: true,
+      validateSchema: {
+        _id: Joi.string().required(),
+      },
+      handler: noticeController.deleteNotice,
     },
   ],
 });
