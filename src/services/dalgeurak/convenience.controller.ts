@@ -170,9 +170,6 @@ export const insteadOfAppli = async (req: Request, res: Response) => {
   });
   if (blackCheck) throw new HttpException(401, '블랙리스트로 인해 신청할 수 없습니다.');
 
-  const today = getDayCode();
-  if (!['tue', 'wed'].includes(today)) throw new HttpException(401, '신청할 수 있는 날이 아닙니다.');
-
   const convenience = await ConvenienceFoodModel.findOne({
     food,
     time,
