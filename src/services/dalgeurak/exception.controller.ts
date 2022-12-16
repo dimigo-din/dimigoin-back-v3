@@ -570,3 +570,69 @@ export const getMyExceptions = async (req: Request, res: Response) => {
 
   res.json({ exceptions });
 };
+
+export const cancelMealException = async (req: Request, res: Response) => {
+  const {
+    student,
+    date,
+    type,
+    time,
+  } = req.body;
+
+  const exception = await MealExceptionModel.findOne({
+    time,
+    type,
+    date,
+    $or: [
+      {
+        applier: student,
+      },
+      {
+        appliers: {
+          $elemMatch: {
+            student,
+          },
+        },
+      },
+    ],
+  });
+  if (!exception) throw new HttpException(401, '신청 기록을 찾을 수 없습니다.');
+
+  if (exception.group) {
+    const appliersIdx = exception.appliers.findIndex((e) => e.student === student);
+    await MealExceptionModel.updateOne(
+      {
+        time,
+        type,
+        date,
+        $or: [
+          {
+            applier: student,
+          },
+          {
+            appliers: {
+              $elemMatch: {
+                student,
+              },
+            },
+          },
+        ],
+      },
+      {
+        appliers: [
+          ...exception.appliers.slice(0, appliersIdx),
+          ...exception.appliers.slice(appliersIdx + 1, exception.appliers.length),
+        ],
+      },
+    );
+  } else {
+    await MealExceptionModel.deleteOne({
+      time,
+      type,
+      date,
+      applier: student,
+    });
+  }
+
+  res.json({ success: true });
+};
