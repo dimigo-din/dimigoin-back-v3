@@ -590,7 +590,7 @@ export default createService({
       needPermission: false,
       teacherOnly: true,
       validateSchema: {
-        mesage: Joi.string().required(),
+        message: Joi.string().required(),
       },
       handler: noticeController.createNotice,
     },
