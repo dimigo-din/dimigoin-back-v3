@@ -21,7 +21,7 @@ import {
   ConvenienceFoodModel,
   FriDayHomeModel,
 } from '../../models/dalgeurak';
-import { ConvenienceFoodType, ConvenienceTimeType } from '../../types';
+import { ConvenienceFoodType, ConvenienceTimeType, ConvenienceTimeValues } from '../../types';
 import { User } from '../../interfaces';
 
 export const createConvenience = async (req: Request, res: Response) => {
@@ -484,20 +484,22 @@ export const getCheckEat = async (req: Request, res: Response) => {
   const data: Array<{
     student: number;
     date: Array<string>;
+    time: ConvenienceTimeType;
   }> = [];
 
-  const nowTime = getConvTime();
-
-  checkin[nowTime].forEach((e) => {
-    const idx = data.findIndex((v) => v.student === e.student);
-    if (idx === -1) {
-      data.push({
-        student: e.student,
-        date: [e.date],
-      });
-    } else if (!data[idx].date.includes(e.date)) {
-      data[idx].date = [...data[idx].date, e.date];
-    }
+  ConvenienceTimeValues.forEach((time) => {
+    checkin[time].forEach((e) => {
+      const idx = data.findIndex((v) => v.student === e.student);
+      if (idx === -1) {
+        data.push({
+          student: e.student,
+          date: [e.date],
+          time,
+        });
+      } else if (!data[idx].date.includes(e.date)) {
+        data[idx].date = [...data[idx].date, e.date];
+      }
+    });
   });
 
   res.json({ data });
