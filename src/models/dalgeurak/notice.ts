@@ -8,7 +8,7 @@ interface INotice extends Document {
 
 const noticeSchema = createSchema({
   message: Type.string({ required: true }),
-}, { versionKey: false, timestamps: false });
+}, { versionKey: false, timestamps: true });
 
 const NoticeModel: Model<INotice> = dalgeurakDB.model('notice', noticeSchema);
 

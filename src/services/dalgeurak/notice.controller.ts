@@ -12,9 +12,9 @@ export const createNotice = async (req: Request, res: Response) => {
 };
 
 export const getNotice = async (req: Request, res: Response) => {
-  const notices = await NoticeModel.find();
+  const notice = await NoticeModel.findOne().sort({ _id: -1 });
 
-  res.json({ notices });
+  res.json({ notice });
 };
 
 export const deleteNotice = async (req: Request, res: Response) => {
