@@ -168,14 +168,20 @@ export default createService({
       needPermission: false,
       handler: exceptionControllers.getMyExceptions,
     },
-    // {
-    //   method: 'delete',
-    //   path: '/exception',
-    //   needAuth: true,
-    //   needPermission: false,
-    //   studentOnly: true,
-    //   handler: exceptionControllers.cancelMealException,
-    // },
+    {
+      method: 'delete',
+      path: '/exception',
+      needAuth: true,
+      needPermission: false,
+      studentOnly: true,
+      validateSchema: {
+        student: Joi.number().required(),
+        time: Joi.string().valid(...MealExceptionTimeValues).required(),
+        date: Joi.string().required(),
+        type: Joi.string().valid(...MealExceptionValues).required(),
+      },
+      handler: exceptionControllers.cancelMealException,
+    },
     {
       method: 'get',
       path: '/user',

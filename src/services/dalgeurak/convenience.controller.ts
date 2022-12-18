@@ -21,7 +21,7 @@ import {
   ConvenienceFoodModel,
   FriDayHomeModel,
 } from '../../models/dalgeurak';
-import { ConvenienceFoodType } from '../../types';
+import { ConvenienceFoodType, ConvenienceTimeType } from '../../types';
 import { User } from '../../interfaces';
 
 export const createConvenience = async (req: Request, res: Response) => {
@@ -327,6 +327,7 @@ export const getUserList = async (req: Request, res: Response) => {
       grade: number;
       class: number;
       checkin: boolean;
+      time: ConvenienceTimeType;
     }>;
   };
 
@@ -377,6 +378,7 @@ export const getUserList = async (req: Request, res: Response) => {
         grade,
         class: kclass,
         checkin: !!checkin,
+        time: food.time,
       });
     }
   }
