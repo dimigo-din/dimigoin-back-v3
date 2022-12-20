@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { getTeacherInfo } from '../../resources/dimi-api';
+import { getTeacherInfo, teacherSearch } from '../../resources/dimi-api';
 import { HttpException } from '../../exceptions';
 // import {
 //   getAfterschoolApplierCount,
@@ -12,7 +12,7 @@ const applierCountMapper = async (afterschool: any) => {
     afterschool: afterschool._id,
   });
   return {
-    ...(afterschool.toJSON()),
+    ...(typeof afterschool === 'object' ? afterschool : afterschool.toJSON()),
     applierCount,
   };
 };
@@ -27,11 +27,26 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
   )
     .populateTs('place');
 
-  afterschools.forEach(async (e, idx) => {
-    (afterschools[idx].teacher as any) = await getTeacherInfo(e.teacher);
+  const tids = afterschools.map((e) => e.teacher);
+  const teachersIdx = tids.filter((v, i) => tids.indexOf(v) === i);
+
+  const teachers = await teacherSearch({
+    user_id: teachersIdx,
   });
+
+  const processData: Array<any> = [];
+
+  for (const afterschool of afterschools) {
+    const idx = teachers.findIndex((v) => v.user_id === afterschool.teacher);
+    const user = teachers[idx];
+    delete (afterschool as any)._doc.teacher;
+    processData.push({
+      ...(afterschool as any)._doc,
+      teacher: user,
+    });
+  }
   const mappedAfterschools = await Promise.all(
-    afterschools.map(applierCountMapper),
+    processData.map(applierCountMapper),
   );
 
   res.json({ afterschools: mappedAfterschools });

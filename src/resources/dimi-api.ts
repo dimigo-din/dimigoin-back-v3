@@ -133,10 +133,8 @@ export const studentSearch = async (param: object): Promise<User[]> => {
   });
   return data;
 };
-export const teacherSearch = async (
-  param: object,
-): Promise<TeacherIdentity[]> => {
-  const { data } = await api.get(apiRouter.getTeacher, {
+export const teacherSearch = async (param: object): Promise<TeacherIdentity[]> => {
+  const data = await apiRequest(apiRouter.getTeacher, {
     ...param,
   });
   return data;
