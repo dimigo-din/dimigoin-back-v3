@@ -40,7 +40,7 @@ export const updateMeal = async () => {
       date,
     });
     // eslint-disable-next-line no-continue
-    if (mealCheck) continue;
+    if (mealCheck && mealCheck.breakfast.length !== 0) continue;
 
     try {
       const { data } = await axios.get(mealApi, {
@@ -64,13 +64,13 @@ export const updateMeal = async () => {
         dinner: [],
       };
       meals[date].breakfast.push(
-        ...context.substring(context.indexOf('조식: ') + 5, context.indexOf('*중식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('조식: ') + 4, context.indexOf('*중식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
       meals[date].lunch.push(
-        ...context.substring(context.indexOf('중식: ') + 5, context.indexOf('*석식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('중식: ') + 4, context.indexOf('*석식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
       meals[date].dinner.push(
-        ...context.substring(context.indexOf('석식: ') + 5).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('석식: ') + 4).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
     } catch (err) {
       if (!meals[date]) { meals[date] = {
