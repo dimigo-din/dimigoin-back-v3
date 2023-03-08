@@ -24,7 +24,7 @@ const getMealPostNum = async (month: string, day: string) => {
     },
   });
 
-  const idx = data.indexOf(`${month}월 ${day}일 식단입니다`);
+  const idx = data.indexOf(`${month}월${day}일 식단입니다`);
   const postUrl = data.substring(data.indexOf('https', idx - 125), idx - 2);
 
   return postUrl.split('document_srl=')[1];
@@ -64,13 +64,13 @@ export const updateMeal = async () => {
         dinner: [],
       };
       meals[date].breakfast.push(
-        ...context.substring(context.indexOf('조식 : ') + 5, context.indexOf('*중식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('조식: ') + 5, context.indexOf('*중식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
       meals[date].lunch.push(
-        ...context.substring(context.indexOf('중식 : ') + 5, context.indexOf('*석식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('중식: ') + 5, context.indexOf('*석식')).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
       meals[date].dinner.push(
-        ...context.substring(context.indexOf('석식 : ') + 5).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
+        ...context.substring(context.indexOf('석식: ') + 5).split('\n').filter((v) => v.trim())[0].split('/').filter((m: string) => m),
       );
     } catch (err) {
       if (!meals[date]) { meals[date] = {
