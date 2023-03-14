@@ -6,6 +6,7 @@ export * from './circle';
 export * from './circle-application';
 export * from './config';
 export * from './ingang-application';
+export * from './user';
 export * from './meal';
 export * from './outgo-request';
 export * from './attendance-log';

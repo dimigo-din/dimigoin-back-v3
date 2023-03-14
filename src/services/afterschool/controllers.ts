@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
-import { getTeacherInfo, teacherSearch } from '../../resources/dimi-api';
+import { getTeacherInfo } from '../../resources/dimi-api';
 import { HttpException } from '../../exceptions';
 // import {
 //   getAfterschoolApplierCount,
 //   removeAfterschoolApplierCount,
 // } from '../../resources/redis';
-import { AfterschoolModel, AfterschoolApplicationModel } from '../../models';
+import { AfterschoolModel, AfterschoolApplicationModel, UserModel } from '../../models';
 
 const applierCountMapper = async (afterschool: any) => {
   const applierCount = await AfterschoolApplicationModel.count({
@@ -30,19 +30,14 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
   const tids = afterschools.map((e) => e.teacher);
   const teachersIdx = tids.filter((v, i) => tids.indexOf(v) === i);
 
-  const teachers = await teacherSearch({
-    user_id: teachersIdx,
-  });
+  const teacher = await UserModel.findByIdx(teachersIdx[0]);
 
   const processData: Array<any> = [];
 
   for (const afterschool of afterschools) {
-    const idx = teachers.findIndex((v) => v.user_id === afterschool.teacher);
-    const user = teachers[idx];
-    delete (afterschool as any)._doc.teacher;
     processData.push({
       ...(afterschool as any)._doc,
-      teacher: user,
+      teacher,
     });
   }
   const mappedAfterschools = await Promise.all(
