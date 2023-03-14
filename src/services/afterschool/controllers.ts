@@ -27,17 +27,14 @@ export const getAllAfterschools = async (req: Request, res: Response) => {
   )
     .populateTs('place');
 
-  const tids = afterschools.map((e) => e.teacher);
-  const teachersIdx = tids.filter((v, i) => tids.indexOf(v) === i);
-
-  const teacher = await UserModel.findByIdx(teachersIdx[0]);
-
   const processData: Array<any> = [];
 
   for (const afterschool of afterschools) {
+    const user = await UserModel.findByIdx(afterschool.teacher);
+    delete (afterschool as any)._doc.teacher;
     processData.push({
       ...(afterschool as any)._doc,
-      teacher,
+      teacher: user,
     });
   }
   const mappedAfterschools = await Promise.all(
