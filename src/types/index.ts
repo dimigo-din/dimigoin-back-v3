@@ -80,6 +80,9 @@ export type Gender = typeof GenderValues[number];
 export const UserTypeValues = ['S', 'G', 'O', 'D', 'T', 'P'] as const;
 export type UserType = typeof UserTypeValues[number];
 
+export const OutgoRequestValues = ['A', 'W', 'D'] as const; // APPROVED, WAITING, DENIED
+export type OutgoRequestType = typeof OutgoRequestValues[number];
+
 export const GradeValues = [1, 2, 3] as const;
 export type Grade = typeof GradeValues[number];
 
