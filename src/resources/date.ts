@@ -29,21 +29,21 @@ export const getDayCode = (date?: string) => {
 };
 
 export const getWeekStartString = (date?: string) => {
-  if (date) return moment(date).startOf('isoWeek').format(format);
-  return moment().startOf('isoWeek').format(format);
+  if (date) return moment(date).startOf('week').format(format);
+  return moment().startOf('week').format(format);
 };
 
 export const getDayToDate = (day: number) => moment().day(day).format(format);
 
-export const getWeekCalcul = (add: number) => moment().clone().startOf('isoWeek').add(add, 'day');
+export const getWeekCalcul = (add: number) => moment().clone().startOf('week').add(add, 'day');
 
 export const getWeekEndString = (date?: string) => {
-  if (date) return moment(date).endOf('isoWeek').format(format);
-  return moment().endOf('isoWeek').format(format);
+  if (date) return moment(date).endOf('week').format(format);
+  return moment().endOf('week').format(format);
 };
-export const getWeekdayEndString = () => moment().clone().endOf('isoWeek').add(-2, 'd')
+export const getWeekdayEndString = () => moment().clone().endOf('week').add(-2, 'd')
   .format(format);
-export const getConvAppliEndString = () => moment().clone().startOf('isoWeek').add(2, 'd')
+export const getConvAppliEndString = () => moment().clone().startOf('week').add(2, 'd')
   .format(format);
 
 export const getMonthStartString = (date?: string) => {
