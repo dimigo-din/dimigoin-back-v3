@@ -1,7 +1,7 @@
 import Joi from 'joi';
 import * as controllers from './controllers';
 import {
-  AfterschoolTimeValues, ClassValues, DayValues, GradeValues,
+  AfterschoolTimeValues, ClassValues, DayValues, GradeValues, TimeValues,
 } from '../../types';
 import { createService } from '../index';
 
@@ -41,7 +41,7 @@ export default createService({
         key: Joi.string().optional(),
         teacher: Joi.number().required(),
         days: Joi.array().items(Joi.string().valid(...DayValues)).required(),
-        times: Joi.array().items(Joi.string().valid(...AfterschoolTimeValues)).required(),
+        times: Joi.array().items(Joi.string().valid(...TimeValues)).required(), // 2023년부터 야자에도 방과후한다네요
         capacity: Joi.number().required(),
         place: Joi.string().required(),
       },
