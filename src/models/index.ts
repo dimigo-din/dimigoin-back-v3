@@ -5,7 +5,6 @@ export * from './afterschool-application';
 export * from './circle';
 export * from './circle-application';
 export * from './config';
-export * from './ingang-application';
 export * from './meal';
 export * from './outgo-request';
 export * from './attendance-log';
