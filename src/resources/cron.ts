@@ -4,7 +4,7 @@ import {
   refreshWeeklyTimetable,
 } from './timetable';
 import {
-  notifyIngangAppliers, notifyMealMenu, notifyNewNotice,
+  notifyMealMenu, notifyNewNotice,
 } from './notifier';
 import {
   resetExtraTimes,
@@ -49,18 +49,6 @@ const cronJobs = [
     action: async () => {
       await resetExtraTimes();
     },
-    runOnSetup: false,
-  },
-  {
-    name: '인강실 신청자 푸시 알림 (1타임)',
-    schedule: '35 19 * * 1-5',
-    action: async () => await notifyIngangAppliers('NSS1'),
-    runOnSetup: false,
-  },
-  {
-    name: '인강실 신청자 푸시 알림 (2타임)',
-    schedule: '15 21 * * 1-5',
-    action: async () => await notifyIngangAppliers('NSS2'),
     runOnSetup: false,
   },
   {
