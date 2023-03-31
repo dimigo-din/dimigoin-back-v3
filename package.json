@@ -76,7 +76,7 @@
     "mime": "^2.5.0",
     "moment-timezone": "^0.5.32",
     "mongodb": "^3.6.0",
-    "mongoose": "^5.9.4",
+    "mongoose": "^5.13.15",
     "node-cron": "^2.0.3",
     "slack-node": "^0.1.8",
     "socket.io": "^4.4.1",
