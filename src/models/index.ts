@@ -21,3 +21,4 @@ export * from './temporary-password';
 export * from './token';
 export * from './permission';
 export * from './user-type';
+export * from './washer';
