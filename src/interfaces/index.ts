@@ -5,3 +5,4 @@ export * from './dimi-api';
 export * from './user';
 export * from './place';
 export * from './meal';
+export * from './washer';

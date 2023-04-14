@@ -92,9 +92,6 @@ export type Class = typeof ClassValues[number];
 export const WasherValues = ['F1', 'F2', 'F3', 'M2L', 'M2M', 'M2R', 'M4L', 'M4R', 'M5'] as const; // Ex: Female-1층 = F1, Male-2층-오른쪽 = M2R
 export type Washer = typeof WasherValues[number];
 
-// to-do: 세탁기 사용시간 Array 만들기
-// export const WasherTimes = []
-
 export const CircleApplicationStatusValues = [
   'applied',
   'document-fail',
