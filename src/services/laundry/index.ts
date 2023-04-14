@@ -51,7 +51,7 @@ export default createService({
       method: 'patch',
       path: '/edit',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       validateSchema: {
         washerName: Joi.string().valid(...WasherValues),
         grade: Joi.array().items(Joi.number().valid(...GradeValues)),
