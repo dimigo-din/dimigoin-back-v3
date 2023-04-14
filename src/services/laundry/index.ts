@@ -47,5 +47,16 @@ export default createService({
       },
       handler: controllers.applyLaundry,
     },
+    {
+      method: 'patch',
+      path: '/edit',
+      needAuth: true,
+      needPermission: false,
+      validateSchema: {
+        washerName: Joi.string().valid(...WasherValues),
+        grade: Joi.array().items(Joi.number().valid(...GradeValues)),
+      },
+      handler: controllers.editGrade,
+    },
   ],
 });

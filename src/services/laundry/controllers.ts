@@ -67,3 +67,13 @@ export const applyLaundry = async (req: Request, res: Response) => {
   await washer.save();
   res.json({ error: false, message: 'Success' });
 };
+
+export const editGrade = async (req: Request, res: Response) => {
+  const { washerName, grade } = req.body;
+
+  const washer = await WasherModel.findOne({ name: washerName });
+  washer.grade = grade;
+  washer.save();
+
+  res.json({ error: false, message: 'Success' });
+};
