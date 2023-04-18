@@ -6,8 +6,7 @@ export interface PopulatedWasher {
   name: Washer;
   grade: Grade;
   gender: Gender;
-  weekDayTimetable: laundryApplyer[];
-  weekEndTimetable: laundryApplyer[];
+  timetable: laundryApplyer[];
 }
 
 export interface laundryApplyer {

@@ -9,19 +9,15 @@ export const getAllWashers = async (req: Request, res: Response) => {
 };
 
 export const createWasher = async (req: Request, res: Response) => {
-  const notExist = await WasherModel.findOne({
-    name: req.body.name,
-    gender: req.body.gender,
-  });
+  const { name, gender } = req.body;
 
-  if (!notExist) throw new HttpException(404, '이미 해당 세탁기가 존재합니다.');
+  const existingWasher = await WasherModel.findOne({ name, gender });
+  if (existingWasher) {
+    throw new HttpException(400, '이미 해당 세탁기가 존재합니다.');
+  }
 
-  const washer = await new WasherModel({
-    ...(req.body),
-    weekDayTimetable: [],
-    weekEndTimetable: [],
-  }).save();
-
+  const timetable = Array(7).fill({});
+  const washer = await WasherModel.create({ ...req.body, timetable });
   res.json({ washer });
 };
 
@@ -38,31 +34,22 @@ export const applyLaundry = async (req: Request, res: Response) => {
     gender, grade, user_id, name,
   } = req.user;
   const { applyTime, washerName } = req.body;
-  const washer = await WasherModel.findOne({ name: washerName });
 
+  const washer = await WasherModel.findOne({ name: washerName });
+  if (!washer) throw new HttpException(404, '세탁기가 존재하지 않습니다.');
   if (washer.gender !== gender) throw new HttpException(404, '성별에 맞는 기숙사인지 다시 확인해주세요.');
   if (!washer.grade.includes(grade)) throw new HttpException(404, '신청 가능한 학년이 아닙니다.');
 
-  const date = new Date();
-  const day = date.getDay();
+  const isWeekend = new Date().getDay() % 6 === 0;
+  const maxApplyTime = isWeekend ? 7 : 5; // 평일에 5타임, 주말에 7타임
 
-  if (day % 6 !== 0) {
-    if (washer.weekDayTimetable[applyTime].userIdx) throw new HttpException(404, '이미 예약되어 있는 시간대입니다.');
-
-    const obj = {
+  if (applyTime < maxApplyTime) {
+    if (washer.timetable[applyTime].name) throw new HttpException(404, '이미 예약되어 있는 시간대입니다.');
+    washer.timetable[applyTime] = {
       userIdx: user_id, grade, class: req.user.class, name,
     };
-
-    Object.assign(washer.weekDayTimetable[applyTime], obj);
-  } else {
-    if (washer.weekEndTimetable[applyTime].userIdx) throw new HttpException(404, '이미 예약되어 있는 시간대입니다.');
-
-    const obj = {
-      userIdx: user_id, grade, class: req.user.class, name,
-    };
-
-    Object.assign(washer.weekEndTimetable[applyTime], obj);
   }
+  else throw new HttpException(404, '신청 가능한 시간이 아닙니다.');
 
   await washer.save();
   res.json({ error: false, message: 'Success' });

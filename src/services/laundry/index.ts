@@ -21,7 +21,7 @@ export default createService({
       needPermission: true,
       validateSchema: {
         name: Joi.string().valid(...WasherValues),
-        grade: Joi.string().valid(...GradeValues),
+        grade: Joi.array().items(Joi.number().valid(...GradeValues)),
         gender: Joi.string().valid(...GenderValues),
       },
       handler: controllers.createWasher,
