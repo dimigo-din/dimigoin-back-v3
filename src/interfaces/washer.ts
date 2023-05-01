@@ -10,7 +10,7 @@ export interface PopulatedWasher {
 }
 
 export interface laundryApplyer {
-  userIdx: number;
+  userId: number;
   username: string;
   grade: number;
   class: number;

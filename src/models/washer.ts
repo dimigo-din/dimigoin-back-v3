@@ -6,7 +6,7 @@ const washerSchema = createSchema({
   grade: Type.array({ required: true }).of(Type.number({ enum: GradeValues })),
   gender: Type.string({ required: true, enum: GenderValues }),
   timetable: Type.array({ required: true }).of({
-    userIdx: Type.number({ required: false }),
+    userId: Type.number({ required: false, unique: true }),
     name: Type.string({ required: false }),
     grade: Type.number({ required: false }),
     class: Type.number({ required: false }),

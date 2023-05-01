@@ -46,7 +46,7 @@ export const applyLaundry = async (req: Request, res: Response) => {
   if (applyTime < maxApplyTime) {
     if (washer.timetable[applyTime].name) throw new HttpException(404, '이미 예약되어 있는 시간대입니다.');
     washer.timetable[applyTime] = {
-      userIdx: user_id, grade, class: req.user.class, name,
+      userId: user_id, grade, class: req.user.class, name,
     };
   }
   else throw new HttpException(404, '신청 가능한 시간이 아닙니다.');
