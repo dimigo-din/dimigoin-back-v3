@@ -31,31 +31,11 @@ export default createService({
       },
       handler: controllers.applyFrigo,
     },
-    // {
-    //   method: 'post',
-    //   path: '/accept',
-    //   needAuth: true,
-    //   needPermission: true,
-    //   validateSchema: {
-    //     userId: Joi.number(),
-    //   },
-    //   handler: controllers.acceptFrigo,
-    // },
-    // {
-    //   method: 'post',
-    //   path: '/cancel',
-    //   needAuth: true,
-    //   needPermission: true,
-    //   validateSchema: {
-    //     userId: Joi.number(),
-    //   },
-    //   handler: controllers.cancelFrigo,
-    // },
     {
       method: 'post',
       path: '/manage',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       validateSchema: {
         userId: Joi.number(),
         edit: Joi.boolean(),
