@@ -32,19 +32,10 @@ export const applyFrigo = async (req: Request, res: Response) => {
   res.json({ frigoReqest });
 };
 
-export const acceptFrigo = async (req: Request, res: Response) => {
+export const manageFrigo = async (req: Request, res: Response) => {
   const frigoRequest = await FrigoModel.findOne({ userId: req.body.userId });
 
-  frigoRequest.accepted = true;
-  frigoRequest.save();
-
-  res.json({ error: false, message: 'Success' });
-};
-
-export const cancelFrigo = async (req: Request, res: Response) => {
-  const frigoRequest = await FrigoModel.findOne({ userId: req.body.userId });
-
-  frigoRequest.accepted = false;
+  frigoRequest.accepted = req.body.edit;
   frigoRequest.save();
 
   res.json({ error: false, message: 'Success' });
