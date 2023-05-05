@@ -92,6 +92,9 @@ export type Class = typeof ClassValues[number];
 export const WasherValues = ['F1', 'F2', 'F3', 'M2L', 'M2M', 'M2R', 'M4L', 'M4R', 'M5'] as const; // Ex: Female-1층 = F1, Male-2층-오른쪽 = M2R
 export type Washer = typeof WasherValues[number];
 
+export const FrigoStatusValues = ['waiting', 'rejected', 'accepted'];
+export type FrigoStatus = typeof FrigoStatusValues[number];
+
 export const CircleApplicationStatusValues = [
   'applied',
   'document-fail',

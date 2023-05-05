@@ -22,3 +22,4 @@ export * from './token';
 export * from './permission';
 export * from './user-type';
 export * from './washer';
+export * from './frigo';
