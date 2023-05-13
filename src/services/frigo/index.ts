@@ -12,7 +12,7 @@ export default createService({
       method: 'get',
       path: '/',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       handler: controllers.getAllFrigo,
     },
     {
@@ -33,13 +33,12 @@ export default createService({
       handler: controllers.applyFrigo,
     },
     {
-      method: 'post',
-      path: '/manage',
+      method: 'patch',
+      path: '/:FrigoRequestId',
       needAuth: true,
-      needPermission: false,
+      needPermission: true,
       validateSchema: {
-        userId: Joi.number(),
-        edit: Joi.string().valid(...FrigoStatusValues),
+        status: Joi.string().valid(...FrigoStatusValues),
       },
       handler: controllers.manageFrigo,
     },

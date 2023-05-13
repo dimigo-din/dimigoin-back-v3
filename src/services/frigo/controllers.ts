@@ -27,16 +27,16 @@ export const applyFrigo = async (req: Request, res: Response) => {
   }
 
   const frigoReqest = await FrigoModel.create({
-    userId: user_id, name, grade, class: req.user.class, ...req.body, status: 'waiting',
+    userId: user_id, name, grade, class: req.user.class, ...req.body, status: 'W',
   });
   res.json({ frigoReqest });
 };
 
 export const manageFrigo = async (req: Request, res: Response) => {
-  const frigoRequest = await FrigoModel.findOne({ userId: req.body.userId });
+  const frigoRequest = await FrigoModel.findById(req.params.FrigoRequestId);
 
-  frigoRequest.status = req.body.edit;
+  frigoRequest.status = req.body.status;
   frigoRequest.save();
 
-  res.json({ error: false, message: 'Success' });
+  res.json({ error: false });
 };
