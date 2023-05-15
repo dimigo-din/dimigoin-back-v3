@@ -6,5 +6,12 @@ export interface PopulatedWasher {
   name: Washer;
   grade: Grade;
   gender: Gender;
-  userIdx: number;
+  timetable: laundryApplyer[];
+}
+
+export interface laundryApplyer {
+  userId: number;
+  username: string;
+  grade: number;
+  class: number;
 }
