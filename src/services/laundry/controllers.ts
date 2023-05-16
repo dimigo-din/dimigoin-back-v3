@@ -52,7 +52,7 @@ export const applyLaundry = async (req: Request, res: Response) => {
   else throw new HttpException(404, '신청 가능한 시간이 아닙니다.');
 
   await washer.save();
-  res.json({ error: false, message: 'Success' });
+  res.json({ error: false });
 };
 
 export const editGrade = async (req: Request, res: Response) => {
@@ -62,5 +62,5 @@ export const editGrade = async (req: Request, res: Response) => {
   washer.grade = grade;
   washer.save();
 
-  res.json({ error: false, message: 'Success' });
+  res.json({ error: false });
 };

@@ -11,7 +11,7 @@ export default createService({
       method: 'get',
       path: '/',
       needAuth: true,
-      needPermission: true,
+      needPermission: false,
       handler: controllers.getAllOutgoRequests,
     },
     {

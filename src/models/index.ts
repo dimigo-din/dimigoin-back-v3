@@ -23,3 +23,6 @@ export * from './permission';
 export * from './user-type';
 export * from './washer';
 export * from './frigo';
+export * from './stay';
+export * from './stay-application';
+export * from './stay-outgo';

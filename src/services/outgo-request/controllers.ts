@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import moment from 'moment-timezone';
-import { getTeacherInfo, studentSearch } from '../../resources/dimi-api';
+import { getOutgoResults } from '../../resources/outgo';
 import { HttpException } from '../../exceptions';
 import { OutgoRequestModel, UserTypeModel } from '../../models';
 import { OutgoRequestStatus } from '../../types';
+import { OutgoSearchResult } from '../../interfaces';
 
 export const getMyOutgoRequests = async (req: Request, res: Response) => {
   const { user } = req;
@@ -14,12 +15,12 @@ export const getMyOutgoRequests = async (req: Request, res: Response) => {
       createdAt: { $gte: startDate },
     });
 
-  outgoRequests.forEach(async (e, idx) => {
-    (outgoRequests[idx].applier as any) = await studentSearch({ user_id: e.applier });
-    (outgoRequests[idx].approver as any) = await getTeacherInfo(e.approver);
-  });
+  const result: OutgoSearchResult[] = [];
+  for (let i = 0; i < outgoRequests.length; i += 1) {
+    result.push(await getOutgoResults(outgoRequests[i]));
+  }
 
-  res.json({ outgoRequests });
+  res.json({ outgoRequests: result });
 };
 
 export const getOutgoRequest = async (req: Request, res: Response) => {
@@ -33,9 +34,8 @@ export const getOutgoRequest = async (req: Request, res: Response) => {
     throw new HttpException(403, '권한이 없습니다.');
   }
 
-  (outgoRequest.applier as any) = await studentSearch({ user_id: outgoRequest.applier });
-  (outgoRequest.approver as any) = await getTeacherInfo(outgoRequest.approver);
-  res.json({ outgoRequest });
+  const result = await getOutgoResults(outgoRequest);
+  res.json({ outgoRequest: result });
 };
 
 export const createOutgoRequest = async (req: Request, res: Response) => {
@@ -51,7 +51,7 @@ export const createOutgoRequest = async (req: Request, res: Response) => {
   }
 
   const now = new Date();
-  if (request.duration.start <= now || now <= request.duration.end) {
+  if (new Date(request.duration.start) <= now || now >= new Date(request.duration.end)) {
     throw new HttpException(400, '외출 신청 시간을 확인해 주세요.');
   }
 

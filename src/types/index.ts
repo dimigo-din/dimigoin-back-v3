@@ -80,9 +80,6 @@ export type Gender = typeof GenderValues[number];
 export const UserTypeValues = ['S', 'G', 'O', 'D', 'T', 'P'] as const;
 export type UserType = typeof UserTypeValues[number];
 
-export const OutgoRequestValues = ['A', 'W', 'D'] as const; // APPROVED, WAITING, DENIED
-export type OutgoRequestType = typeof OutgoRequestValues[number];
-
 export const GradeValues = [1, 2, 3] as const;
 export type Grade = typeof GradeValues[number];
 
@@ -92,8 +89,11 @@ export type Class = typeof ClassValues[number];
 export const WasherValues = ['F1', 'F2', 'F3', 'M2L', 'M2M', 'M2R', 'M4L', 'M4R', 'M5'] as const; // Ex: Female-1층 = F1, Male-2층-오른쪽 = M2R
 export type Washer = typeof WasherValues[number];
 
-export const FrigoStatusValues = ['waiting', 'rejected', 'accepted'];
+export const FrigoStatusValues = ['A', 'R', 'W']; // Accepted, Rejected, Waiting
 export type FrigoStatus = typeof FrigoStatusValues[number];
+
+export const StayOutgoStatusValues = ['A', 'R', 'W']; // Accepted, Rejected, Waiting
+export type StayOutgoStatusType = typeof StayOutgoStatusValues[number];
 
 export const CircleApplicationStatusValues = [
   'applied',

@@ -1,25 +1,30 @@
 import { Request, Response } from 'express';
 import { OutgoRequestModel } from '../../models';
 import { HttpException } from '../../exceptions';
-import { getStudentInfo, studentSearch } from '../../resources/dimi-api';
+import { getOutgoResults } from '../../resources/outgo';
+import { OutgoSearchResult } from '../../interfaces';
 
 export const getAllOutgoRequests = async (req: Request, res: Response) => {
   const outgoRequests = await OutgoRequestModel
     .find({});
-  outgoRequests.forEach(async (outgoRequest, idx) => {
-    (outgoRequests[idx].approver as any) = await getStudentInfo(outgoRequests[idx].approver);
-    (outgoRequests[idx].applier as any) = await studentSearch({ user_id: outgoRequests[idx].applier });
-  });
-  res.json({ outgoRequests });
+
+  const result: OutgoSearchResult[] = [];
+  for (let i = 0; i < outgoRequests.length; i += 1) {
+    result.push(await getOutgoResults(outgoRequests[i]));
+  }
+
+  res.json({ outgoRequests: result });
 };
 
+// objectID 넣어야함!!
 export const getOutgoRequest = async (req: Request, res: Response) => {
   const outgoRequest = await OutgoRequestModel
     .findById(req.params.outgoRequestId);
 
-  (outgoRequest.approver as any) = await getStudentInfo(outgoRequest.approver);
-  (outgoRequest.applier as any) = await studentSearch({ user_id: outgoRequest.applier });
   if (!outgoRequest) throw new HttpException(404, '해당 외출 신청을 찾을 수 없습니다.');
+
+  const result = await getOutgoResults(outgoRequest);
+  res.json({ outgoRequest: result });
 };
 
 export const toggleOutgoRequestStatus = async (req: Request, res: Response) => {
@@ -35,8 +40,6 @@ export const toggleOutgoRequestStatus = async (req: Request, res: Response) => {
   outgoRequest.status = req.body.status;
   await outgoRequest.save();
 
-  (outgoRequest.approver as any) = await getStudentInfo(outgoRequest.approver);
-  (outgoRequest.applier as any) = await studentSearch({ user_id: outgoRequest.applier });
-
-  res.json({ outgoRequest });
+  const result = await getOutgoResults(outgoRequest);
+  res.json({ outgoRequest: result });
 };

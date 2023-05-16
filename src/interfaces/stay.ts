@@ -1,29 +1,25 @@
-import { OutgoRequestType } from '../types';
+import { StayOutgoStatusType } from '../types';
 
-export interface OutgoRequest {
-    status: OutgoRequestType
+export interface StayOutgoDuration {
     start: Date
     end: Date
-    reason: string
-    permitter: number
-    breakfast: boolean
-    lunch: boolean
-    dinner: boolean
 }
 
-export interface StayApplyDate {
+export interface StayOutgo {
+    user: number
+    status: StayOutgoStatusType
+    date: Date
+    duration: StayOutgoDuration
     breakfast: boolean
     lunch: boolean
     dinner: boolean
-    outgo: boolean
-    requests: OutgoRequest[]
+    reason: string
 }
 
 export interface StayApply {
     seat: string
     user: number
     reason: string
-    dates: StayApplyDate[]
 }
 
 export interface StayDate {
@@ -32,10 +28,9 @@ export interface StayDate {
 }
 
 export interface Stay {
-    startlines: Date[]
-    deadlines: Date[]
+    startline: Date
+    deadline: Date
     disabled: boolean
     deleted: boolean
     dates: StayDate[]
-    applies: StayApply[]
 }
