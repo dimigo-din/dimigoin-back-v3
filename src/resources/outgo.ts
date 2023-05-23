@@ -5,6 +5,7 @@ export const getOutgoResults = async (outgoRequest: OutgoSearch) => {
   const students = await studentSearch({ user_id: outgoRequest.applier });
   const teacher = await getTeacherInfo(outgoRequest.approver);
   const result: OutgoSearchResult = {
+    _id: outgoRequest._id,
     applier: students.map((v) => v.name),
     approver: teacher.name,
     reason: outgoRequest.reason,

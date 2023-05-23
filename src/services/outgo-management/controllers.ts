@@ -16,7 +16,6 @@ export const getAllOutgoRequests = async (req: Request, res: Response) => {
   res.json({ outgoRequests: result });
 };
 
-// objectID 넣어야함!!
 export const getOutgoRequest = async (req: Request, res: Response) => {
   const outgoRequest = await OutgoRequestModel
     .findById(req.params.outgoRequestId);
