@@ -33,6 +33,15 @@ const checkOverlap = async (applierId: number, target: AfterschoolDoc): Promise<
 };
 
 export const applyAfterschool = async (req: Request, res: Response) => {
+  const currentTime = new Date();
+  const firstStart = new Date();
+  const firstEnd = new Date();
+  const secondEnd = new Date();
+
+  firstStart.setHours(17, 10, 0);
+  firstEnd.setHours(17, 30, 0);
+  secondEnd.setHours(18, 0, 0);
+
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
   if (!afterschool) throw new HttpException(404, '해당 방과 후 수업이 존재하지 않습니다.');
   const { user_id: userId, grade, class: klass } = req.user;
@@ -43,6 +52,20 @@ export const applyAfterschool = async (req: Request, res: Response) => {
   if (await checkOverlap(userId, afterschool)) {
     throw new HttpException(409, '중복 수강이 불가능한 강좌를 이미 신청했거나, 동시간대에 이미 신청한 강좌가 있습니다.');
   }
+
+  const isTargetGradesValid = (afterschool.targetGrades.length === 1 && afterschool.targetGrades.includes(1))
+    || (afterschool.targetGrades.length === 2 && afterschool.targetGrades.includes(1) && afterschool.targetGrades.includes(2));
+
+  if (isTargetGradesValid) {
+    if (currentTime < firstStart || currentTime > firstEnd) {
+      throw new HttpException(404, '해당 방과후의 신청시간이 아닙니다.');
+    }
+  } else if (afterschool.targetGrades.length === 1 && afterschool.targetGrades.includes(2)) {
+    if (currentTime < firstEnd || currentTime > secondEnd) {
+      throw new HttpException(404, '해당 방과후의 신청시간이 아닙니다.');
+    }
+  }
+
   const applierCount = await AfterschoolApplicationModel.count({
     afterschool: afterschool._id,
   });

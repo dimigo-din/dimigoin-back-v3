@@ -19,7 +19,7 @@ export default createService({
       needAuth: true,
       needPermission: false,
       studentOnly: true,
-      middlewares: [checkAfterschoolApplyPeriod],
+      // middlewares: [checkAfterschoolApplyPeriod],
       handler: controllers.applyAfterschool,
     },
     {

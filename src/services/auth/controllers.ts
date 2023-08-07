@@ -42,9 +42,12 @@ export const identifyUser = async (req: Request, res: Response) => {
       additional.serial = student.serial;
     }
 
+    const accessToken = await issueToken({ ...identity, ...additional }, false);
+    const refreshToken = await issueToken({ ...identity, ...additional }, true);
+
     res.json({
-      accessToken: await issueToken({ ...identity, ...additional }, false),
-      refreshToken: await issueToken({ ...identity, ...additional }, true),
+      accessToken,
+      refreshToken,
       dalgeurakFirstLogin: identity.dalgeurakFirstLogin,
     });
   } catch (error) {
@@ -61,8 +64,11 @@ export const refreshAccessToken = async (req: Request, res: Response) => {
   if (tokenType !== 'REFRESH') throw new HttpException(400, '리프레시 토큰이 아닙니다.');
 
   const payload = await verify(refreshToken);
+  const accessToken = await issueToken(payload, false);
+  const newRefreshToken = await issueToken(payload, true);
+
   res.json({
-    accessToken: await issueToken(payload, false),
-    refreshToken: await issueToken(payload, true),
+    accessToken,
+    refreshToken: newRefreshToken,
   });
 };
