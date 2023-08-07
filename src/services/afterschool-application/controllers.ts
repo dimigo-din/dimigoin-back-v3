@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import { getStudentInfo } from '../../resources/dimi-api';
 import { AfterschoolModel, AfterschoolApplicationModel, AfterschoolDoc } from '../../models';
 import { HttpException } from '../../exceptions';
 import { Grade } from '../../types';
@@ -66,10 +67,31 @@ export const applyAfterschool = async (req: Request, res: Response) => {
     }
   }
 
-  const applierCount = await AfterschoolApplicationModel.count({
+  const appliers = await AfterschoolApplicationModel.find({
     afterschool: afterschool._id,
   });
-  if (applierCount < afterschool.capacity) {
+  if (appliers.length < afterschool.capacity) {
+    // 물리와 함께
+    if (afterschool.name === '물리와 함께') {
+      const gradeLimit = (grade === 1) ? 10 : 5;
+      let firstGrade = 0;
+      let secondGrade = 0;
+
+      for (const applier of appliers) {
+        const student = await getStudentInfo(applier.applier);
+        if (student.grade === 1) {
+          firstGrade += 1;
+        } else {
+          secondGrade += 1;
+        }
+      }
+
+      if ((grade === 1 && firstGrade >= gradeLimit) || (grade === 2 && secondGrade >= gradeLimit)) {
+        const errorMessage = (grade === 1) ? '1학년 수강신청인원이 마감되었습니다.' : '2학년 수강신청인원이 마감되었습니다.';
+        throw new HttpException(404, errorMessage);
+      }
+    }
+
     const afterschoolApplication = new AfterschoolApplicationModel({
       applier: userId,
       afterschool: afterschool._id,
