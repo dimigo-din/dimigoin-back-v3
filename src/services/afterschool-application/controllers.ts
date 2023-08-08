@@ -39,9 +39,9 @@ export const applyAfterschool = async (req: Request, res: Response) => {
   const firstEnd = new Date();
   const secondEnd = new Date();
 
-  firstStart.setHours(17, 10, 0);
-  firstEnd.setHours(17, 30, 0);
-  secondEnd.setHours(18, 0, 0);
+  firstStart.setHours(17, 50, 0);
+  firstEnd.setHours(18, 10, 0);
+  secondEnd.setHours(18, 30, 0);
 
   const afterschool = await AfterschoolModel.findById(req.params.afterschoolId);
   if (!afterschool) throw new HttpException(404, '해당 방과 후 수업이 존재하지 않습니다.');
